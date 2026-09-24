@@ -1,0 +1,428 @@
+# Agent demo transcript
+
+Generated 2026-09-17 10:38Z by `scripts/agent_demo.py` — manager 895045, strategy `balanced`, models router/explain `gpt-4o-mini` (see docs/agent.md). Every number in the answers comes from deterministic tools (xPts v0, MILP optimizer, news signals); the LLM only routes and explains, and its answer is validated against the facts.
+
+### 1. player_status (signal from DB / extraction)
+
+**Query:** `Is João Pedro fit for GW5?`
+
+<details><summary>Node progress (stderr)</summary>
+
+```text
+[start] thread 17e25d87592e
+[load_context] GW5 deadline 2026-09-18 17:30Z; squad 15 players from GW4, bank £0.1, FT 2; issues 4
+[router] intent=player_status players=['João Pedro'] horizon=1
+[ensure_signals] 1 signals {'cached': 1}
+[grade_signals] all signals sufficient
+[compute] tools ['predict_player']; facts: ['as_of', 'deadline', 'gw', 'headline', 'intent', 'manager', 'players', 'question', 'squad_issues', 'strategy']
+[check_action] no confirmation needed
+[explain] attempt 1: 1018 chars
+[validate_answer] passed
+```
+
+</details>
+
+**Verdict:** João Pedro is doubtful for Gameweek 5 with a 75% chance of playing.
+
+**Why**
+- João Pedro has an FPL status of doubtful (d) with a 75% chance of playing in GW5.
+- His expected points (xPts) for GW5 are 3.3, with a probability of starting (p(start)) at 0.64.
+- He has pulled out of the Brazil squad due to an unspecified injury, raising concerns about his availability for the match against Brentford [ffscout, 16.09].
+- The news indicates a medium rotation risk and expected minutes of around 30 if he plays [fpl_api, 16.09].
+
+**Sources**
+- ffscout, 16.09, https://www.fantasyfootballscout.co.uk/2026/09/16/joao-pedro-out-of-brazil-squad-with-reported-injury
+- fpl_api, 16.09, fpl://player/165/news/2026-09-16T19:00:09.919929+00:00
+- ffscout, 15.09, https://www.fantasyfootballscout.co.uk/2026/09/15/joao-pedro-shaw-baleba-fpl-injury-updates-ahead-of-gameweek-5
+
+**Caveats**
+- Squad = picks of GW4 (public API shows transfers of the current gameweek only after its deadline). Data as of 2026-09-17 10:38Z.
+
+```text
+— intent: player_status | strategy: balanced | GW5 | data as of 2026-09-17T10:38:40+00:00 | wall 4.8s
+— tools: get_gameweek_context 333ms; diagnose_squad 0ms; router_llm 1762.0ms; analyze_player_risk [cached] 5ms; deterministic_rule 0ms; predict_player 80ms; explain_llm 2600.0ms; validate_answer 10ms
+— LLM calls: 2 (route gpt-4o-mini 1762.0ms; explain gpt-4o-mini 2600.0ms) | tokens in/out 3995/419 | cost ≈ $0.0009
+— signal retries: 0 | validation: passed (15 names, 6 numbers checked, attempts 1)
+— thread: 17e25d87592e
+```
+
+### 2. transfer (forced sale, constrained MILP)
+
+**Query:** `Should I sell Palmer?`
+
+<details><summary>Node progress (stderr)</summary>
+
+```text
+[start] thread 0713b4a4ace9
+[load_context] GW5 deadline 2026-09-18 17:30Z; squad 15 players from GW4, bank £0.1, FT 2; issues 4
+[router] intent=transfer players=['Palmer'] horizon=3
+[ensure_signals] 2 signals {'cached': 2}
+[grade_signals] all signals sufficient
+[compute] tools ['predict_player', 'recommend_transfers']; facts: ['as_of', 'deadline', 'gw', 'headline', 'intent', 'manager', 'players', 'question', 'squad_issues', 'squad_news_signals', 'strategy', 'transfers']
+[check_action] no confirmation needed
+[explain] attempt 1: 1964 chars
+[validate_answer] passed
+```
+
+</details>
+
+**Verdict:** Selling Palmer is fine but not required; the optimizer's free choice keeps him.
+
+| Option                       | xPts | Δ    | Cost | Risk / note                                                                 |
+|-----------------------------|------|------|------|-----------------------------------------------------------------------------|
+| Palmer, João Pedro -> Barry, B.Fernandes | 3.56 | +3.56 | 0    | out João Pedro: doubtful (FPL doubtful 75%); in B.Fernandes: high variance (sd 4.1); in B.Fernandes: template (41% owned) |
+| Konsa, João Pedro -> Barry, Guéhi | 4.03 | +4.03 | 0    | Keeping Palmer is optimal; in Guéhi: high variance (sd 3.6)                |
+
+**Why**
+- Palmer has an expected 4.76 points in GW5, with a 93% chance of starting.
+- Over the next three gameweeks, Palmer is projected to score 14.82 points.
+- The best transfer route involving Palmer yields a gain of +3.56 xPts next GW and +9.72 over the horizon.
+- An alternative route that keeps Palmer yields a slightly higher gain of +4.03 xPts next GW and +9.78 over the horizon.
+- Palmer is fit and has been contributing to Chelsea's scoring efforts, as noted in a report from BBC Football on 2026-09-17 [bbc_football, 17.09].
+
+**Sources**
+- bbc_football, 17.09, https://www.bbc.co.uk/sport/football/articles/cnvlr92eyldo
+- ffscout, 15.09, https://www.fantasyfootballscout.co.uk/2026/09/15/how-the-great-and-the-good-did-in-fpl-gameweek-4
+- ffscout, 16.09, https://www.fantasyfootballscout.co.uk/2026/09/16/joao-pedro-out-of-brazil-squad-with-reported-injury
+- fpl_api, 16.09, fpl://player/165/news/2026-09-16T19:00:09.919929+00:00
+- ffscout, 15.09, https://www.fantasyfootballscout.co.uk/2026/09/15/joao-pedro-shaw-baleba-fpl-injury-updates-ahead-of-gameweek-5
+
+**Caveats**
+- Squad = picks of GW4 (public API shows transfers of the current gameweek only after its deadline).
+- 'Palmer' resolved to the one in your squad (Cole Palmer).  
+- Data as of 2026-09-17 10:38Z.
+
+```text
+— intent: transfer | strategy: balanced | GW5 | data as of 2026-09-17T10:38:45+00:00 | wall 6.5s
+— tools: get_gameweek_context 0ms; diagnose_squad 0ms; router_llm 850.0ms; analyze_player_risk [cached] 3ms; analyze_player_risk [cached] 2ms; deterministic_rule 0ms; predict_player 191ms; recommend_transfers 745ms; explain_llm 4696.0ms; validate_answer 5ms
+— LLM calls: 2 (route gpt-4o-mini 850.0ms; explain gpt-4o-mini 4696.0ms) | tokens in/out 5210/680 | cost ≈ $0.0012
+— signal retries: 0 | validation: passed (39 names, 18 numbers checked, attempts 1)
+— thread: 0713b4a4ace9
+```
+
+### 3. captain (best XI + captain options)
+
+**Query:** `Who should I captain this week?`
+
+<details><summary>Node progress (stderr)</summary>
+
+```text
+[start] thread d361de97a8bf
+[load_context] GW5 deadline 2026-09-18 17:30Z; squad 15 players from GW4, bank £0.1, FT 2; issues 4
+[router] intent=captain players=[] horizon=1
+[ensure_signals] 1 signals {'cached': 1}
+[grade_signals] all signals sufficient
+[compute] tools ['optimize_team']; facts: ['as_of', 'best_xi', 'captain_options', 'captain_tag_rule', 'deadline', 'gw', 'headline', 'intent', 'manager', 'question', 'squad_issues', 'squad_news_signals', 'strategy']
+[check_action] no confirmation needed
+[explain] attempt 1: 1255 chars
+[validate_answer] passed
+```
+
+</details>
+
+**Verdict:** Captain Haaland this week for the best expected points.
+
+| Option | xPts | Captain Points | Ownership % | Tag |
+|--------|------|----------------|--------------|-----|
+| Haaland (MCI) | 7.13 | 14.26 | 72.6 | safe |
+| Szoboszlai (LIV) | 5.0 | 10.0 | 35.6 | safe |
+| Hall (NEW) | 4.76 | 9.52 | 14.4 | balanced |
+
+**Why**
+- Haaland has the highest expected points (7.13) and is playing against Sunderland, rated as a very easy fixture (FSI 1).
+- His ownership is 72.6%, categorizing him as a safe captain choice.
+- Szoboszlai and Hall are viable alternatives but with lower expected points (5.0 and 4.76 respectively).
+- João Pedro is doubtful for Gameweek 5 due to an unspecified injury, with a 75% chance of playing, which may affect his performance [ffscout, 16.09].
+
+**Sources**
+- ffscout, 16.09, https://www.fantasyfootballscout.co.uk/2026/09/16/joao-pedro-out-of-brazil-squad-with-reported-injury
+- fpl_api, 16.09, fpl://player/165/news/2026-09-16T19:00:09.919929+00:00
+- ffscout, 15.09, https://www.fantasyfootballscout.co.uk/2026/09/15/joao-pedro-shaw-baleba-fpl-injury-updates-ahead-of-gameweek-5
+
+**Caveats**
+- Squad = picks of GW4 (public API shows transfers of the current gameweek only after its deadline). Data is as of 2026-09-17.
+
+```text
+— intent: captain | strategy: balanced | GW5 | data as of 2026-09-17T10:38:52+00:00 | wall 4.7s
+— tools: get_gameweek_context 0ms; diagnose_squad 0ms; router_llm 844.0ms; analyze_player_risk [cached] 4ms; deterministic_rule 0ms; optimize_team 10ms; explain_llm 3808.0ms; validate_answer 4ms
+— LLM calls: 2 (route gpt-4o-mini 844.0ms; explain gpt-4o-mini 3808.0ms) | tokens in/out 4375/501 | cost ≈ $0.0010
+— signal retries: 0 | validation: passed (24 names, 17 numbers checked, attempts 1)
+— thread: d361de97a8bf
+```
+
+### 4. plan (5 GWs, wildcard compare, diff vs previous plan)
+
+**Query:** `Plan my transfers for the next 5 gameweeks`
+
+<details><summary>Node progress (stderr)</summary>
+
+```text
+[start] thread 9c57595e7160
+[load_context] GW5 deadline 2026-09-18 17:30Z; squad 15 players from GW4, bank £0.1, FT 2; issues 4
+[router] intent=plan players=[] horizon=5
+[ensure_signals] 1 signals {'cached': 1}
+[grade_signals] all signals sufficient
+[compute] tools ['build_gameweek_plan']; facts: ['as_of', 'deadline', 'gw', 'headline', 'intent', 'manager', 'plan', 'question', 'squad_issues', 'squad_news_signals', 'strategy']
+[check_action] no confirmation needed
+[explain] attempt 1: 1421 chars
+[validate_answer] passed
+```
+
+</details>
+
+**Verdict:** Plan to transfer Konsa to Guéhi and João Pedro to Barry for Gameweek 5.
+
+| Option                          | Δ     | Cost | Risk / note  |
+|--------------------------------|-------|------|--------------|
+| Konsa (£4.5) -> Guéhi (£6.0)  | +13.45| 0    | n/a          |
+| João Pedro (£7.8, doubtful) -> Barry (£5.6) | +2.49 | 0    | João Pedro is doubtful for Gameweek 5 due to an unspecified injury, with a 75% chance of playing [ffscout, 16.09]. |
+
+**Why**
+- Expected total with transfers is 307.54, compared to 283.13 without transfers, gaining 24.41 points.
+- Konsa has a favorable transfer to Guéhi, significantly boosting expected points.
+- João Pedro's injury status makes his transfer to Barry advisable, given his 75% chance of playing.
+- You have 2 free transfers available for Gameweek 5, with a bank of 0.1.
+
+**Sources**
+- ffscout, 16.09, https://www.fantasyfootballscout.co.uk/2026/09/16/joao-pedro-out-of-brazil-squad-with-reported-injury
+- fpl_api, 16.09, fpl://player/165/news/2026-09-16T19:00:09.919929+00:00
+- ffscout, 15.09, https://www.fantasyfootballscout.co.uk/2026/09/15/joao-pedro-shaw-baleba-fpl-injury-updates-ahead-of-gameweek-5
+
+**Caveats**
+- Squad = picks of GW4 (public API shows transfers of the current gameweek only after its deadline).
+- Only the next gameweek's move is actionable; later moves are directional and are re-planned every week. 
+
+Data is as of 2026-09-17 10:38Z.
+
+```text
+— intent: plan | strategy: balanced | GW5 | data as of 2026-09-17T10:38:56+00:00 | wall 10.6s
+— tools: get_gameweek_context 0ms; diagnose_squad 0ms; router_llm 904.0ms; analyze_player_risk [cached] 5ms; deterministic_rule 0ms; build_gameweek_plan 5247ms; explain_llm 4373.0ms; validate_answer 5ms
+— LLM calls: 2 (route gpt-4o-mini 904.0ms; explain gpt-4o-mini 4373.0ms) | tokens in/out 4186/528 | cost ≈ $0.0009
+— signal retries: 0 | validation: passed (33 names, 14 numbers checked, attempts 1)
+— thread: 9c57595e7160
+```
+
+### 5. what_if (HITL: hit -> interrupt -> reject / confirm)
+
+**Query:** `What if I take a -4 to bring in Saka and Guéhi?`
+
+<details><summary>Node progress (stderr)</summary>
+
+```text
+[start] thread a54c51bd704d
+[load_context] GW5 deadline 2026-09-18 17:30Z; squad 15 players from GW4, bank £0.1, FT 2; issues 4
+[router] intent=what_if players=['Saka', 'Guéhi'] horizon=3 allow_hit=True
+[ensure_signals] 2 signals {'cached': 2}
+[grade_signals] all signals sufficient
+[compute] tools ['predict_player', 'predict_player', 'simulate_scenario']; facts: ['as_of', 'deadline', 'gw', 'headline', 'intent', 'manager', 'players', 'question', 'scenario', 'squad_issues', 'strategy']
+[check_action] pending hit (Konsa, Palmer, João Pedro -> Saka, Barry, Guéhi (GW5))
+[__interrupt__] waiting for human decision (confirm | reject)
+```
+
+</details>
+
+⏸ **Interrupted before `confirm_action`** — pending hit: Konsa, Palmer, João Pedro -> Saka, Barry, Guéhi (GW5) (cost 4 pts). Thread `a54c51bd704d` saved in SQLite checkpoints; resume with `--decision confirm|reject`.
+
+```text
+— intent: what_if | strategy: balanced | GW5 | data as of 2026-09-17T10:39:07+00:00 | wall 2.3s
+— tools: get_gameweek_context 0ms; diagnose_squad 0ms; router_llm 1073.0ms; analyze_player_risk [cached] 5ms; analyze_player_risk [cached] 2ms; deterministic_rule 0ms; predict_player 0ms; predict_player 0ms; simulate_scenario 1162ms
+— LLM calls: 1 (route gpt-4o-mini 1073.0ms) | tokens in/out 1397/73 | cost ≈ $0.0003
+— signal retries: 0 | validation: n/a (no answer yet)
+— PENDING CONFIRMATION: hit — Konsa, Palmer, João Pedro -> Saka, Barry, Guéhi (GW5) (cost 4). Resume: --thread a54c51bd704d --decision confirm|reject
+```
+
+### 5a. resume `reject` (thread a54c51bd704d)
+
+**Query:** `What if I take a -4 to bring in Saka and Guéhi?`
+
+<details><summary>Node progress (stderr)</summary>
+
+```text
+[resume] thread a54c51bd704d: decision=reject
+[confirm_action] decision=reject
+[compute] tools ['predict_player', 'predict_player', 'simulate_scenario']; facts: ['as_of', 'deadline', 'gw', 'headline', 'intent', 'manager', 'players', 'question', 'scenario', 'squad_issues', 'strategy']
+[check_action] no confirmation needed
+[explain] attempt 1: 1359 chars
+[validate_answer] passed
+```
+
+</details>
+
+**Verdict:** Scenario feasible, no hit needed — free transfers cover it: Gabriel, Rogers -> Saka, Guéhi (2 transfers, no hit).
+
+**Why**
+- Saka has an expected points (xPts) of 6.2 for GW5, with a favorable fixture against Brighton (FSI 2).
+- Guéhi has an xPts of 5.94 for GW5, facing Sunderland (FSI 1).
+- The combined gain for the next gameweek is +2.96 xPts, and +7.13 over the horizon.
+- Both players are available for selection, with Guéhi confirmed fit and Saka marked as available.
+- Your current squad has 2 free transfers and a bank of £0.1, allowing for these changes without incurring a hit.
+
+| Option                     | xPts | Δ    | Cost | Risk / note                       |
+|---------------------------|------|------|------|-----------------------------------|
+| Gabriel, Rogers -> Saka, Guéhi | 59.11 | +2.96 | 0    | Saka: high variance (sd 3.9); Guéhi: high variance (sd 3.6) |
+
+**Sources**
+- sky_football, 16.09, https://www.skysports.com/football/news/11095/13586227/gianluigi-donnarumma-interview-man-city-goalkeeper-insists-club-are-not-in-a-transition-year-and-backs-club-to-have-a-great-season
+
+**Caveats**
+- Squad = picks of GW4 (public API shows transfers of the current gameweek only after its deadline).
+- You rejected the hit (Konsa, Palmer, João Pedro -> Saka, Barry, Guéhi (GW5)); recomputed without paid transfers / wildcard.
+
+```text
+— intent: what_if | strategy: balanced | GW5 | data as of 2026-09-17T10:39:07+00:00 | wall 4.3s
+— tools: get_gameweek_context 0ms; diagnose_squad 0ms; router_llm 1073.0ms; analyze_player_risk [cached] 5ms; analyze_player_risk [cached] 2ms; deterministic_rule 0ms; predict_player 0ms; predict_player 0ms; simulate_scenario 1162ms; human 0ms; predict_player 0ms; predict_player 0ms; simulate_scenario 309ms; explain_llm 4019.0ms; validate_answer 3ms
+— LLM calls: 2 (route gpt-4o-mini 1073.0ms; explain gpt-4o-mini 4019.0ms) | tokens in/out 4729/478 | cost ≈ $0.0010
+— signal retries: 0 | validation: passed (36 names, 10 numbers checked, attempts 1)
+— thread: a54c51bd704d
+```
+
+### 5b. resume `confirm` (new thread 355c117cdbed)
+
+**Query:** `What if I take a -4 to bring in Saka and Guéhi?`
+
+<details><summary>Node progress (stderr)</summary>
+
+```text
+[start] thread 355c117cdbed
+[load_context] GW5 deadline 2026-09-18 17:30Z; squad 15 players from GW4, bank £0.1, FT 2; issues 4
+[router] intent=what_if players=['Saka', 'Guéhi'] horizon=3 allow_hit=True
+[ensure_signals] 2 signals {'cached': 2}
+[grade_signals] all signals sufficient
+[compute] tools ['predict_player', 'predict_player', 'simulate_scenario']; facts: ['as_of', 'deadline', 'gw', 'headline', 'intent', 'manager', 'players', 'question', 'scenario', 'squad_issues', 'strategy']
+[check_action] pending hit (Konsa, Palmer, João Pedro -> Saka, Barry, Guéhi (GW5))
+[__interrupt__] waiting for human decision (confirm | reject)
+[resume] thread 355c117cdbed: decision=confirm
+[confirm_action] decision=confirm
+[explain] attempt 1: 1485 chars
+[validate_answer] passed
+```
+
+</details>
+
+**Verdict:** Taking a -4 hit to bring in Saka and Guéhi is feasible and recommended, yielding a gain of 5.46 expected points next gameweek.
+
+| Option | xPts | Δ | Cost | Risk / note |
+| --- | --- | --- | --- | --- |
+| Konsa, Palmer, João Pedro -> Saka, Barry, Guéhi | 61.61 | +5.46 | -4 | out João Pedro: doubtful (FPL doubtful 75%); in Saka: high variance (sd 3.9); in Guéhi: high variance (sd 3.6) |
+| Gabriel, Rogers -> Saka, Guéhi | 59.11 | +2.96 | 0 | n/a |
+
+**Why**
+- The proposed transfers (Konsa, Palmer, João Pedro out; Saka, Barry, Guéhi in) result in an expected points increase of 5.46 for GW5 and 14.15 over the next three gameweeks.
+- The alternative route (Gabriel, Rogers out; Saka, Guéhi in) incurs no hit but yields a lower expected points gain of 2.96 next gameweek.
+- Saka has an expected points of 6.2 for GW5, while Guéhi is expected to score 5.94, both benefiting from favorable fixtures (FSI 1 and 2).
+- Guéhi is confirmed fit and available for selection, as noted in an interview with Gianluigi Donnarumma [sky_football, 16.09].
+
+**Sources**
+- sky_football, 16.09, https://www.skysports.com/football/news/11095/13586227/gianluigi-donnarumma-interview-man-city-goalkeeper-insists-club-are-not-in-a-transition-year-and-backs-club-to-have-a-great-season
+
+**Caveats**
+- Squad = picks of GW4 (public API shows transfers of the current gameweek only after its deadline).
+- You confirmed the hit: Konsa, Palmer, João Pedro -> Saka, Barry, Guéhi (GW5) (cost 4 points).
+
+```text
+— intent: what_if | strategy: balanced | GW5 | data as of 2026-09-17T10:39:13+00:00 | wall 6.4s
+— tools: get_gameweek_context 0ms; diagnose_squad 0ms; router_llm 1178.0ms; analyze_player_risk [cached] 3ms; analyze_player_risk [cached] 2ms; deterministic_rule 0ms; predict_player 0ms; predict_player 0ms; simulate_scenario 1172ms; human 0ms; explain_llm 3991.0ms; validate_answer 5ms
+— LLM calls: 2 (route gpt-4o-mini 1178.0ms; explain gpt-4o-mini 3991.0ms) | tokens in/out 5037/557 | cost ≈ $0.0011
+— signal retries: 0 | validation: passed (52 names, 13 numbers checked, attempts 1)
+— thread: 355c117cdbed
+```
+
+### 6. betting refusal (domain guardrail)
+
+**Query:** `Best odds for Arsenal to win?`
+
+<details><summary>Node progress (stderr)</summary>
+
+```text
+[start] thread 321afa5fe9d5
+[load_context] GW5 deadline 2026-09-18 17:30Z; squad 15 players from GW4, bank £0.1, FT 2; issues 4
+[router] intent=betting players=[] horizon=1
+[refuse] deterministic answer (no LLM)
+```
+
+</details>
+
+I don't give betting advice — no odds, bookmakers or stakes.
+
+What I can do instead: check a player's fitness and news signal, estimate expected FPL points for the next gameweeks, recommend transfers (with hit verdicts), pick a captain, optimise your starting XI, or plan several gameweeks ahead. Ask, for example: "Should I captain Haaland this week?"
+
+```text
+— intent: betting | strategy: balanced | GW5 | data as of 2026-09-17T10:39:20+00:00 | wall 1.1s
+— tools: get_gameweek_context 0ms; diagnose_squad 0ms; router_llm 1048.0ms
+— LLM calls: 1 (route gpt-4o-mini 1048.0ms) | tokens in/out 1387/54 | cost ≈ $0.0002
+— signal retries: 0 | validation: n/a (deterministic answer)
+— thread: 321afa5fe9d5
+```
+
+### 7. clarification (ambiguous name)
+
+**Query:** `Should I sell Gabriel?`
+
+<details><summary>Node progress (stderr)</summary>
+
+```text
+[start] thread d0d9d9f0ebc3
+[load_context] GW5 deadline 2026-09-18 17:30Z; squad 15 players from GW4, bank £0.1, FT 2; issues 4
+[router] intent=transfer players=[] horizon=3 ambiguous -> clarify
+[clarify] deterministic answer (no LLM)
+```
+
+</details>
+
+Which **Gabriel** do you mean?
+1. Gabriel dos Santos Magalhães (ARS, DEF, £8.0, 23.3% owned, status a) — in your squad
+2. Gabriel Fernando de Jesus (ARS, FWD, £5.9, 0.2% owned, status u)
+3. Gabriel Gudmundsson (LEE, DEF, £4.5, 0.1% owned, status a)
+4. Gabriel Martinelli Silva (ARS, MID, £6.3, 0.1% owned, status u)
+
+Reply with the full name (e.g. the club and position help too).
+
+```text
+— intent: transfer | strategy: balanced | GW5 | data as of 2026-09-17T10:39:21+00:00 | wall 1.6s
+— tools: get_gameweek_context 1ms; diagnose_squad 0ms; router_llm 1594.0ms
+— LLM calls: 1 (route gpt-4o-mini 1594.0ms) | tokens in/out 1385/65 | cost ≈ $0.0002
+— signal retries: 0 | validation: n/a (deterministic answer)
+— thread: d0d9d9f0ebc3
+```
+
+### 8. off_topic
+
+**Query:** `Give me a recipe for plov`
+
+<details><summary>Node progress (stderr)</summary>
+
+```text
+[start] thread da58c7639471
+[load_context] GW5 deadline 2026-09-18 17:30Z; squad 15 players from GW4, bank £0.1, FT 2; issues 4
+[router] intent=off_topic players=[] horizon=1
+[refuse] deterministic answer (no LLM)
+```
+
+</details>
+
+I only help with Fantasy Premier League decisions (player status, transfers, captaincy, lineups, multi-gameweek plans) — this question is outside that scope.
+
+```text
+— intent: off_topic | strategy: balanced | GW5 | data as of 2026-09-17T10:39:23+00:00 | wall 1.2s
+— tools: get_gameweek_context 0ms; diagnose_squad 0ms; router_llm 1166.0ms
+— LLM calls: 1 (route gpt-4o-mini 1166.0ms) | tokens in/out 1388/58 | cost ≈ $0.0002
+— signal retries: 0 | validation: n/a (deterministic answer)
+— thread: da58c7639471
+```
+
+## Summary
+
+| scenario | intent | tools | LLM calls | tokens | cost $ | signal retries | validation | wall s |
+|---|---|---|---|---|---|---|---|---|
+| 1. player_status (signal from DB / extraction) | player_status | 8 | 2 | 4414 | 0.0009 | 0 | passed (1 attempt(s)) | 4.8 |
+| 2. transfer (forced sale, constrained MILP) | transfer | 10 | 2 | 5890 | 0.0012 | 0 | passed (1 attempt(s)) | 6.5 |
+| 3. captain (best XI + captain options) | captain | 8 | 2 | 4876 | 0.0010 | 0 | passed (1 attempt(s)) | 4.7 |
+| 4. plan (5 GWs, wildcard compare, diff vs previous plan) | plan | 8 | 2 | 4714 | 0.0009 | 0 | passed (1 attempt(s)) | 10.6 |
+| 5. what_if (HITL: hit -> interrupt -> reject / confirm) | what_if | 9 | 1 | 1470 | 0.0003 | 0 | n/a | 2.3 |
+| 5a. reject branch | what_if | 15 | 2 | 5207 | 0.0010 | 0 | passed (1 attempt(s)) | 4.3 |
+| 5b. confirm branch | what_if | 12 | 2 | 5594 | 0.0011 | 0 | passed (1 attempt(s)) | 6.4 |
+| 6. betting refusal (domain guardrail) | betting | 3 | 1 | 1441 | 0.0002 | 0 | n/a | 1.1 |
+| 7. clarification (ambiguous name) | transfer | 3 | 1 | 1450 | 0.0002 | 0 | n/a | 1.6 |
+| 8. off_topic | off_topic | 3 | 1 | 1446 | 0.0002 | 0 | n/a | 1.2 |
+
+**Total LLM cost for the demo: ≈ $0.0068** (gpt-4o-mini prices; embeddings for retrieval queries add < $0.0001). Wall time is dominated by LLM latency and, on first use, by loading the flashrank reranker; optimizer solves take 0.4–1.3 s.

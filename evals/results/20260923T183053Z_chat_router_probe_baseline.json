@@ -1,0 +1,640 @@
+{
+ "n": 5,
+ "rows": [
+  {
+   "id": "c01",
+   "query": "как думаешь на сколько силен мой состав?",
+   "expected_intents": [
+    "transfer"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "transfer": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The user is asking for a review of their squad, which requires their specific team details."
+   ]
+  },
+  {
+   "id": "c02",
+   "query": "что у меня слабое в команде?",
+   "expected_intents": [
+    "transfer"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "transfer": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The user is asking about weak spots in their team, which requires squad analysis.",
+    "The user is asking about weak spots in their team, which requires knowledge of their squad."
+   ]
+  },
+  {
+   "id": "c03",
+   "query": "оцени мой состав что был в последнем туре. Скажи где была ошибка?",
+   "expected_intents": [],
+   "expected_behavior": [
+    "answer",
+    "partial"
+   ],
+   "intents": {
+    "transfer": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": null,
+   "reasons": [
+    "The user is asking for a review of their squad, which requires their specific team details."
+   ]
+  },
+  {
+   "id": "c04",
+   "query": "rate my team out of 10",
+   "expected_intents": [
+    "transfer"
+   ],
+   "expected_behavior": [
+    "answer",
+    "partial"
+   ],
+   "intents": {
+    "transfer": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The query is about evaluating the user's own squad.",
+    "The query asks for a review of the user's own squad, indicating a need for transfer advice."
+   ]
+  },
+  {
+   "id": "c06",
+   "query": "норм у меня команда или всё плохо? я чет в минусе по рангу",
+   "expected_intents": [
+    "transfer"
+   ],
+   "expected_behavior": [
+    "answer",
+    "partial"
+   ],
+   "intents": {
+    "transfer": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "User is asking for a review of their squad's performance.",
+    "User is asking for a review of their squad, indicating weak spots and potential changes.",
+    "User is asking for a review of their squad, indicating a need for transfer advice."
+   ]
+  },
+  {
+   "id": "c17",
+   "query": "стоит ли ставить triple captain на Haaland в этом туре?",
+   "expected_intents": [
+    "captain",
+    "plan",
+    "strategy_question"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "plan": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The user is asking about using a chip in their own squad context."
+   ]
+  },
+  {
+   "id": "c19",
+   "query": "какой состав поставить на gw7?",
+   "expected_intents": [
+    "lineup",
+    "plan"
+   ],
+   "expected_behavior": [
+    "answer",
+    "partial"
+   ],
+   "intents": {
+    "lineup": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The user is asking for advice on their starting lineup for the upcoming gameweek.",
+    "The user is asking about their starting lineup for the upcoming gameweek.",
+    "User is asking about their starting lineup for the upcoming gameweek."
+   ]
+  },
+  {
+   "id": "c20",
+   "query": "в gw7 буду делать bench boost. Какой состав рекомендуется сделать? JOao Pedro не убирать из состава. Платные трансферы - нельзя",
+   "expected_intents": [
+    "plan"
+   ],
+   "expected_behavior": [
+    "answer",
+    "partial"
+   ],
+   "intents": {
+    "plan": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "User is planning a bench boost and wants to keep a specific player."
+   ]
+  },
+  {
+   "id": "c24",
+   "query": "когда мне играть bench boost?",
+   "expected_intents": [
+    "plan",
+    "strategy_question"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "strategy_question": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The question is about general strategy for using a chip, not specific to the user's squad."
+   ]
+  },
+  {
+   "id": "c25",
+   "query": "какие фишки у меня еще остались?",
+   "expected_intents": [
+    "plan",
+    "transfer",
+    "strategy_question"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "strategy_question": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The question is about general FPL rules regarding chips."
+   ]
+  },
+  {
+   "id": "c27",
+   "query": "с кем играет Арсенал в ближайшие 3 тура?",
+   "expected_intents": [],
+   "expected_behavior": [
+    "answer",
+    "partial"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": null,
+   "reasons": [
+    "The query is not related to FPL or player decisions."
+   ]
+  },
+  {
+   "id": "c28",
+   "query": "у кого лучший календарь на ближайшие туры?",
+   "expected_intents": [],
+   "expected_behavior": [
+    "answer",
+    "partial"
+   ],
+   "intents": {
+    "player_ranking": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": null,
+   "reasons": [
+    "The query asks for the best fixtures, which relates to player ranking."
+   ]
+  },
+  {
+   "id": "c29",
+   "query": "а с кем будет играть команда Jayden Bogle? сколько ты думаешь он очков наберет",
+   "expected_intents": [
+    "player_status"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": 0.0,
+   "reasons": [
+    "The query is not related to FPL decisions or player status.",
+    "The query is not related to FPL or player decisions."
+   ]
+  },
+  {
+   "id": "c32",
+   "query": "сколько очков наберет Haaland в следующем туре?",
+   "expected_intents": [
+    "player_status"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": 0.0,
+   "reasons": [
+    "The query is about predicting points, which is off-topic for FPL."
+   ]
+  },
+  {
+   "id": "c43",
+   "query": "посоветуй дифференциал до 6 млн с низким владением",
+   "expected_intents": [
+    "player_ranking",
+    "transfer"
+   ],
+   "expected_behavior": [
+    "answer",
+    "partial"
+   ],
+   "intents": {
+    "player_ranking": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The query asks for a differential player under 6 million with low ownership, which is a ranking request.",
+    "The query is about finding a differential player under 6 million with low ownership, which falls under player ranking.",
+    "The query is about finding a differential player under 6 million with low ownership, which is a ranking request."
+   ]
+  },
+  {
+   "id": "c44",
+   "query": "кого сейчас все берут? самые популярные трансферы тура",
+   "expected_intents": [],
+   "expected_behavior": [
+    "partial",
+    "answer"
+   ],
+   "intents": {
+    "player_ranking": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": null,
+   "reasons": [
+    "The query asks for the most popular transfers, which relates to player rankings."
+   ]
+  },
+  {
+   "id": "c45",
+   "query": "кто подорожает сегодня ночью?",
+   "expected_intents": [],
+   "expected_behavior": [
+    "partial"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": null,
+   "reasons": [
+    "The query is not related to FPL or player decisions.",
+    "The query is not related to FPL or Premier League football."
+   ]
+  },
+  {
+   "id": "c49",
+   "query": "когда дедлайн следующего тура?",
+   "expected_intents": [
+    "strategy_question"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "strategy_question": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The question is about general FPL rules, not the user's squad.",
+    "The question is about the deadline, which is a general FPL rule.",
+    "The question is about general FPL rules regarding deadlines."
+   ]
+  },
+  {
+   "id": "c51",
+   "query": "почему не Салах?",
+   "expected_intents": [
+    "captain",
+    "compare_players"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": 0.0,
+   "reasons": [
+    "The query is not related to FPL or player decisions."
+   ]
+  },
+  {
+   "id": "c52",
+   "query": "ты про gw7?",
+   "expected_intents": [
+    "lineup",
+    "plan",
+    "captain"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": 0.0,
+   "reasons": [
+    "The query is not related to FPL or player decisions."
+   ]
+  },
+  {
+   "id": "c53",
+   "query": "а если без хита?",
+   "expected_intents": [
+    "transfer",
+    "what_if"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "strategy_question": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 0.0,
+   "reasons": [
+    "The question is about general strategy regarding hits without reference to specific players or the user's squad.",
+    "The question is about general strategy regarding hits without referring to specific players or the user's squad.",
+    "The query is about general strategy regarding hits without reference to specific players or the user's squad."
+   ]
+  },
+  {
+   "id": "c54",
+   "query": "а он сколько наберёт?",
+   "expected_intents": [
+    "player_status"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": 0.0,
+   "reasons": [
+    "The query is not related to FPL or player statistics.",
+    "The query is not related to FPL or player decisions."
+   ]
+  },
+  {
+   "id": "c55",
+   "query": "а на gw7?",
+   "expected_intents": [
+    "transfer",
+    "plan"
+   ],
+   "expected_behavior": [
+    "answer",
+    "partial"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": 0.0,
+   "reasons": [
+    "The query is not related to FPL or player decisions."
+   ]
+  },
+  {
+   "id": "c56",
+   "query": "почему ты советуешь именно этот трансфер?",
+   "expected_intents": [
+    "plan",
+    "transfer"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": 0.0,
+   "reasons": [
+    "The query is not related to FPL or player decisions."
+   ]
+  },
+  {
+   "id": "c57",
+   "query": "а среди защитников?",
+   "expected_intents": [
+    "player_ranking"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "player_ranking": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The query is asking about defenders in general without naming specific players.",
+    "The query is asking about defenders in general, which fits the player ranking intent.",
+    "The query is asking about defenders in general, which fits the player_ranking intent."
+   ]
+  },
+  {
+   "id": "c58",
+   "query": "какая погода будет в Лондоне в субботу?",
+   "expected_intents": [
+    "off_topic"
+   ],
+   "expected_behavior": [
+    "refuse"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The query is not related to FPL or football."
+   ]
+  },
+  {
+   "id": "c60",
+   "query": "помоги собрать команду в UCL Fantasy",
+   "expected_intents": [
+    "off_topic"
+   ],
+   "expected_behavior": [
+    "refuse"
+   ],
+   "intents": {
+    "off_topic": 5
+   },
+   "refused_share": 1.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The query is not related to FPL or Premier League football."
+   ]
+  },
+  {
+   "id": "c64",
+   "query": "my team is a mess, what's wrong with it?",
+   "expected_intents": [
+    "transfer"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "transfer": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The user is asking for a diagnosis of their own squad.",
+    "The user is asking for a diagnosis of their squad, which requires their specific team details."
+   ]
+  },
+  {
+   "id": "c65",
+   "query": "что мне делать в этом туре?",
+   "expected_intents": [
+    "transfer",
+    "plan"
+   ],
+   "expected_behavior": [
+    "answer"
+   ],
+   "intents": {
+    "transfer": 5
+   },
+   "refused_share": 0.0,
+   "stable": true,
+   "ok_share": 1.0,
+   "reasons": [
+    "The user is asking for advice on their squad for the current gameweek.",
+    "The user is asking for advice on what to do this gameweek, which requires their squad information."
+   ]
+  }
+ ],
+ "cost_usd": 0.11195,
+ "summary": {
+  "rows": 29,
+  "unstable_rows": 0,
+  "answerable_rows_refused_at_least_once": 9,
+  "answerable_rows_refused_always": 9,
+  "answerable_rows": 27
+ },
+ "meta": {
+  "label": "baseline",
+  "git_head": "52936c7",
+  "fingerprint": {
+   "src/fplcopilot/agent/__init__.py": "67ee1225676b",
+   "src/fplcopilot/agent/cli.py": "17b336a5553e",
+   "src/fplcopilot/agent/graph.py": "738f527eba94",
+   "src/fplcopilot/agent/llm.py": "89ecc8311ef4",
+   "src/fplcopilot/agent/resolve.py": "19164f477d3e",
+   "src/fplcopilot/agent/state.py": "a441615faed4",
+   "src/fplcopilot/agent/tools.py": "578f8b8705dd",
+   "src/fplcopilot/agent/tracing.py": "a878cdecf707",
+   "src/fplcopilot/agent/translit.py": "241be760245e",
+   "src/fplcopilot/agent/validate.py": "00d021ca7d23",
+   "src/fplcopilot/agent/prompts/v1/explain.system.md": "2b108f842b60",
+   "src/fplcopilot/agent/prompts/v1/grader.system.md": "a97d3086080b",
+   "src/fplcopilot/agent/prompts/v1/router.system.md": "9f579957c926",
+   "src/fplcopilot/agent/prompts/v1/rules_digest.md": "6215032bbaba",
+   "src/fplcopilot/agent/prompts/v2/compare.system.md": "0cdd0ad6acb0",
+   "src/fplcopilot/agent/prompts/v2/explain.system.md": "45a366c6ab22",
+   "src/fplcopilot/agent/prompts/v2/router.system.md": "5a81d69fda98",
+   "src/fplcopilot/agent/prompts/v3/explain.system.md": "ffc7e624f3cb",
+   "src/fplcopilot/agent/prompts/v3/router.system.md": "05d5146bbe9f",
+   "src/fplcopilot/config.py": "4e2f27630b75",
+   "src/fplcopilot/rag/__init__.py": "9a91049106db",
+   "src/fplcopilot/rag/chunking.py": "1df76557a76c",
+   "src/fplcopilot/rag/entity_matcher.py": "c0be709dda22",
+   "src/fplcopilot/rag/extract.py": "b68b3512331b",
+   "src/fplcopilot/rag/index.py": "193630e7fa37",
+   "src/fplcopilot/rag/ingest.py": "0e55ff0bcfb4",
+   "src/fplcopilot/rag/llm.py": "f33b88cd8916",
+   "src/fplcopilot/rag/query.py": "a4b16d622b57",
+   "src/fplcopilot/rag/refresh.py": "100ca589a35a",
+   "src/fplcopilot/rag/report.py": "0d10decbfb3a",
+   "src/fplcopilot/rag/retrieve.py": "af9df184159e",
+   "src/fplcopilot/rag/signal.py": "76c7cb304e58",
+   "src/fplcopilot/rag/sources.py": "3d0b268ac6a8",
+   "src/fplcopilot/rag/summary_check.py": "641274c5daaf",
+   "src/fplcopilot/rag/team_news.py": "560d8a3ff3b7",
+   "src/fplcopilot/app/views/5_chat.py": "56e807e58f4f"
+  },
+  "prompt_version": "default"
+ }
+}

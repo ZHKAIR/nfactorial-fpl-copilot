@@ -1,0 +1,115 @@
+# Тема FPL Copilot по референсу Figma. По умолчанию — светлая (см. theme.DEFAULT_LIGHT_JS:
+# при первом открытии выбор «Light» записывается в браузер), тёмная — в меню ⋮ → Dark.
+# Конфиг лежит рядом с Home.py: Streamlit читает его поверх проектного и глобального, и он
+# попадает в Docker-образ вместе с src/. Шрифты (OFL, с кириллицей) — из static/ рядом с
+# Home.py: Manrope — весь текст, JetBrains Mono — только числа и короткие метки.
+# Акцент — синий с эмблемы (#06A8FD, в CSS app/theme.py); кнопки и виджеты — #0277B8 (белый
+# текст на кнопке читается, 4.9 : 1).
+
+[server]
+enableStaticServing = true
+
+[client]
+toolbarMode = "viewer"
+
+[theme]
+font = "Manrope, system-ui, -apple-system, 'Segoe UI', sans-serif"
+headingFont = "Manrope, system-ui, -apple-system, 'Segoe UI', sans-serif"
+codeFont = "'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace"
+baseFontSize = 15
+baseFontWeight = 400
+headingFontSizes = ["2rem", "1.3rem", "1.1rem", "1rem", "0.95rem", "0.9rem"]
+headingFontWeights = [750, 700, 700, 650, 650, 650]
+metricValueFontSize = "1.5rem"
+metricValueFontWeight = 650
+baseRadius = "0.5rem"
+buttonRadius = "0.45rem"
+showWidgetBorder = true
+showSidebarBorder = true
+linkUnderline = false
+
+[[theme.fontFaces]]
+family = "Manrope"
+url = "app/static/Manrope-latin.woff2"
+weight = "200 800"
+style = "normal"
+unicodeRange = "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+
+[[theme.fontFaces]]
+family = "Manrope"
+url = "app/static/Manrope-latin-ext.woff2"
+weight = "200 800"
+style = "normal"
+unicodeRange = "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF"
+
+[[theme.fontFaces]]
+family = "Manrope"
+url = "app/static/Manrope-cyrillic.woff2"
+weight = "200 800"
+style = "normal"
+unicodeRange = "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+
+[[theme.fontFaces]]
+family = "JetBrains Mono"
+url = "app/static/JetBrainsMono-latin.woff2"
+weight = "100 800"
+style = "normal"
+unicodeRange = "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+
+[[theme.fontFaces]]
+family = "JetBrains Mono"
+url = "app/static/JetBrainsMono-latin-ext.woff2"
+weight = "100 800"
+style = "normal"
+unicodeRange = "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF"
+
+[[theme.fontFaces]]
+family = "JetBrains Mono"
+url = "app/static/JetBrainsMono-cyrillic.woff2"
+weight = "100 800"
+style = "normal"
+unicodeRange = "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116"
+
+[theme.light]
+primaryColor = "#0277B8"
+backgroundColor = "#F4F7F9"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#12202A"
+linkColor = "#0277B8"
+borderColor = "#D6E0E6"
+dataframeBorderColor = "#E3EAEE"
+dataframeHeaderBackgroundColor = "#F7FAFB"
+codeBackgroundColor = "#EDF2F5"
+blueColor = "#0277B8"
+greenColor = "#15803D"
+yellowColor = "#B45309"
+orangeColor = "#C2410C"
+redColor = "#C8373E"
+chartCategoricalColors = ["#06A8FD", "#9AA9B2", "#15803D", "#C2410C", "#8E7CC3", "#C8373E", "#6B7280"]
+
+[theme.light.sidebar]
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F4F7F9"
+borderColor = "#E3EAEE"
+
+[theme.dark]
+primaryColor = "#0277B8"
+backgroundColor = "#0B1116"
+secondaryBackgroundColor = "#131C23"
+textColor = "#E6EDF1"
+linkColor = "#4CC3FF"
+borderColor = "#2A3A44"
+dataframeBorderColor = "#1E2B33"
+dataframeHeaderBackgroundColor = "#131C23"
+codeBackgroundColor = "#131C23"
+blueColor = "#38B6FF"
+greenColor = "#3FB97A"
+yellowColor = "#E0B040"
+orangeColor = "#F08A4B"
+redColor = "#F06A6F"
+chartCategoricalColors = ["#06A8FD", "#5B6B75", "#3FB97A", "#F08A4B", "#A897E0", "#F06A6F", "#9CA3AF"]
+
+[theme.dark.sidebar]
+backgroundColor = "#0E151B"
+secondaryBackgroundColor = "#131C23"
+borderColor = "#1E2B33"

@@ -1,0 +1,98 @@
+# Прод-стек FPL Copilot для одного VPS (Ubuntu 24.04, 2 vCPU / 4 GB, amd64 или arm64).
+# Инструкция — docs/deploy.md.
+#
+#   cp .env.prod.example .env && nano .env         # пароли, ключи, DOMAIN
+#   docker compose -f docker-compose.prod.yml up -d --build
+#   docker compose -f docker-compose.prod.yml ps   # все сервисы healthy / running
+#
+# Наружу открыт только Caddy (80/443, авто-HTTPS для DOMAIN). Postgres и Streamlit слушают
+# только внутреннюю сеть compose. Имена контейнеров не фиксированы: префикс — имя проекта
+# (`-p`), поэтому стек не пересекается с локальным docker-compose.yml.
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-app-env: &app-env
+  DATABASE_URL: postgresql://${POSTGRES_USER:-fpl}:${POSTGRES_PASSWORD:?задайте POSTGRES_PASSWORD в .env}@db:5432/${POSTGRES_DB:-fpl}
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fpl}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?задайте POSTGRES_PASSWORD в .env}
+      POSTGRES_DB: ${POSTGRES_DB:-fpl}
+    # порт НЕ публикуется: база доступна только сервисам этого стека
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fpl} -d ${POSTGRES_DB:-fpl}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    mem_limit: 1g
+    logging: *logging
+
+  app:
+    build: .
+    image: fpl-copilot:prod
+    restart: unless-stopped
+    env_file: ${APP_ENV_FILE:-.env}
+    environment:
+      <<: *app-env
+    # без ports: только для caddy внутри сети compose (HEALTHCHECK образа — /_stcore/health)
+    volumes:
+      - appcache:/app/.cache
+    depends_on:
+      db:
+        condition: service_healthy
+    mem_limit: 1600m
+    logging: *logging
+
+  ingest:
+    image: fpl-copilot:prod
+    restart: unless-stopped
+    env_file: ${APP_ENV_FILE:-.env}
+    environment:
+      <<: *app-env
+    command: ["python", "-m", "fplcopilot.rag.ingest", "--loop", "--every", "30", "--index"]
+    healthcheck:
+      disable: true  # HEALTHCHECK образа проверяет Streamlit на :8501, в ingest его нет
+    volumes:
+      - appcache:/app/.cache
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_started  # образ собирается сервисом app
+    mem_limit: 768m
+    logging: *logging
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "${CADDY_HTTP_PORT:-80}:80"
+      - "${CADDY_HTTPS_PORT:-443}:443"
+      - "${CADDY_HTTPS_PORT:-443}:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:?задайте DOMAIN в .env (домен или <ip>.sslip.io)}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    mem_limit: 128m
+    logging: *logging
+
+volumes:
+  pgdata:
+  appcache:
+  caddy_data:
+  caddy_config:

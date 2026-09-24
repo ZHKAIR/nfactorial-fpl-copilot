@@ -1,0 +1,370 @@
+# Реестр источников стратегической базы знаний (RAG #2). Проверка 17.09.2026 — docs/strategy_kb.md.
+# Поля: name (слаг), source (издатель -> kb_docs.source), url, title_hint, tags, fetch, enabled, note.
+# tags: rules — ТОЛЬКО официальные страницы premierleague.com и внутренний дайджест; блоги, пересказывающие
+# правила, получают beginner/тематические теги (промпт считает rules авторитетным источником фактов).
+# Загрузка: `uv run python -m fplcopilot.rag.kb --probe` (проверка), `--ingest` (в БД).
+version: 1
+tags: [rules, chips, transfers, hits, captaincy, structure, rank, prices, fixtures, defcon, beginner]
+
+sources:
+  # ---------- официальные (premierleague.com, автор The Scout) ----------
+  - name: pl_fpl_help_copilot
+    source: premierleague
+    url: https://www.premierleague.com/en/news/4681092/fpl-help-copilot
+    title_hint: "FPL Help Copilot (official help page: basics, squad, transfers, chips, leagues)"
+    tags: [rules, beginner]
+    fetch: html
+    enabled: true
+  - name: pl_changes_2026_27
+    source: premierleague
+    url: https://www.premierleague.com/en/news/4679873/all-you-need-to-know-about-changes-to-fpl-for-202627
+    title_hint: "All you need to know about changes to FPL for 2026/27"
+    tags: [rules, chips, transfers, defcon]
+    fetch: html
+    enabled: true
+  - name: pl_how_when_chips
+    source: premierleague
+    url: https://www.premierleague.com/en/news/4362085/how-and-when-to-use-your-fpl-chips
+    title_hint: "How and when to use your FPL chips"
+    tags: [chips, rules]
+    fetch: html
+    enabled: true
+  - name: pl_news_4661029
+    source: premierleague
+    url: https://www.premierleague.com/en/news/4661029
+    title_hint: "FPL Rules Copilot (official rules: squad, transfers, chips, scoring, leagues)"
+    tags: [rules, transfers, hits, chips, beginner]
+    fetch: html
+    enabled: true
+
+  # ---------- Fantasy Football Scout (бесплатные статьи) ----------
+  - name: ffscout_what_is_eo
+    source: ffscout
+    url: https://www.fantasyfootballscout.co.uk/2021/03/24/what-is-effective-ownership-and-why-is-it-so-widely-talked-about-in-fpl/
+    title_hint: "What is 'effective ownership' and why is it so widely talked about in FPL?"
+    tags: [captaincy, rank]
+    fetch: html
+    enabled: true
+  - name: ffscout_eo_differentials
+    source: ffscout
+    url: https://www.fantasyfootballscout.co.uk/2021/03/07/how-to-use-effective-ownership-to-make-differential-fpl-decisions/
+    title_hint: "How to use effective ownership to make differential FPL decisions"
+    tags: [captaincy, rank, structure]
+    fetch: html
+    enabled: true
+
+  # ---------- Fantasy Football Fix ----------
+  - name: ffix_chip_strategy
+    source: fantasyfootballfix
+    url: https://www.fantasyfootballfix.com/blog-index/fpl-chip-strategy/
+    title_hint: "FPL chip strategy"
+    tags: [chips]
+    fetch: html
+    enabled: true
+  - name: ffix_top50_tips_budget
+    source: fantasyfootballfix
+    url: https://www.fantasyfootballfix.com/blog-index/fpl-top-50-tips-budget-25-26/
+    title_hint: "FPL top 50 tips: budget and team value"
+    tags: [prices, structure, transfers]
+    fetch: html
+    enabled: true
+  - name: ffix_top50_tips_chips
+    source: fantasyfootballfix
+    url: https://www.fantasyfootballfix.com/blog-index/fpl-top-50-tips-chips-25-26/
+    title_hint: "FPL top 50 tips: chips"
+    tags: [chips]
+    fetch: html
+    enabled: true
+  - name: ffix_bonus_points
+    source: fantasyfootballfix
+    url: https://www.fantasyfootballfix.com/blog-index/fpl-bonus-points/
+    title_hint: "FPL bonus points explained (BPS)"
+    tags: [beginner]
+    fetch: html
+    enabled: true
+
+  # ---------- LiveFPL blog ----------
+  - name: livefpl_auto_subs
+    source: livefpl
+    url: https://www.livefpl.com/blog/fpl-auto-subs
+    title_hint: "FPL auto-subs explained"
+    tags: [beginner, structure]
+    fetch: html
+    enabled: true
+  - name: livefpl_defcon
+    source: livefpl
+    url: https://www.livefpl.com/blog/fpl-defensive-contributions
+    title_hint: "FPL defensive contributions explained"
+    tags: [defcon]
+    fetch: html
+    enabled: true
+  - name: livefpl_eo
+    source: livefpl
+    url: https://www.livefpl.com/blog/fpl-effective-ownership
+    title_hint: "FPL effective ownership explained: why EO decides your rank"
+    tags: [captaincy, rank]
+    fetch: html
+    enabled: true
+  - name: livefpl_chip_strategy
+    source: livefpl
+    url: https://www.livefpl.com/blog/fpl-chip-strategy
+    title_hint: "FPL chip strategy"
+    tags: [chips]
+    fetch: html
+    enabled: true
+  - name: livefpl_bonus_points
+    source: livefpl
+    url: https://www.livefpl.com/blog/fpl-bonus-points
+    title_hint: "FPL bonus points explained"
+    tags: [beginner]
+    fetch: html
+    enabled: true
+  - name: livefpl_live_rank
+    source: livefpl
+    url: https://www.livefpl.com/blog/fpl-live-rank
+    title_hint: "FPL live rank explained"
+    tags: [rank]
+    fetch: html
+    enabled: true
+  - name: livefpl_rank_distribution
+    source: livefpl
+    url: https://www.livefpl.com/blog/league-rank-distribution
+    title_hint: "FPL league rank distribution"
+    tags: [rank]
+    fetch: html
+    enabled: true
+  - name: livefpl_captain_eo
+    source: livefpl
+    url: https://www.livefpl.com/blog/captain-e-o
+    title_hint: "Captain effective ownership"
+    tags: [captaincy, rank]
+    fetch: html
+    enabled: true
+  - name: livefpl_free_hit
+    source: livefpl
+    url: https://www.livefpl.com/blog/free-hit-fpl
+    title_hint: "Free Hit chip in FPL"
+    tags: [chips, fixtures]
+    fetch: html
+    enabled: true
+  - name: livefpl_price_changes
+    source: livefpl
+    url: https://www.livefpl.com/blog/fpl-price-changes
+    title_hint: "FPL price changes explained"
+    tags: [prices, transfers]
+    fetch: html
+    enabled: true
+  - name: livefpl_double_gameweeks
+    source: livefpl
+    url: https://www.livefpl.com/blog/double-gameweeks-fpl
+    title_hint: "Double gameweeks in FPL"
+    tags: [fixtures, chips]
+    fetch: html
+    enabled: true
+
+  # ---------- FPLWatch blog ----------
+  - name: fplwatch_price_changes_time
+    source: fplwatch
+    url: https://fplwatch.com/blog/fpl-price-changes-time-2026-27
+    title_hint: "When do FPL price changes happen (2026/27)"
+    tags: [prices]
+    fetch: html
+    enabled: true
+  - name: fplwatch_build_gw1_squad
+    source: fplwatch
+    url: https://fplwatch.com/blog/build-gw1-squad-from-scratch
+    title_hint: "How to build a GW1 squad from scratch"
+    tags: [structure, beginner]
+    fetch: html
+    enabled: true
+  - name: fplwatch_preseason_price_rises
+    source: fplwatch
+    url: https://fplwatch.com/blog/pre-season-price-rises-explained
+    title_hint: "Pre-season price rises explained"
+    tags: [prices]
+    fetch: html
+    enabled: true
+  - name: fplwatch_blank_double_gameweeks
+    source: fplwatch
+    url: https://fplwatch.com/blog/blank-and-double-gameweeks
+    title_hint: "Blank and double gameweeks"
+    tags: [fixtures, chips]
+    fetch: html
+    enabled: true
+  - name: fplwatch_captaincy_guide
+    source: fplwatch
+    url: https://fplwatch.com/blog/captaincy-guide
+    title_hint: "FPL captain selection guide: form, fixtures & EO"
+    tags: [captaincy]
+    fetch: html
+    enabled: true
+  - name: fplwatch_eo_differentials
+    source: fplwatch
+    url: https://fplwatch.com/blog/effective-ownership-and-differentials
+    title_hint: "Effective ownership and differentials"
+    tags: [rank, captaincy, structure]
+    fetch: html
+    enabled: true
+  - name: fplwatch_beginners_guide
+    source: fplwatch
+    url: https://fplwatch.com/blog/fpl-beginners-guide
+    title_hint: "FPL beginners guide"
+    tags: [beginner]
+    fetch: html
+    enabled: true
+  - name: fplwatch_chips_guide
+    source: fplwatch
+    url: https://fplwatch.com/blog/ultimate-guide-to-fpl-chips
+    title_hint: "Ultimate guide to FPL chips"
+    tags: [chips]
+    fetch: html
+    enabled: true
+  - name: fplwatch_fixtures_form
+    source: fplwatch
+    url: https://fplwatch.com/blog/mastering-fixtures-and-form
+    title_hint: "Mastering fixtures and form"
+    tags: [fixtures, transfers]
+    fetch: html
+    enabled: true
+  - name: fplwatch_team_value
+    source: fplwatch
+    url: https://fplwatch.com/blog/maximizing-team-value
+    title_hint: "Maximizing team value"
+    tags: [prices, transfers]
+    fetch: html
+    enabled: true
+
+  # ---------- FPL Pilot blog ----------
+  - name: fplpilot_rule_changes_2026_27
+    source: fplpilot
+    url: https://www.fplpilot.com/blog/fpl-rule-changes-2026-27
+    title_hint: "FPL rule changes 2026/27"
+    tags: [beginner, chips, transfers, defcon]
+    fetch: html
+    enabled: true
+  - name: fplpilot_price_changes
+    source: fplpilot
+    url: https://www.fplpilot.com/blog/fpl-price-changes-2026-27
+    title_hint: "FPL price changes 2026/27"
+    tags: [prices]
+    fetch: html
+    enabled: true
+  - name: fplpilot_chip_strategy
+    source: fplpilot
+    url: https://www.fplpilot.com/blog/fpl-chip-strategy-2026-27
+    title_hint: "FPL chip strategy 2026/27"
+    tags: [chips]
+    fetch: html
+    enabled: true
+  - name: fplpilot_template_team
+    source: fplpilot
+    url: https://www.fplpilot.com/blog/fpl-template-team-2026-27
+    title_hint: "FPL template team 2026/27"
+    tags: [structure, rank]
+    fetch: html
+    enabled: true
+  - name: fplpilot_budget_enablers
+    source: fplpilot
+    url: https://www.fplpilot.com/blog/fpl-budget-enablers-2026-27
+    title_hint: "FPL budget enablers 2026/27"
+    tags: [structure, prices]
+    fetch: html
+    enabled: true
+  - name: fplpilot_gw1_captain_strategy
+    source: fplpilot
+    url: https://www.fplpilot.com/blog/fpl-gw1-captain-strategy
+    title_hint: "FPL GW1 captain strategy"
+    tags: [captaincy]
+    fetch: html
+    enabled: true
+
+  # ---------- прочие блоги ----------
+  - name: rotowire_chip_strategy_2026_27
+    source: rotowire
+    url: https://www.rotowire.com/soccer/article/best-fpl-chip-strategy-2026-27-when-to-play-every-chip-127670
+    title_hint: "Best FPL chip strategy 2026/27: when to play every chip"
+    tags: [chips]
+    fetch: html
+    enabled: false
+    note: "17.09.2026: TLS handshake timeout из этой сети (2 попытки, 20-30 с); сайт недоступен, а не пустой"
+  - name: draftfantasy_defcon_2026_27
+    source: draftfantasy
+    url: https://www.draftfantasy.com/blog/fpl-defensive-contributions-2026-27
+    title_hint: "FPL defensive contributions 2026/27"
+    tags: [defcon]
+    fetch: html
+    enabled: true
+  - name: draftfantasy_price_predictor
+    source: draftfantasy
+    url: https://www.draftfantasy.com/blog/fpl-price-change-predictor
+    title_hint: "FPL price change predictor: how price changes work"
+    tags: [prices]
+    fetch: html
+    enabled: true
+  - name: goaliqai_expected_ownership
+    source: goaliqai
+    url: https://www.goaliqai.com/expected-ownership-fpl-explained/
+    title_hint: "Expected ownership in FPL explained"
+    tags: [captaincy, rank]
+    fetch: html
+    enabled: true
+  - name: wikipedia_fpl
+    source: wikipedia
+    url: https://en.wikipedia.org/wiki/Fantasy_Premier_League
+    title_hint: "Fantasy Premier League — Wikipedia"
+    tags: [rules, beginner]
+    fetch: html
+    enabled: false
+    note: "17.09.2026: HTTP 403 и на статье, и на REST API (api/rest_v1/page/html) с описательным UA — блок на уровне IP сети"
+
+  # ---------- r/FantasyPL (old.reddit .json, только selftext) ----------
+  - name: reddit_beginners_guide_1
+    source: reddit
+    url: https://www.reddit.com/r/FantasyPL/comments/ia4vpk/
+    title_hint: "r/FantasyPL Beginners' Guide Part I"
+    tags: [beginner, rules, transfers]
+    fetch: reddit_json
+    enabled: false
+    note: "17.09.2026: old.reddit.com/<path>/.json -> 302 /login/?reason=lor2 (описательный и браузерный UA), www/api.reddit.com -> 403; без OAuth недоступно. Код reddit_json готов, покрыт unit-тестами на фикстуре"
+  - name: reddit_beginners_guide_2
+    source: reddit
+    url: https://www.reddit.com/r/FantasyPL/comments/iaorcf/
+    title_hint: "r/FantasyPL Beginners' Guide Part II"
+    tags: [beginner, structure, captaincy]
+    fetch: reddit_json
+    enabled: false
+    note: "17.09.2026: old.reddit.com/<path>/.json -> 302 /login/?reason=lor2 (описательный и браузерный UA), www/api.reddit.com -> 403; без OAuth недоступно. Код reddit_json готов, покрыт unit-тестами на фикстуре"
+  - name: reddit_talking_points_hub
+    source: reddit
+    url: https://www.reddit.com/r/FantasyPL/comments/ibh7xd/
+    title_hint: "r/FantasyPL talking points hub (linked guides)"
+    tags: [beginner, chips, hits, rank]
+    fetch: reddit_json
+    enabled: false
+    note: "17.09.2026: old.reddit.com/<path>/.json -> 302 /login/?reason=lor2 (описательный и браузерный UA), www/api.reddit.com -> 403; без OAuth недоступно. Код reddit_json готов, покрыт unit-тестами на фикстуре"
+    follow_links: 8
+  - name: reddit_guide_14u1h09
+    source: reddit
+    url: https://www.reddit.com/r/FantasyPL/comments/14u1h09/
+    title_hint: "r/FantasyPL guide post (14u1h09)"
+    tags: [beginner, structure]
+    fetch: reddit_json
+    enabled: false
+    note: "17.09.2026: old.reddit.com/<path>/.json -> 302 /login/?reason=lor2 (описательный и браузерный UA), www/api.reddit.com -> 403; без OAuth недоступно. Код reddit_json готов, покрыт unit-тестами на фикстуре"
+
+  # ---------- внутренний дайджест правил (read-only; файл Skill fpl-transfer-analyst) ----------
+  - name: internal_rules_digest
+    source: internal
+    url: skills/fpl-transfer-analyst/references/fpl_rules_2026_27.md
+    title_hint: "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)"
+    tags: [rules, transfers, hits, chips, defcon, structure]
+    fetch: internal
+    enabled: true
+  - name: internal_rules_digest_agent_prompt
+    source: internal
+    url: src/fplcopilot/agent/prompts/v1/rules_digest.md
+    title_hint: "FPL 2026/27 rules digest (internal, agent prompt v1)"
+    tags: [rules, transfers, hits, chips, defcon]
+    fetch: internal
+    enabled: false
+    note: "дубликат дайджеста Skill (тот же текст короче); включать, если файл Skill исчезнет"

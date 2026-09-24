@@ -1,0 +1,3426 @@
+{
+ "created_at": "2026-09-17T11:36:12.955059+00:00",
+ "git_commit": "d433cf316592e6aa8d4b3399efa4c06776cedfa0",
+ "suite": "kb",
+ "k": 6,
+ "modes": [
+  "dense",
+  "hybrid",
+  "hybrid_rerank"
+ ],
+ "answer_mode": "hybrid_rerank",
+ "config": {
+  "llm_model": "gpt-4o-mini",
+  "prompt_version": "v1",
+  "embedding_model": "text-embedding-3-small",
+  "reranker": "flashrank:ms-marco-MiniLM-L-12-v2",
+  "per_doc_cap": 2,
+  "candidates": 30,
+  "time_decay": null
+ },
+ "corpus": {
+  "docs": 41,
+  "chunks": 622,
+  "chunks_embedded": 622,
+  "tokens": 98152,
+  "docs_by_source": {
+   "livefpl": 11,
+   "fplwatch": 10,
+   "fplpilot": 6,
+   "fantasyfootballfix": 4,
+   "premierleague": 4,
+   "ffscout": 2,
+   "draftfantasy": 2,
+   "goaliqai": 1,
+   "internal": 1
+  },
+  "max_fetched_at": "2026-09-17T11:28:13.864949+00:00"
+ },
+ "golden": {
+  "n": 10,
+  "ids": [
+   "kb_ft_bank",
+   "kb_wildcard_expiry",
+   "kb_hit_cost",
+   "kb_defcon",
+   "kb_bb_after_wc",
+   "kb_eo_captaincy",
+   "kb_free_hit_cancel",
+   "kb_selling_price",
+   "kb_specific_squad_numbers",
+   "kb_not_covered_ucl"
+  ]
+ },
+ "retrieval": {
+  "aggregates": {
+   "dense": {
+    "n_queries": 10,
+    "n_with_expected_domain": 8,
+    "hit_at_k": 1.0,
+    "mean_distinct_docs": 4.3,
+    "top1_score_mean": 0.613885937309854,
+    "latency_p50_ms": 272.9124170000432,
+    "latency_p95_ms": 1232.2129590029363,
+    "stage_ms_mean": {
+     "embed_ms": 367.89284590195166,
+     "dense_ms": 21.273570696939714,
+     "total_ms": 389.2407417020877
+    }
+   },
+   "hybrid": {
+    "n_queries": 10,
+    "n_with_expected_domain": 8,
+    "hit_at_k": 1.0,
+    "mean_distinct_docs": 4.6,
+    "top1_score_mean": 0.031520906756008035,
+    "latency_p50_ms": 264.5096670021303,
+    "latency_p95_ms": 438.04883300617803,
+    "stage_ms_mean": {
+     "embed_ms": 259.75977499911096,
+     "dense_ms": 18.33460829948308,
+     "bm25_ms": 6.650416596676223,
+     "fuse_ms": 0.3528123997966759,
+     "total_ms": 285.1767664993531
+    }
+   },
+   "hybrid_rerank": {
+    "n_queries": 10,
+    "n_with_expected_domain": 8,
+    "hit_at_k": 1.0,
+    "mean_distinct_docs": 4.5,
+    "top1_score_mean": 0.9432164311408997,
+    "latency_p50_ms": 953.2023749925429,
+    "latency_p95_ms": 1348.6899999988964,
+    "stage_ms_mean": {
+     "embed_ms": 253.95278759824578,
+     "dense_ms": 23.549533302139025,
+     "bm25_ms": 6.1829001002479345,
+     "fuse_ms": 0.27047920011682436,
+     "rerank_ms": 711.5410416008672,
+     "total_ms": 995.5364251014544
+    }
+   }
+  },
+  "rows": [
+   {
+    "example_id": "kb_ft_bank",
+    "mode": "dense",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 5,
+    "top1_score": 0.627969791816923,
+    "top1_source": "fplpilot",
+    "retrieved": [
+     {
+      "doc_id": 32,
+      "chunk_id": 803,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Rules 2026/27: Squad Budget, Transfers, Chips and Scoring, Confirmed",
+      "tags": [
+       "beginner",
+       "chips",
+       "transfers",
+       "defcon"
+      ],
+      "score": 0.627969791816923
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 44,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.6277609504651237
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 17,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.5996739976907755
+     },
+     {
+      "doc_id": 42,
+      "chunk_id": 866,
+      "source": "internal",
+      "domain": "",
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "score": 0.5721644177896971
+     },
+     {
+      "doc_id": 28,
+      "chunk_id": 737,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.5481182203163284
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 7,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.5356088211036885
+     }
+    ],
+    "latency_ms": 450.3490829956718,
+    "timings": {
+     "embed_ms": 425.74675001378637,
+     "dense_ms": 24.47366699925624,
+     "total_ms": 450.3143750043819
+    }
+   },
+   {
+    "example_id": "kb_wildcard_expiry",
+    "mode": "dense",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 5,
+    "top1_score": 0.46780324272553164,
+    "top1_source": "fplpilot",
+    "retrieved": [
+     {
+      "doc_id": 34,
+      "chunk_id": 823,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Chip Strategy 2026/27: When to Play Wildcard, Bench Boost, Triple Captain and Free Hit",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.46780324272553164
+     },
+     {
+      "doc_id": 14,
+      "chunk_id": 184,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Chip Strategy Guide: When to Play Each Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.46039798225217676
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 47,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.4523990083196885
+     },
+     {
+      "doc_id": 29,
+      "chunk_id": 760,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.4339931265389184
+     },
+     {
+      "doc_id": 14,
+      "chunk_id": 182,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Chip Strategy Guide: When to Play Each Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.4336828277145228
+     },
+     {
+      "doc_id": 32,
+      "chunk_id": 804,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Rules 2026/27: Squad Budget, Transfers, Chips and Scoring, Confirmed",
+      "tags": [
+       "beginner",
+       "chips",
+       "transfers",
+       "defcon"
+      ],
+      "score": 0.43063802659486883
+     }
+    ],
+    "latency_ms": 1232.2129590029363,
+    "timings": {
+     "embed_ms": 1207.2421250049956,
+     "dense_ms": 24.89541699469555,
+     "total_ms": 1232.1962920104852
+    }
+   },
+   {
+    "example_id": "kb_hit_cost",
+    "mode": "dense",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 5,
+    "top1_score": 0.6146174572070393,
+    "top1_source": "premierleague",
+    "retrieved": [
+     {
+      "doc_id": 1,
+      "chunk_id": 17,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.6146174572070393
+     },
+     {
+      "doc_id": 42,
+      "chunk_id": 866,
+      "source": "internal",
+      "domain": "",
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "score": 0.5826430253924736
+     },
+     {
+      "doc_id": 28,
+      "chunk_id": 738,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.5821823320482447
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 44,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.5796875955280318
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 7,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.5176133947604715
+     },
+     {
+      "doc_id": 19,
+      "chunk_id": 304,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "Free Hit FPL: When to Play It & How to Build the Perfect Squad",
+      "tags": [
+       "chips",
+       "fixtures"
+      ],
+      "score": 0.5157489405332296
+     }
+    ],
+    "latency_ms": 306.0067920014262,
+    "timings": {
+     "embed_ms": 294.9354169977596,
+     "dense_ms": 11.012082992237993,
+     "total_ms": 305.98595800984185
+    }
+   },
+   {
+    "example_id": "kb_defcon",
+    "mode": "dense",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 3,
+    "top1_score": 0.6987933457731395,
+    "top1_source": "livefpl",
+    "retrieved": [
+     {
+      "doc_id": 12,
+      "chunk_id": 152,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Defensive Contributions Explained: How to Earn 2 Extra Points Every Match",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.6987933457731395
+     },
+     {
+      "doc_id": 38,
+      "chunk_id": 579,
+      "source": "draftfantasy",
+      "domain": "draftfantasy.com",
+      "title": "FPL Defensive Contributions 2026/27: How DEFCON Points Work",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.6826082367034865
+     },
+     {
+      "doc_id": 12,
+      "chunk_id": 164,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Defensive Contributions Explained: How to Earn 2 Extra Points Every Match",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.682390352490968
+     },
+     {
+      "doc_id": 38,
+      "chunk_id": 578,
+      "source": "draftfantasy",
+      "domain": "draftfantasy.com",
+      "title": "FPL Defensive Contributions 2026/27: How DEFCON Points Work",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.6511873504377926
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 51,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.6368414631573976
+     },
+     {
+      "doc_id": 12,
+      "chunk_id": 163,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Defensive Contributions Explained: How to Earn 2 Extra Points Every Match",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.6713610490845403
+     }
+    ],
+    "latency_ms": 339.3021669908194,
+    "timings": {
+     "embed_ms": 317.49225000385195,
+     "dense_ms": 21.713415990234353,
+     "total_ms": 339.28754199587274
+    }
+   },
+   {
+    "example_id": "kb_bb_after_wc",
+    "mode": "dense",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.661979165331731,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 29,
+      "chunk_id": 767,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.661979165331731
+     },
+     {
+      "doc_id": 29,
+      "chunk_id": 766,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.6038429271983058
+     },
+     {
+      "doc_id": 34,
+      "chunk_id": 825,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Chip Strategy 2026/27: When to Play Wildcard, Bench Boost, Triple Captain and Free Hit",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.6003978857779271
+     },
+     {
+      "doc_id": 34,
+      "chunk_id": 823,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Chip Strategy 2026/27: When to Play Wildcard, Bench Boost, Triple Captain and Free Hit",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.5803526865680962
+     },
+     {
+      "doc_id": 14,
+      "chunk_id": 188,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Chip Strategy Guide: When to Play Each Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.5679607476617899
+     },
+     {
+      "doc_id": 3,
+      "chunk_id": 37,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "Triple-Captain in Gameweek 5? How and when to use your FPL chips",
+      "tags": [
+       "chips",
+       "rules"
+      ],
+      "score": 0.5535827753617782
+     }
+    ],
+    "latency_ms": 229.1389170131879,
+    "timings": {
+     "embed_ms": 207.00587499595713,
+     "dense_ms": 22.006208993843757,
+     "total_ms": 229.11437500442844
+    }
+   },
+   {
+    "example_id": "kb_eo_captaincy",
+    "mode": "dense",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.7063409429108068,
+    "top1_source": "ffscout",
+    "retrieved": [
+     {
+      "doc_id": 5,
+      "chunk_id": 621,
+      "source": "ffscout",
+      "domain": "fantasyfootballscout.co.uk",
+      "title": "What is 'effective ownership' and why is it so widely talked about in FPL?",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.7063409429108068
+     },
+     {
+      "doc_id": 5,
+      "chunk_id": 631,
+      "source": "ffscout",
+      "domain": "fantasyfootballscout.co.uk",
+      "title": "What is 'effective ownership' and why is it so widely talked about in FPL?",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.6772744595847688
+     },
+     {
+      "doc_id": 6,
+      "chunk_id": 634,
+      "source": "ffscout",
+      "domain": "fantasyfootballscout.co.uk",
+      "title": "How to use effective ownership to make differential FPL decisions",
+      "tags": [
+       "captaincy",
+       "rank",
+       "structure"
+      ],
+      "score": 0.6726451235521643
+     },
+     {
+      "doc_id": 27,
+      "chunk_id": 723,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Effective Ownership & Differentials Guide",
+      "tags": [
+       "rank",
+       "captaincy",
+       "structure"
+      ],
+      "score": 0.6626167143742018
+     },
+     {
+      "doc_id": 40,
+      "chunk_id": 607,
+      "source": "goaliqai",
+      "domain": "goaliqai.com",
+      "title": "Expected Ownership in FPL Explained",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.6608247663662802
+     },
+     {
+      "doc_id": 40,
+      "chunk_id": 601,
+      "source": "goaliqai",
+      "domain": "goaliqai.com",
+      "title": "Expected Ownership in FPL Explained",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.6560600094817625
+     }
+    ],
+    "latency_ms": 269.17883299756795,
+    "timings": {
+     "embed_ms": 248.67724999785423,
+     "dense_ms": 20.40116699936334,
+     "total_ms": 269.1438750043744
+    }
+   },
+   {
+    "example_id": "kb_free_hit_cancel",
+    "mode": "dense",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.5773456025907976,
+    "top1_source": "livefpl",
+    "retrieved": [
+     {
+      "doc_id": 19,
+      "chunk_id": 304,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "Free Hit FPL: When to Play It & How to Build the Perfect Squad",
+      "tags": [
+       "chips",
+       "fixtures"
+      ],
+      "score": 0.5773456025907976
+     },
+     {
+      "doc_id": 19,
+      "chunk_id": 288,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "Free Hit FPL: When to Play It & How to Build the Perfect Squad",
+      "tags": [
+       "chips",
+       "fixtures"
+      ],
+      "score": 0.4837734108457843
+     },
+     {
+      "doc_id": 29,
+      "chunk_id": 763,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.4096507697070162
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 47,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.407246446766131
+     },
+     {
+      "doc_id": 14,
+      "chunk_id": 185,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Chip Strategy Guide: When to Play Each Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.40701962224217203
+     },
+     {
+      "doc_id": 29,
+      "chunk_id": 765,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.40174256759549
+     }
+    ],
+    "latency_ms": 250.3730829921551,
+    "timings": {
+     "embed_ms": 229.11962500074878,
+     "dense_ms": 21.164916004636325,
+     "total_ms": 250.35779099562205
+    }
+   },
+   {
+    "example_id": "kb_selling_price",
+    "mode": "dense",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.6426079562362358,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 24,
+      "chunk_id": 662,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Pre-Season Price Rises Explained: How to Catch Them",
+      "tags": [
+       "prices"
+      ],
+      "score": 0.6426079562362358
+     },
+     {
+      "doc_id": 20,
+      "chunk_id": 331,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Price Changes: When They Happen & How to Predict Them",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.636231464398744
+     },
+     {
+      "doc_id": 20,
+      "chunk_id": 318,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Price Changes: When They Happen & How to Predict Them",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.5813472506912553
+     },
+     {
+      "doc_id": 31,
+      "chunk_id": 789,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Price Changes Guide: Build Team Value",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.5713724428388092
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 45,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.5583411111405556
+     },
+     {
+      "doc_id": 24,
+      "chunk_id": 666,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Pre-Season Price Rises Explained: How to Catch Them",
+      "tags": [
+       "prices"
+      ],
+      "score": 0.5137102959542051
+     }
+    ],
+    "latency_ms": 272.9124170000432,
+    "timings": {
+     "embed_ms": 250.10520800424274,
+     "dense_ms": 22.694165993016213,
+     "total_ms": 272.87733400589786
+    }
+   },
+   {
+    "example_id": "kb_specific_squad_numbers",
+    "mode": "dense",
+    "hit_at_k": null,
+    "n_distinct_docs": 5,
+    "top1_score": 0.614364207265759,
+    "top1_source": "fplpilot",
+    "retrieved": [
+     {
+      "doc_id": 37,
+      "chunk_id": 856,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Gameweek 1 Captain: How to Choose When There Is No Form to Go On",
+      "tags": [
+       "captaincy"
+      ],
+      "score": 0.614364207265759
+     },
+     {
+      "doc_id": 7,
+      "chunk_id": 105,
+      "source": "fantasyfootballfix",
+      "domain": "fantasyfootballfix.com",
+      "title": "FPL Chip Strategy 2026/27: When to Use Every Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.6122907450944575
+     },
+     {
+      "doc_id": 3,
+      "chunk_id": 34,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "Triple-Captain in Gameweek 5? How and when to use your FPL chips",
+      "tags": [
+       "chips",
+       "rules"
+      ],
+      "score": 0.5987144872030615
+     },
+     {
+      "doc_id": 26,
+      "chunk_id": 708,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Captain Selection Guide: Form, Fixtures & EO",
+      "tags": [
+       "captaincy"
+      ],
+      "score": 0.5872866397998686
+     },
+     {
+      "doc_id": 36,
+      "chunk_id": 841,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Budget Enablers 2026/27: The Cheap Starters That Pay for Haaland",
+      "tags": [
+       "structure",
+       "prices"
+      ],
+      "score": 0.5670949814658851
+     },
+     {
+      "doc_id": 37,
+      "chunk_id": 857,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Gameweek 1 Captain: How to Choose When There Is No Form to Go On",
+      "tags": [
+       "captaincy"
+      ],
+      "score": 0.5641007838649119
+     }
+    ],
+    "latency_ms": 275.29029099969193,
+    "timings": {
+     "embed_ms": 252.67579199862666,
+     "dense_ms": 22.522041006595828,
+     "total_ms": 275.2747089980403
+    }
+   },
+   {
+    "example_id": "kb_not_covered_ucl",
+    "mode": "dense",
+    "hit_at_k": null,
+    "n_distinct_docs": 4,
+    "top1_score": 0.5270376612405758,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 23,
+      "chunk_id": 652,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL GW1 Squad Guide: Build Your Team From Scratch",
+      "tags": [
+       "structure",
+       "beginner"
+      ],
+      "score": 0.5270376612405758
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 4,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.524348513357038
+     },
+     {
+      "doc_id": 28,
+      "chunk_id": 756,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.523721308902203
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 41,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.519719355039988
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 3,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.5154953424323284
+     },
+     {
+      "doc_id": 28,
+      "chunk_id": 730,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.5137810371832289
+     }
+    ],
+    "latency_ms": 267.8716250084108,
+    "timings": {
+     "embed_ms": 245.9281670016935,
+     "dense_ms": 21.852624995517544,
+     "total_ms": 267.85516599193215
+    }
+   },
+   {
+    "example_id": "kb_ft_bank",
+    "mode": "hybrid",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 5,
+    "top1_score": 0.03278688524590164,
+    "top1_source": "fplpilot",
+    "retrieved": [
+     {
+      "doc_id": 32,
+      "chunk_id": 803,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Rules 2026/27: Squad Budget, Transfers, Chips and Scoring, Confirmed",
+      "tags": [
+       "beginner",
+       "chips",
+       "transfers",
+       "defcon"
+      ],
+      "score": 0.03278688524590164
+     },
+     {
+      "doc_id": 42,
+      "chunk_id": 866,
+      "source": "internal",
+      "domain": "",
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "score": 0.031754032258064516
+     },
+     {
+      "doc_id": 20,
+      "chunk_id": 329,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Price Changes: When They Happen & How to Predict Them",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.03057889822595705
+     },
+     {
+      "doc_id": 32,
+      "chunk_id": 806,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Rules 2026/27: Squad Budget, Transfers, Chips and Scoring, Confirmed",
+      "tags": [
+       "beginner",
+       "chips",
+       "transfers",
+       "defcon"
+      ],
+      "score": 0.028850145288501453
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 17,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.028693528693528692
+     },
+     {
+      "doc_id": 28,
+      "chunk_id": 742,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.028083267871170464
+     }
+    ],
+    "latency_ms": 286.4363330008928,
+    "timings": {
+     "embed_ms": 258.14099999843165,
+     "dense_ms": 20.472958000027575,
+     "bm25_ms": 7.266457992955111,
+     "fuse_ms": 0.41116699867416173,
+     "total_ms": 286.40641701349523
+    }
+   },
+   {
+    "example_id": "kb_wildcard_expiry",
+    "mode": "hybrid",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 6,
+    "top1_score": 0.03125763125763126,
+    "top1_source": "premierleague",
+    "retrieved": [
+     {
+      "doc_id": 4,
+      "chunk_id": 47,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.03125763125763126
+     },
+     {
+      "doc_id": 29,
+      "chunk_id": 760,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.030330882352941176
+     },
+     {
+      "doc_id": 3,
+      "chunk_id": 36,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "Triple-Captain in Gameweek 5? How and when to use your FPL chips",
+      "tags": [
+       "chips",
+       "rules"
+      ],
+      "score": 0.030330882352941176
+     },
+     {
+      "doc_id": 34,
+      "chunk_id": 823,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Chip Strategy 2026/27: When to Play Wildcard, Bench Boost, Triple Captain and Free Hit",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.03009207275993712
+     },
+     {
+      "doc_id": 42,
+      "chunk_id": 867,
+      "source": "internal",
+      "domain": "",
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "score": 0.029850746268656716
+     },
+     {
+      "doc_id": 14,
+      "chunk_id": 182,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Chip Strategy Guide: When to Play Each Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.02967032967032967
+     }
+    ],
+    "latency_ms": 264.5096670021303,
+    "timings": {
+     "embed_ms": 234.27645799529273,
+     "dense_ms": 22.22362499742303,
+     "bm25_ms": 7.615790993440896,
+     "fuse_ms": 0.28054100403096527,
+     "total_ms": 264.4791670027189
+    }
+   },
+   {
+    "example_id": "kb_hit_cost",
+    "mode": "hybrid",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 5,
+    "top1_score": 0.03200204813108039,
+    "top1_source": "internal",
+    "retrieved": [
+     {
+      "doc_id": 42,
+      "chunk_id": 866,
+      "source": "internal",
+      "domain": "",
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "score": 0.03200204813108039
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 17,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.03131881575727918
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 44,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.030776515151515152
+     },
+     {
+      "doc_id": 42,
+      "chunk_id": 870,
+      "source": "internal",
+      "domain": "",
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "score": 0.02921395544346364
+     },
+     {
+      "doc_id": 19,
+      "chunk_id": 290,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "Free Hit FPL: When to Play It & How to Build the Perfect Squad",
+      "tags": [
+       "chips",
+       "fixtures"
+      ],
+      "score": 0.02821939586645469
+     },
+     {
+      "doc_id": 28,
+      "chunk_id": 738,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.027777777777777776
+     }
+    ],
+    "latency_ms": 256.71962500200607,
+    "timings": {
+     "embed_ms": 232.9517920006765,
+     "dense_ms": 17.284499990637414,
+     "bm25_ms": 5.778957987786271,
+     "fuse_ms": 0.626042005023919,
+     "total_ms": 256.6969999897992
+    }
+   },
+   {
+    "example_id": "kb_defcon",
+    "mode": "hybrid",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.03200204813108039,
+    "top1_source": "draftfantasy",
+    "retrieved": [
+     {
+      "doc_id": 38,
+      "chunk_id": 579,
+      "source": "draftfantasy",
+      "domain": "draftfantasy.com",
+      "title": "FPL Defensive Contributions 2026/27: How DEFCON Points Work",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.03200204813108039
+     },
+     {
+      "doc_id": 12,
+      "chunk_id": 164,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Defensive Contributions Explained: How to Earn 2 Extra Points Every Match",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.031024531024531024
+     },
+     {
+      "doc_id": 12,
+      "chunk_id": 161,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Defensive Contributions Explained: How to Earn 2 Extra Points Every Match",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.030536130536130537
+     },
+     {
+      "doc_id": 38,
+      "chunk_id": 577,
+      "source": "draftfantasy",
+      "domain": "draftfantasy.com",
+      "title": "FPL Defensive Contributions 2026/27: How DEFCON Points Work",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.02919863597612958
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 51,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.02900988017658188
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 6,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.016129032258064516
+     }
+    ],
+    "latency_ms": 261.0010839998722,
+    "timings": {
+     "embed_ms": 234.33199999271892,
+     "dense_ms": 21.037541999248788,
+     "bm25_ms": 5.290208995575085,
+     "fuse_ms": 0.23599999258294702,
+     "total_ms": 260.9726249938831
+    }
+   },
+   {
+    "example_id": "kb_bb_after_wc",
+    "mode": "hybrid",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.032018442622950824,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 29,
+      "chunk_id": 767,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.032018442622950824
+     },
+     {
+      "doc_id": 3,
+      "chunk_id": 37,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "Triple-Captain in Gameweek 5? How and when to use your FPL chips",
+      "tags": [
+       "chips",
+       "rules"
+      ],
+      "score": 0.030679156908665108
+     },
+     {
+      "doc_id": 29,
+      "chunk_id": 766,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.030621785881252923
+     },
+     {
+      "doc_id": 14,
+      "chunk_id": 188,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Chip Strategy Guide: When to Play Each Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.027583600982429624
+     },
+     {
+      "doc_id": 3,
+      "chunk_id": 39,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "Triple-Captain in Gameweek 5? How and when to use your FPL chips",
+      "tags": [
+       "chips",
+       "rules"
+      ],
+      "score": 0.02749719416386083
+     },
+     {
+      "doc_id": 25,
+      "chunk_id": 684,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Blank & Double Gameweek Strategy Guide",
+      "tags": [
+       "fixtures",
+       "chips"
+      ],
+      "score": 0.027031963470319637
+     }
+    ],
+    "latency_ms": 253.59108300472144,
+    "timings": {
+     "embed_ms": 227.59416700864676,
+     "dense_ms": 18.189750000601634,
+     "bm25_ms": 7.369083003140986,
+     "fuse_ms": 0.3140420012641698,
+     "total_ms": 253.55654099257663
+    }
+   },
+   {
+    "example_id": "kb_eo_captaincy",
+    "mode": "hybrid",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.03177805800756621,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 27,
+      "chunk_id": 723,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Effective Ownership & Differentials Guide",
+      "tags": [
+       "rank",
+       "captaincy",
+       "structure"
+      ],
+      "score": 0.03177805800756621
+     },
+     {
+      "doc_id": 40,
+      "chunk_id": 607,
+      "source": "goaliqai",
+      "domain": "goaliqai.com",
+      "title": "Expected Ownership in FPL Explained",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.030309988518943745
+     },
+     {
+      "doc_id": 6,
+      "chunk_id": 634,
+      "source": "ffscout",
+      "domain": "fantasyfootballscout.co.uk",
+      "title": "How to use effective ownership to make differential FPL decisions",
+      "tags": [
+       "captaincy",
+       "rank",
+       "structure"
+      ],
+      "score": 0.02976190476190476
+     },
+     {
+      "doc_id": 26,
+      "chunk_id": 699,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Captain Selection Guide: Form, Fixtures & EO",
+      "tags": [
+       "captaincy"
+      ],
+      "score": 0.028577260665441927
+     },
+     {
+      "doc_id": 40,
+      "chunk_id": 600,
+      "source": "goaliqai",
+      "domain": "goaliqai.com",
+      "title": "Expected Ownership in FPL Explained",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.026984126984126985
+     },
+     {
+      "doc_id": 27,
+      "chunk_id": 715,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Effective Ownership & Differentials Guide",
+      "tags": [
+       "rank",
+       "captaincy",
+       "structure"
+      ],
+      "score": 0.026785714285714288
+     }
+    ],
+    "latency_ms": 249.85495800501667,
+    "timings": {
+     "embed_ms": 231.17683301097713,
+     "dense_ms": 12.867583995102905,
+     "bm25_ms": 5.511374998604879,
+     "fuse_ms": 0.23158300609793514,
+     "total_ms": 249.83566599257756
+    }
+   },
+   {
+    "example_id": "kb_free_hit_cancel",
+    "mode": "hybrid",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.03278688524590164,
+    "top1_source": "livefpl",
+    "retrieved": [
+     {
+      "doc_id": 19,
+      "chunk_id": 304,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "Free Hit FPL: When to Play It & How to Build the Perfect Squad",
+      "tags": [
+       "chips",
+       "fixtures"
+      ],
+      "score": 0.03278688524590164
+     },
+     {
+      "doc_id": 19,
+      "chunk_id": 307,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "Free Hit FPL: When to Play It & How to Build the Perfect Squad",
+      "tags": [
+       "chips",
+       "fixtures"
+      ],
+      "score": 0.03125763125763126
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 47,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.030017921146953404
+     },
+     {
+      "doc_id": 29,
+      "chunk_id": 763,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.028370221327967807
+     },
+     {
+      "doc_id": 29,
+      "chunk_id": 765,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.02667140825035562
+     },
+     {
+      "doc_id": 11,
+      "chunk_id": 141,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Auto Subs: How Automatic Substitutions Work in Fantasy Premier League",
+      "tags": [
+       "beginner",
+       "structure"
+      ],
+      "score": 0.025893752088205813
+     }
+    ],
+    "latency_ms": 266.37683299486525,
+    "timings": {
+     "embed_ms": 239.17845799587667,
+     "dense_ms": 19.585208006901667,
+     "bm25_ms": 7.170875003794208,
+     "fuse_ms": 0.31512499845121056,
+     "total_ms": 266.34712499799207
+    }
+   },
+   {
+    "example_id": "kb_selling_price",
+    "mode": "hybrid",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.03252247488101534,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 24,
+      "chunk_id": 662,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Pre-Season Price Rises Explained: How to Catch Them",
+      "tags": [
+       "prices"
+      ],
+      "score": 0.03252247488101534
+     },
+     {
+      "doc_id": 31,
+      "chunk_id": 789,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Price Changes Guide: Build Team Value",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.029910714285714284
+     },
+     {
+      "doc_id": 20,
+      "chunk_id": 308,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Price Changes: When They Happen & How to Predict Them",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.029857397504456328
+     },
+     {
+      "doc_id": 20,
+      "chunk_id": 319,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Price Changes: When They Happen & How to Predict Them",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.028381642512077296
+     },
+     {
+      "doc_id": 24,
+      "chunk_id": 666,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Pre-Season Price Rises Explained: How to Catch Them",
+      "tags": [
+       "prices"
+      ],
+      "score": 0.025989268947015427
+     },
+     {
+      "doc_id": 6,
+      "chunk_id": 633,
+      "source": "ffscout",
+      "domain": "fantasyfootballscout.co.uk",
+      "title": "How to use effective ownership to make differential FPL decisions",
+      "tags": [
+       "captaincy",
+       "rank",
+       "structure"
+      ],
+      "score": 0.024222968043192763
+     }
+    ],
+    "latency_ms": 290.8883329946548,
+    "timings": {
+     "embed_ms": 259.95824999699835,
+     "dense_ms": 21.94141599466093,
+     "bm25_ms": 8.574791994760744,
+     "fuse_ms": 0.29366600210778415,
+     "total_ms": 290.8569580031326
+    }
+   },
+   {
+    "example_id": "kb_specific_squad_numbers",
+    "mode": "hybrid",
+    "hit_at_k": null,
+    "n_distinct_docs": 6,
+    "top1_score": 0.030621785881252923,
+    "top1_source": "fantasyfootballfix",
+    "retrieved": [
+     {
+      "doc_id": 7,
+      "chunk_id": 105,
+      "source": "fantasyfootballfix",
+      "domain": "fantasyfootballfix.com",
+      "title": "FPL Chip Strategy 2026/27: When to Use Every Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.030621785881252923
+     },
+     {
+      "doc_id": 3,
+      "chunk_id": 34,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "Triple-Captain in Gameweek 5? How and when to use your FPL chips",
+      "tags": [
+       "chips",
+       "rules"
+      ],
+      "score": 0.028373015873015873
+     },
+     {
+      "doc_id": 37,
+      "chunk_id": 856,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Gameweek 1 Captain: How to Choose When There Is No Form to Go On",
+      "tags": [
+       "captaincy"
+      ],
+      "score": 0.02815814850530376
+     },
+     {
+      "doc_id": 34,
+      "chunk_id": 824,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Chip Strategy 2026/27: When to Play Wildcard, Bench Boost, Triple Captain and Free Hit",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.02667140825035562
+     },
+     {
+      "doc_id": 18,
+      "chunk_id": 263,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "Master Captain EO: Dominate Your FPL Mini-League with Smart Tactics",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.026132699813337858
+     },
+     {
+      "doc_id": 9,
+      "chunk_id": 117,
+      "source": "fantasyfootballfix",
+      "domain": "fantasyfootballfix.com",
+      "title": "FPL Chip Strategy: How the Top 50 Used Double Chips",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.025779967159277502
+     }
+    ],
+    "latency_ms": 438.04883300617803,
+    "timings": {
+     "embed_ms": 425.42262499046046,
+     "dense_ms": 8.360459003597498,
+     "bm25_ms": 3.872083005262539,
+     "fuse_ms": 0.31358299020212144,
+     "total_ms": 438.0230829992797
+    }
+   },
+   {
+    "example_id": "kb_not_covered_ucl",
+    "mode": "hybrid",
+    "hit_at_k": null,
+    "n_distinct_docs": 4,
+    "top1_score": 0.027432808155699723,
+    "top1_source": "premierleague",
+    "retrieved": [
+     {
+      "doc_id": 1,
+      "chunk_id": 3,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.027432808155699723
+     },
+     {
+      "doc_id": 28,
+      "chunk_id": 730,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.027271052146674038
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 1,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.027242401779095628
+     },
+     {
+      "doc_id": 28,
+      "chunk_id": 745,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.023122159850307404
+     },
+     {
+      "doc_id": 23,
+      "chunk_id": 652,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL GW1 Squad Guide: Build Your Team From Scratch",
+      "tags": [
+       "structure",
+       "beginner"
+      ],
+      "score": 0.01639344262295082
+     },
+     {
+      "doc_id": 20,
+      "chunk_id": 332,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Price Changes: When They Happen & How to Predict Them",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.01639344262295082
+     }
+    ],
+    "latency_ms": 284.62691699678544,
+    "timings": {
+     "embed_ms": 254.5661670010304,
+     "dense_ms": 21.383041006629355,
+     "bm25_ms": 8.05454199144151,
+     "fuse_ms": 0.5063749995315447,
+     "total_ms": 284.59308300807606
+    }
+   },
+   {
+    "example_id": "kb_ft_bank",
+    "mode": "hybrid_rerank",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.976379930973053,
+    "top1_source": "fplpilot",
+    "retrieved": [
+     {
+      "doc_id": 32,
+      "chunk_id": 803,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Rules 2026/27: Squad Budget, Transfers, Chips and Scoring, Confirmed",
+      "tags": [
+       "beginner",
+       "chips",
+       "transfers",
+       "defcon"
+      ],
+      "score": 0.976379930973053
+     },
+     {
+      "doc_id": 42,
+      "chunk_id": 866,
+      "source": "internal",
+      "domain": "",
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "score": 0.869411826133728
+     },
+     {
+      "doc_id": 32,
+      "chunk_id": 806,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Rules 2026/27: Squad Budget, Transfers, Chips and Scoring, Confirmed",
+      "tags": [
+       "beginner",
+       "chips",
+       "transfers",
+       "defcon"
+      ],
+      "score": 0.41615423560142517
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 44,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.30368897318840027
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 17,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.2717762589454651
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 7,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.1101250946521759
+     }
+    ],
+    "latency_ms": 1077.220542007126,
+    "timings": {
+     "embed_ms": 217.06999999878462,
+     "dense_ms": 46.18441700586118,
+     "bm25_ms": 8.982583007309586,
+     "fuse_ms": 0.09737499931361526,
+     "rerank_ms": 804.8379579995526,
+     "total_ms": 1077.2054590051994
+    }
+   },
+   {
+    "example_id": "kb_wildcard_expiry",
+    "mode": "hybrid_rerank",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 6,
+    "top1_score": 0.9529489874839783,
+    "top1_source": "fantasyfootballfix",
+    "retrieved": [
+     {
+      "doc_id": 7,
+      "chunk_id": 107,
+      "source": "fantasyfootballfix",
+      "domain": "fantasyfootballfix.com",
+      "title": "FPL Chip Strategy 2026/27: When to Use Every Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.9529489874839783
+     },
+     {
+      "doc_id": 42,
+      "chunk_id": 867,
+      "source": "internal",
+      "domain": "",
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "score": 0.9301499724388123
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 47,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.5243034958839417
+     },
+     {
+      "doc_id": 34,
+      "chunk_id": 823,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Chip Strategy 2026/27: When to Play Wildcard, Bench Boost, Triple Captain and Free Hit",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.2305331826210022
+     },
+     {
+      "doc_id": 14,
+      "chunk_id": 198,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Chip Strategy Guide: When to Play Each Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.2244783490896225
+     },
+     {
+      "doc_id": 32,
+      "chunk_id": 804,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Rules 2026/27: Squad Budget, Transfers, Chips and Scoring, Confirmed",
+      "tags": [
+       "beginner",
+       "chips",
+       "transfers",
+       "defcon"
+      ],
+      "score": 0.15747089684009552
+     }
+    ],
+    "latency_ms": 840.2311249956256,
+    "timings": {
+     "embed_ms": 215.61066700087395,
+     "dense_ms": 19.78233399859164,
+     "bm25_ms": 4.875250000623055,
+     "fuse_ms": 0.23520799004472792,
+     "rerank_ms": 599.6775409876136,
+     "total_ms": 840.2170420013135
+    }
+   },
+   {
+    "example_id": "kb_hit_cost",
+    "mode": "hybrid_rerank",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 5,
+    "top1_score": 0.9909788370132446,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 28,
+      "chunk_id": 738,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.9909788370132446
+     },
+     {
+      "doc_id": 23,
+      "chunk_id": 656,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL GW1 Squad Guide: Build Your Team From Scratch",
+      "tags": [
+       "structure",
+       "beginner"
+      ],
+      "score": 0.9738752841949463
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 17,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.9599570631980896
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 11,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.9578604102134705
+     },
+     {
+      "doc_id": 42,
+      "chunk_id": 866,
+      "source": "internal",
+      "domain": "",
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "score": 0.881504476070404
+     },
+     {
+      "doc_id": 12,
+      "chunk_id": 156,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Defensive Contributions Explained: How to Earn 2 Extra Points Every Match",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.7631806135177612
+     }
+    ],
+    "latency_ms": 938.6171669902978,
+    "timings": {
+     "embed_ms": 243.94912499701604,
+     "dense_ms": 22.925249999389052,
+     "bm25_ms": 3.640959010226652,
+     "fuse_ms": 0.21920799918007106,
+     "rerank_ms": 667.8323749947594,
+     "total_ms": 938.6027080036001
+    }
+   },
+   {
+    "example_id": "kb_defcon",
+    "mode": "hybrid_rerank",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.9994192123413086,
+    "top1_source": "livefpl",
+    "retrieved": [
+     {
+      "doc_id": 12,
+      "chunk_id": 152,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Defensive Contributions Explained: How to Earn 2 Extra Points Every Match",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.9994192123413086
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 51,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.9993608593940735
+     },
+     {
+      "doc_id": 12,
+      "chunk_id": 151,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Defensive Contributions Explained: How to Earn 2 Extra Points Every Match",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.9987699389457703
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 6,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.9985949397087097
+     },
+     {
+      "doc_id": 38,
+      "chunk_id": 579,
+      "source": "draftfantasy",
+      "domain": "draftfantasy.com",
+      "title": "FPL Defensive Contributions 2026/27: How DEFCON Points Work",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.9981364011764526
+     },
+     {
+      "doc_id": 38,
+      "chunk_id": 577,
+      "source": "draftfantasy",
+      "domain": "draftfantasy.com",
+      "title": "FPL Defensive Contributions 2026/27: How DEFCON Points Work",
+      "tags": [
+       "defcon"
+      ],
+      "score": 0.9970130920410156
+     }
+    ],
+    "latency_ms": 992.2119169932557,
+    "timings": {
+     "embed_ms": 243.17537499882746,
+     "dense_ms": 23.39304100314621,
+     "bm25_ms": 5.780833002063446,
+     "fuse_ms": 0.3183750086463988,
+     "rerank_ms": 719.4836670096265,
+     "total_ms": 992.1981250081444
+    }
+   },
+   {
+    "example_id": "kb_bb_after_wc",
+    "mode": "hybrid_rerank",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.9995632767677307,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 29,
+      "chunk_id": 767,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.9995632767677307
+     },
+     {
+      "doc_id": 7,
+      "chunk_id": 102,
+      "source": "fantasyfootballfix",
+      "domain": "fantasyfootballfix.com",
+      "title": "FPL Chip Strategy 2026/27: When to Use Every Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.9968953132629395
+     },
+     {
+      "doc_id": 3,
+      "chunk_id": 39,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "Triple-Captain in Gameweek 5? How and when to use your FPL chips",
+      "tags": [
+       "chips",
+       "rules"
+      ],
+      "score": 0.9968715310096741
+     },
+     {
+      "doc_id": 14,
+      "chunk_id": 188,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Chip Strategy Guide: When to Play Each Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.9959577918052673
+     },
+     {
+      "doc_id": 29,
+      "chunk_id": 774,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.9949571490287781
+     },
+     {
+      "doc_id": 3,
+      "chunk_id": 37,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "Triple-Captain in Gameweek 5? How and when to use your FPL chips",
+      "tags": [
+       "chips",
+       "rules"
+      ],
+      "score": 0.993941068649292
+     }
+    ],
+    "latency_ms": 976.9301250053104,
+    "timings": {
+     "embed_ms": 229.608333989745,
+     "dense_ms": 19.918125006370246,
+     "bm25_ms": 7.263249994139187,
+     "fuse_ms": 0.6326250004349276,
+     "rerank_ms": 719.44658299617,
+     "total_ms": 976.9150829961291
+    }
+   },
+   {
+    "example_id": "kb_eo_captaincy",
+    "mode": "hybrid_rerank",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.9990509152412415,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 27,
+      "chunk_id": 715,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Effective Ownership & Differentials Guide",
+      "tags": [
+       "rank",
+       "captaincy",
+       "structure"
+      ],
+      "score": 0.9990509152412415
+     },
+     {
+      "doc_id": 5,
+      "chunk_id": 631,
+      "source": "ffscout",
+      "domain": "fantasyfootballscout.co.uk",
+      "title": "What is 'effective ownership' and why is it so widely talked about in FPL?",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.9982159733772278
+     },
+     {
+      "doc_id": 40,
+      "chunk_id": 607,
+      "source": "goaliqai",
+      "domain": "goaliqai.com",
+      "title": "Expected Ownership in FPL Explained",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.9981355667114258
+     },
+     {
+      "doc_id": 40,
+      "chunk_id": 602,
+      "source": "goaliqai",
+      "domain": "goaliqai.com",
+      "title": "Expected Ownership in FPL Explained",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.9976916313171387
+     },
+     {
+      "doc_id": 13,
+      "chunk_id": 169,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Effective Ownership Explained: Why EO Decides Your Rank",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.9976018071174622
+     },
+     {
+      "doc_id": 5,
+      "chunk_id": 620,
+      "source": "ffscout",
+      "domain": "fantasyfootballscout.co.uk",
+      "title": "What is 'effective ownership' and why is it so widely talked about in FPL?",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.9965762495994568
+     }
+    ],
+    "latency_ms": 1015.3218750056112,
+    "timings": {
+     "embed_ms": 244.1079159907531,
+     "dense_ms": 21.489499995368533,
+     "bm25_ms": 6.468874998972751,
+     "fuse_ms": 0.3949999954784289,
+     "rerank_ms": 742.8061249956954,
+     "total_ms": 1015.3084589983337
+    }
+   },
+   {
+    "example_id": "kb_free_hit_cancel",
+    "mode": "hybrid_rerank",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 5,
+    "top1_score": 0.9973547458648682,
+    "top1_source": "premierleague",
+    "retrieved": [
+     {
+      "doc_id": 3,
+      "chunk_id": 38,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "Triple-Captain in Gameweek 5? How and when to use your FPL chips",
+      "tags": [
+       "chips",
+       "rules"
+      ],
+      "score": 0.9973547458648682
+     },
+     {
+      "doc_id": 19,
+      "chunk_id": 304,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "Free Hit FPL: When to Play It & How to Build the Perfect Squad",
+      "tags": [
+       "chips",
+       "fixtures"
+      ],
+      "score": 0.9875307083129883
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 47,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.9759411811828613
+     },
+     {
+      "doc_id": 19,
+      "chunk_id": 307,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "Free Hit FPL: When to Play It & How to Build the Perfect Squad",
+      "tags": [
+       "chips",
+       "fixtures"
+      ],
+      "score": 0.31704002618789673
+     },
+     {
+      "doc_id": 14,
+      "chunk_id": 185,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Chip Strategy Guide: When to Play Each Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.0061631156131625175
+     },
+     {
+      "doc_id": 29,
+      "chunk_id": 763,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.004120460711419582
+     }
+    ],
+    "latency_ms": 953.2023749925429,
+    "timings": {
+     "embed_ms": 231.0971669940045,
+     "dense_ms": 24.729083001147956,
+     "bm25_ms": 7.798042002832517,
+     "fuse_ms": 0.24366700381506234,
+     "rerank_ms": 689.2811249999795,
+     "total_ms": 953.1893340026727
+    }
+   },
+   {
+    "example_id": "kb_selling_price",
+    "mode": "hybrid_rerank",
+    "hit_at_k": 1.0,
+    "n_distinct_docs": 4,
+    "top1_score": 0.9994829893112183,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 24,
+      "chunk_id": 662,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Pre-Season Price Rises Explained: How to Catch Them",
+      "tags": [
+       "prices"
+      ],
+      "score": 0.9994829893112183
+     },
+     {
+      "doc_id": 31,
+      "chunk_id": 789,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Price Changes Guide: Build Team Value",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.9944798946380615
+     },
+     {
+      "doc_id": 20,
+      "chunk_id": 308,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Price Changes: When They Happen & How to Predict Them",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.9807974100112915
+     },
+     {
+      "doc_id": 20,
+      "chunk_id": 331,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Price Changes: When They Happen & How to Predict Them",
+      "tags": [
+       "prices",
+       "transfers"
+      ],
+      "score": 0.9804540276527405
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 45,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.9720301032066345
+     },
+     {
+      "doc_id": 24,
+      "chunk_id": 664,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Pre-Season Price Rises Explained: How to Catch Them",
+      "tags": [
+       "prices"
+      ],
+      "score": 0.8808915615081787
+     }
+    ],
+    "latency_ms": 936.2640410108725,
+    "timings": {
+     "embed_ms": 229.46212500391994,
+     "dense_ms": 20.543708000332117,
+     "bm25_ms": 7.341499993344769,
+     "fuse_ms": 0.26804200024344027,
+     "rerank_ms": 678.5956250096206,
+     "total_ms": 936.2497910042293
+    }
+   },
+   {
+    "example_id": "kb_specific_squad_numbers",
+    "mode": "hybrid_rerank",
+    "hit_at_k": null,
+    "n_distinct_docs": 5,
+    "top1_score": 0.9985920786857605,
+    "top1_source": "fplpilot",
+    "retrieved": [
+     {
+      "doc_id": 37,
+      "chunk_id": 856,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Gameweek 1 Captain: How to Choose When There Is No Form to Go On",
+      "tags": [
+       "captaincy"
+      ],
+      "score": 0.9985920786857605
+     },
+     {
+      "doc_id": 34,
+      "chunk_id": 824,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Chip Strategy 2026/27: When to Play Wildcard, Bench Boost, Triple Captain and Free Hit",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.9963734745979309
+     },
+     {
+      "doc_id": 13,
+      "chunk_id": 173,
+      "source": "livefpl",
+      "domain": "livefpl.com",
+      "title": "FPL Effective Ownership Explained: Why EO Decides Your Rank",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "score": 0.9962677359580994
+     },
+     {
+      "doc_id": 9,
+      "chunk_id": 117,
+      "source": "fantasyfootballfix",
+      "domain": "fantasyfootballfix.com",
+      "title": "FPL Chip Strategy: How the Top 50 Used Double Chips",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.9943538904190063
+     },
+     {
+      "doc_id": 37,
+      "chunk_id": 857,
+      "source": "fplpilot",
+      "domain": "fplpilot.com",
+      "title": "FPL Gameweek 1 Captain: How to Choose When There Is No Form to Go On",
+      "tags": [
+       "captaincy"
+      ],
+      "score": 0.9940699338912964
+     },
+     {
+      "doc_id": 7,
+      "chunk_id": 104,
+      "source": "fantasyfootballfix",
+      "domain": "fantasyfootballfix.com",
+      "title": "FPL Chip Strategy 2026/27: When to Use Every Chip",
+      "tags": [
+       "chips"
+      ],
+      "score": 0.9926827549934387
+     }
+    ],
+    "latency_ms": 1348.6899999988964,
+    "timings": {
+     "embed_ms": 366.20800000673626,
+     "dense_ms": 22.531624999828637,
+     "bm25_ms": 5.924333992879838,
+     "fuse_ms": 0.19058400357607752,
+     "rerank_ms": 953.7439170089783,
+     "total_ms": 1348.652749991743
+    }
+   },
+   {
+    "example_id": "kb_not_covered_ucl",
+    "mode": "hybrid_rerank",
+    "hit_at_k": null,
+    "n_distinct_docs": 4,
+    "top1_score": 0.518393337726593,
+    "top1_source": "fplwatch",
+    "retrieved": [
+     {
+      "doc_id": 28,
+      "chunk_id": 730,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.518393337726593
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 3,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.44331008195877075
+     },
+     {
+      "doc_id": 10,
+      "chunk_id": 126,
+      "source": "fantasyfootballfix",
+      "domain": "fantasyfootballfix.com",
+      "title": "Understanding Bonus Points in Fantasy Premier League (FPL)",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.3422616720199585
+     },
+     {
+      "doc_id": 1,
+      "chunk_id": 1,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Help Copilot",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "score": 0.2704249918460846
+     },
+     {
+      "doc_id": 28,
+      "chunk_id": 729,
+      "source": "fplwatch",
+      "domain": "fplwatch.com",
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "tags": [
+       "beginner"
+      ],
+      "score": 0.2132241278886795
+     },
+     {
+      "doc_id": 4,
+      "chunk_id": 41,
+      "source": "premierleague",
+      "domain": "premierleague.com",
+      "title": "FPL Rules Copilot",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "score": 0.16269749402999878
+     }
+    ],
+    "latency_ms": 876.8426250026096,
+    "timings": {
+     "embed_ms": 319.2391670017969,
+     "dense_ms": 13.998250011354685,
+     "bm25_ms": 3.7533750000875443,
+     "fuse_ms": 0.10470800043549389,
+     "rerank_ms": 539.7055000066757,
+     "total_ms": 876.8255000031786
+    }
+   }
+  ]
+ },
+ "answers": {
+  "aggregates": {
+   "n_examples": 10,
+   "n_errors": 0,
+   "keyword_recall": 1.0,
+   "keyword_recall_n_applicable": 9,
+   "must_cite_ok_rate": 1.0,
+   "citation_validity": 0.9375,
+   "citations_raw_total": 17,
+   "citations_valid_total": 16,
+   "all_refs_resolved_rate": 0.9,
+   "quotes_verbatim_rate": 1.0,
+   "not_covered_accuracy": 1.0,
+   "not_covered_n_applicable": 9,
+   "covered_count": 8,
+   "forced_not_covered_count": 0,
+   "forbidden_ok_rate": 1.0,
+   "cites_rules_source_count": 6,
+   "mean_validation_fixes": 0.5,
+   "retrieval_hit_at_k": 1.0,
+   "prompt_tokens": 23448,
+   "completion_tokens": 1030,
+   "cost_usd_total": 0.0041352,
+   "latency_p50_ms": 2322.5067919993307,
+   "latency_p95_ms": 5324.4422919960925,
+   "retrieve_ms_mean": 667.388254198886,
+   "llm_ms_mean": 1917.1237541013397
+  },
+  "rows": [
+   {
+    "example_id": "kb_ft_bank",
+    "question": "How many free transfers can I bank?",
+    "answer": "You can bank a maximum of 5 free transfers in Fantasy Premier League [1][2][4][5].",
+    "covered": true,
+    "expect_not_covered": false,
+    "not_covered_ok": true,
+    "keyword_recall": 1.0,
+    "keywords_missing": [],
+    "must_cite": true,
+    "must_cite_ok": true,
+    "citations_raw": 4,
+    "citations_valid": 4,
+    "citation_validity": 1.0,
+    "refs_removed": [],
+    "all_refs_resolved": true,
+    "quotes_verbatim": true,
+    "forced_not_covered": false,
+    "validation_fixes": 0,
+    "forbidden_hits": [],
+    "forbidden_ok": null,
+    "cites_rules_source": true,
+    "citations": [
+     {
+      "n": 1,
+      "chunk_id": 803,
+      "title": "FPL Rules 2026/27: Squad Budget, Transfers, Chips and Scoring, Confirmed",
+      "url": "https://www.fplpilot.com/blog/fpl-rule-changes-2026-27",
+      "source": "fplpilot",
+      "tags": [
+       "beginner",
+       "chips",
+       "transfers",
+       "defcon"
+      ],
+      "quote": "Unused free transfers bank, up to a cap of 5 in total"
+     },
+     {
+      "n": 2,
+      "chunk_id": 866,
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "url": "skills/fpl-transfer-analyst/references/fpl_rules_2026_27.md",
+      "source": "internal",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "quote": "Unused FTs bank up to a maximum of 5."
+     },
+     {
+      "n": 4,
+      "chunk_id": 44,
+      "title": "FPL Rules Copilot",
+      "url": "https://www.premierleague.com/en/news/4661029",
+      "source": "premierleague",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "quote": "The maximum number of free transfers you can store in any Gameweek is 5."
+     },
+     {
+      "n": 5,
+      "chunk_id": 17,
+      "title": "FPL Help Copilot",
+      "url": "https://www.premierleague.com/en/news/4681092/fpl-help-copilot",
+      "source": "premierleague",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "quote": "Free transfers can be rolled over to a maximum of five in a Gameweek."
+     }
+    ],
+    "retrieval_hit_at_k": 1.0,
+    "prompt_tokens": 2426,
+    "completion_tokens": 124,
+    "cost_usd": 0.0004383,
+    "latency_ms": 2322.5067919993307,
+    "retrieve_ms": 639.3615840061102,
+    "llm_ms": 1682.8764580131974,
+    "model": "gpt-4o-mini",
+    "prompt_version": "v1",
+    "error": null
+   },
+   {
+    "example_id": "kb_wildcard_expiry",
+    "question": "When does the first Wildcard expire?",
+    "answer": "The first Wildcard expires at the Gameweek 19 deadline, which is on Saturday, January 2, 2027, at 13:30 [3].",
+    "covered": true,
+    "expect_not_covered": false,
+    "not_covered_ok": true,
+    "keyword_recall": 1.0,
+    "keywords_missing": [],
+    "must_cite": true,
+    "must_cite_ok": true,
+    "citations_raw": 1,
+    "citations_valid": 1,
+    "citation_validity": 1.0,
+    "refs_removed": [],
+    "all_refs_resolved": true,
+    "quotes_verbatim": true,
+    "forced_not_covered": false,
+    "validation_fixes": 0,
+    "forbidden_hits": [],
+    "forbidden_ok": null,
+    "cites_rules_source": true,
+    "citations": [
+     {
+      "n": 3,
+      "chunk_id": 47,
+      "title": "FPL Rules Copilot",
+      "url": "https://www.premierleague.com/en/news/4661029",
+      "source": "premierleague",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "quote": "The first Wildcard will be available after the first Gameweek of your season until the Gameweek 19 deadline of Sat 2 Jan 13:30."
+     }
+    ],
+    "retrieval_hit_at_k": 1.0,
+    "prompt_tokens": 2697,
+    "completion_tokens": 86,
+    "cost_usd": 0.00045615000000000006,
+    "latency_ms": 2419.160124991322,
+    "retrieve_ms": 697.6758749951841,
+    "llm_ms": 1721.2853749952046,
+    "model": "gpt-4o-mini",
+    "prompt_version": "v1",
+    "error": null
+   },
+   {
+    "example_id": "kb_hit_cost",
+    "question": "What's the points hit for an extra transfer?",
+    "answer": "An extra transfer costs -4 points in Fantasy Premier League. This applies to any transfer made beyond your free transfer allowance for that gameweek [1][3][5].",
+    "covered": true,
+    "expect_not_covered": false,
+    "not_covered_ok": true,
+    "keyword_recall": 1.0,
+    "keywords_missing": [],
+    "must_cite": true,
+    "must_cite_ok": true,
+    "citations_raw": 3,
+    "citations_valid": 3,
+    "citation_validity": 1.0,
+    "refs_removed": [],
+    "all_refs_resolved": true,
+    "quotes_verbatim": true,
+    "forced_not_covered": false,
+    "validation_fixes": 0,
+    "forbidden_hits": [],
+    "forbidden_ok": null,
+    "cites_rules_source": true,
+    "citations": [
+     {
+      "n": 1,
+      "chunk_id": 738,
+      "title": "FPL Beginner's Guide: How to Play Fantasy Premier League",
+      "url": "https://fplwatch.com/blog/fpl-beginners-guide",
+      "source": "fplwatch",
+      "tags": [
+       "beginner"
+      ],
+      "quote": "additional transfers beyond your free allotment will cost you **-4 points each**."
+     },
+     {
+      "n": 3,
+      "chunk_id": 17,
+      "title": "FPL Help Copilot",
+      "url": "https://www.premierleague.com/en/news/4681092/fpl-help-copilot",
+      "source": "premierleague",
+      "tags": [
+       "rules",
+       "beginner"
+      ],
+      "quote": "Additional transfers in a Gameweek deduct 4 points from your Gameweek score; this is often referred to as taking a “points hit”."
+     },
+     {
+      "n": 5,
+      "chunk_id": 866,
+      "title": "FPL 2026/27 rules digest (internal, fpl-transfer-analyst Skill reference)",
+      "url": "skills/fpl-transfer-analyst/references/fpl_rules_2026_27.md",
+      "source": "internal",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "defcon",
+       "structure"
+      ],
+      "quote": "Each transfer beyond the available FTs costs -4 points in that gameweek (a \"hit\")."
+     }
+    ],
+    "retrieval_hit_at_k": 1.0,
+    "prompt_tokens": 2310,
+    "completion_tokens": 135,
+    "cost_usd": 0.0004275,
+    "latency_ms": 2715.560957993148,
+    "retrieve_ms": 652.1630829956848,
+    "llm_ms": 2063.1936249992577,
+    "model": "gpt-4o-mini",
+    "prompt_version": "v1",
+    "error": null
+   },
+   {
+    "example_id": "kb_defcon",
+    "question": "What are defensive contribution points?",
+    "answer": "Defensive contribution points are awarded to players for completing a specific number of defensive actions in a match. Defenders earn 2 points for 10 or more clearances, blocked shots, interceptions, and tackles, while midfielders and forwards need 12 actions to earn the same points. These points do not stack beyond 2 per match [2].",
+    "covered": true,
+    "expect_not_covered": false,
+    "not_covered_ok": true,
+    "keyword_recall": 1.0,
+    "keywords_missing": [],
+    "must_cite": true,
+    "must_cite_ok": true,
+    "citations_raw": 1,
+    "citations_valid": 1,
+    "citation_validity": 1.0,
+    "refs_removed": [],
+    "all_refs_resolved": true,
+    "quotes_verbatim": true,
+    "forced_not_covered": false,
+    "validation_fixes": 0,
+    "forbidden_hits": [],
+    "forbidden_ok": null,
+    "cites_rules_source": true,
+    "citations": [
+     {
+      "n": 2,
+      "chunk_id": 51,
+      "title": "FPL Rules Copilot",
+      "url": "https://www.premierleague.com/en/news/4661029",
+      "source": "premierleague",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "quote": "Any defender who reaches an accumulative total of 10 or more clearances, blocked shots, interceptions (CBI) and tackles in a single match will earn 2 points."
+     }
+    ],
+    "retrieval_hit_at_k": 1.0,
+    "prompt_tokens": 2299,
+    "completion_tokens": 126,
+    "cost_usd": 0.00042044999999999995,
+    "latency_ms": 1968.3424579998245,
+    "retrieve_ms": 609.5927079877583,
+    "llm_ms": 1358.6459170037415,
+    "model": "gpt-4o-mini",
+    "prompt_version": "v1",
+    "error": null
+   },
+   {
+    "example_id": "kb_bb_after_wc",
+    "question": "Should I use Bench Boost right after a Wildcard?",
+    "answer": "Using Bench Boost right after a Wildcard can be effective, as it allows you to create a squad with 15 players who all have good fixtures. This strategy is particularly powerful during a Double Gameweek, maximizing your potential points from all players [1][4].",
+    "covered": true,
+    "expect_not_covered": false,
+    "not_covered_ok": true,
+    "keyword_recall": 1.0,
+    "keywords_missing": [],
+    "must_cite": true,
+    "must_cite_ok": true,
+    "citations_raw": 2,
+    "citations_valid": 2,
+    "citation_validity": 1.0,
+    "refs_removed": [],
+    "all_refs_resolved": true,
+    "quotes_verbatim": true,
+    "forced_not_covered": false,
+    "validation_fixes": 1,
+    "forbidden_hits": [],
+    "forbidden_ok": null,
+    "cites_rules_source": false,
+    "citations": [
+     {
+      "n": 1,
+      "chunk_id": 767,
+      "title": "FPL Chips Strategy Guide: When to Use Wildcard, Free Hit, Bench Boost",
+      "url": "https://fplwatch.com/blog/ultimate-guide-to-fpl-chips",
+      "source": "fplwatch",
+      "tags": [
+       "chips"
+      ],
+      "quote": "Using Bench Boost immediately after a Wildcard can work well, since you can design a squad specifically with 15 playing players who all have good fixtures."
+     },
+     {
+      "n": 4,
+      "chunk_id": 188,
+      "title": "FPL Chip Strategy Guide: When to Play Each Chip",
+      "url": "https://www.livefpl.com/blog/fpl-chip-strategy",
+      "source": "livefpl",
+      "tags": [
+       "chips"
+      ],
+      "quote": "**Best scenario:** During a Double Gameweek, after using your Wildcard to build a squad of 15 players who all have two fixtures."
+     }
+    ],
+    "retrieval_hit_at_k": 1.0,
+    "prompt_tokens": 2259,
+    "completion_tokens": 138,
+    "cost_usd": 0.00042165,
+    "latency_ms": 3142.6534170022933,
+    "retrieve_ms": 669.5813749975059,
+    "llm_ms": 2464.718166011153,
+    "model": "gpt-4o-mini",
+    "prompt_version": "v1",
+    "error": null
+   },
+   {
+    "example_id": "kb_eo_captaincy",
+    "question": "What is effective ownership and why does it matter for captaincy?",
+    "answer": "Effective ownership (EO) measures a player's impact on rank by combining ownership and captaincy percentages. It matters for captaincy because a player with high EO can significantly affect your rank, even if you own them but don't captain them. If many managers captain a player, their points can hurt your rank if you don't captain them, making EO crucial for strategic decisions.",
+    "covered": true,
+    "expect_not_covered": false,
+    "not_covered_ok": true,
+    "keyword_recall": 1.0,
+    "keywords_missing": [],
+    "must_cite": true,
+    "must_cite_ok": true,
+    "citations_raw": 2,
+    "citations_valid": 2,
+    "citation_validity": 1.0,
+    "refs_removed": [],
+    "all_refs_resolved": true,
+    "quotes_verbatim": true,
+    "forced_not_covered": false,
+    "validation_fixes": 1,
+    "forbidden_hits": [],
+    "forbidden_ok": null,
+    "cites_rules_source": false,
+    "citations": [
+     {
+      "n": 1,
+      "chunk_id": 715,
+      "title": "FPL Effective Ownership & Differentials Guide",
+      "url": "https://fplwatch.com/blog/effective-ownership-and-differentials",
+      "source": "fplwatch",
+      "tags": [
+       "rank",
+       "captaincy",
+       "structure"
+      ],
+      "quote": "Effective Ownership is a metric that goes beyond simple ownership percentage. It accounts for how many managers not only own a player, but also **captain or triple-captain them**."
+     },
+     {
+      "n": 5,
+      "chunk_id": 169,
+      "title": "FPL Effective Ownership Explained: Why EO Decides Your Rank",
+      "url": "https://www.livefpl.com/blog/fpl-effective-ownership",
+      "source": "livefpl",
+      "tags": [
+       "captaincy",
+       "rank"
+      ],
+      "quote": "Effective Ownership (EO) is the single most important concept for understanding why your rank moves the way it does."
+     }
+    ],
+    "retrieval_hit_at_k": 1.0,
+    "prompt_tokens": 2530,
+    "completion_tokens": 155,
+    "cost_usd": 0.0004725,
+    "latency_ms": 3333.4885420044884,
+    "retrieve_ms": 664.265625004191,
+    "llm_ms": 2649.3394169956446,
+    "model": "gpt-4o-mini",
+    "prompt_version": "v1",
+    "error": null
+   },
+   {
+    "example_id": "kb_free_hit_cancel",
+    "question": "Can I cancel a Free Hit after confirming?",
+    "answer": "No, you cannot cancel a Free Hit after confirming it. Once confirmed, the Free Hit chip is active and cannot be undone [1][3].",
+    "covered": true,
+    "expect_not_covered": false,
+    "not_covered_ok": true,
+    "keyword_recall": 1.0,
+    "keywords_missing": [],
+    "must_cite": true,
+    "must_cite_ok": true,
+    "citations_raw": 2,
+    "citations_valid": 2,
+    "citation_validity": 1.0,
+    "refs_removed": [],
+    "all_refs_resolved": true,
+    "quotes_verbatim": true,
+    "forced_not_covered": false,
+    "validation_fixes": 1,
+    "forbidden_hits": [],
+    "forbidden_ok": null,
+    "cites_rules_source": true,
+    "citations": [
+     {
+      "n": 1,
+      "chunk_id": 38,
+      "title": "Triple-Captain in Gameweek 5? How and when to use your FPL chips",
+      "url": "https://www.premierleague.com/en/news/4362085/how-and-when-to-use-your-fpl-chips",
+      "source": "premierleague",
+      "tags": [
+       "chips",
+       "rules"
+      ],
+      "quote": "The Free Hit chip is played when confirming your transfers. It CANNOT be cancelled after being confirmed."
+     },
+     {
+      "n": 3,
+      "chunk_id": 47,
+      "title": "FPL Rules Copilot",
+      "url": "https://www.premierleague.com/en/news/4661029",
+      "source": "premierleague",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "quote": "This chip is played when confirming your transfers and cannot be cancelled once confirmed."
+     }
+    ],
+    "retrieval_hit_at_k": 1.0,
+    "prompt_tokens": 2100,
+    "completion_tokens": 94,
+    "cost_usd": 0.0003714,
+    "latency_ms": 5324.4422919960925,
+    "retrieve_ms": 782.6382920029573,
+    "llm_ms": 4531.759834004333,
+    "model": "gpt-4o-mini",
+    "prompt_version": "v1",
+    "error": null
+   },
+   {
+    "example_id": "kb_selling_price",
+    "question": "If a player I own rises in price, how much of the profit do I get when I sell him?",
+    "answer": "When you sell a player who has risen in price, you receive half of the profit from the increase, rounded down to the nearest £0.1m [5]. For example, if a player rises by £0.2m, you gain £0.1m when you sell him.",
+    "covered": true,
+    "expect_not_covered": false,
+    "not_covered_ok": true,
+    "keyword_recall": 1.0,
+    "keywords_missing": [],
+    "must_cite": true,
+    "must_cite_ok": true,
+    "citations_raw": 2,
+    "citations_valid": 1,
+    "citation_validity": 0.5,
+    "refs_removed": [
+     1
+    ],
+    "all_refs_resolved": false,
+    "quotes_verbatim": true,
+    "forced_not_covered": false,
+    "validation_fixes": 2,
+    "forbidden_hits": [],
+    "forbidden_ok": null,
+    "cites_rules_source": true,
+    "citations": [
+     {
+      "n": 5,
+      "chunk_id": 45,
+      "title": "FPL Rules Copilot",
+      "url": "https://www.premierleague.com/en/news/4661029",
+      "source": "premierleague",
+      "tags": [
+       "rules",
+       "transfers",
+       "hits",
+       "chips",
+       "beginner"
+      ],
+      "quote": "you keep half of the increase when selling the player, rounded down to the nearest £0.1m"
+     }
+    ],
+    "retrieval_hit_at_k": 1.0,
+    "prompt_tokens": 2145,
+    "completion_tokens": 132,
+    "cost_usd": 0.00040095,
+    "latency_ms": 2074.06104200345,
+    "retrieve_ms": 705.3287920134608,
+    "llm_ms": 1360.203582997201,
+    "model": "gpt-4o-mini",
+    "prompt_version": "v1",
+    "error": null
+   },
+   {
+    "example_id": "kb_specific_squad_numbers",
+    "question": "How many points will my captain Haaland score in the next gameweek?",
+    "answer": "Not covered by the strategy knowledge base.",
+    "covered": false,
+    "expect_not_covered": null,
+    "not_covered_ok": null,
+    "keyword_recall": 1.0,
+    "keywords_missing": [],
+    "must_cite": false,
+    "must_cite_ok": null,
+    "citations_raw": 0,
+    "citations_valid": 0,
+    "citation_validity": null,
+    "refs_removed": [],
+    "all_refs_resolved": true,
+    "quotes_verbatim": true,
+    "forced_not_covered": false,
+    "validation_fixes": 0,
+    "forbidden_hits": [],
+    "forbidden_ok": true,
+    "cites_rules_source": false,
+    "citations": [],
+    "retrieval_hit_at_k": null,
+    "prompt_tokens": 2416,
+    "completion_tokens": 20,
+    "cost_usd": 0.0003744,
+    "latency_ms": 1396.215166998445,
+    "retrieve_ms": 687.9808749945369,
+    "llm_ms": 708.1435000000056,
+    "model": "gpt-4o-mini",
+    "prompt_version": "v1",
+    "error": null
+   },
+   {
+    "example_id": "kb_not_covered_ucl",
+    "question": "Which players should I pick in UEFA Champions League Fantasy for matchday 1?",
+    "answer": "Not covered by the strategy knowledge base.",
+    "covered": false,
+    "expect_not_covered": true,
+    "not_covered_ok": true,
+    "keyword_recall": null,
+    "keywords_missing": [],
+    "must_cite": false,
+    "must_cite_ok": null,
+    "citations_raw": 0,
+    "citations_valid": 0,
+    "citation_validity": null,
+    "refs_removed": [],
+    "all_refs_resolved": true,
+    "quotes_verbatim": true,
+    "forced_not_covered": false,
+    "validation_fixes": 0,
+    "forbidden_hits": [],
+    "forbidden_ok": null,
+    "cites_rules_source": false,
+    "citations": [],
+    "retrieval_hit_at_k": null,
+    "prompt_tokens": 2266,
+    "completion_tokens": 20,
+    "cost_usd": 0.0003519,
+    "latency_ms": 1196.561249991646,
+    "retrieve_ms": 565.2943329914706,
+    "llm_ms": 631.0716659936588,
+    "model": "gpt-4o-mini",
+    "prompt_version": "v1",
+    "error": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,48 @@
+%% Граф LangGraph-агента (v4, 24.09.2026, 14 узлов). Сгенерирован кодом: build_graph(deps).get_graph().draw_mermaid()
+%% (см. docs/agent.md; YAML-шапка config с curve: linear убрана). Пунктир — условные рёбра;
+%% confirm_action и resolve_clarification — узлы HITL с interrupt_before; candidate_news -.-> compute — один пересчёт,
+%% если рекомендованная покупка недоступна по свежей новости.
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	load_context(load_context)
+	router(router)
+	refuse(refuse)
+	clarify(clarify)
+	resolve_clarification(resolve_clarification<hr/><small><em>__interrupt = before</em></small>)
+	ensure_signals(ensure_signals)
+	grade_signals(grade_signals)
+	rewrite_retry(rewrite_retry)
+	compute(compute)
+	candidate_news(candidate_news)
+	check_action(check_action)
+	confirm_action(confirm_action<hr/><small><em>__interrupt = before</em></small>)
+	explain(explain)
+	validate_answer(validate_answer)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> load_context;
+	candidate_news -.-> check_action;
+	candidate_news -.-> compute;
+	check_action -.-> confirm_action;
+	check_action -.-> explain;
+	clarify --> resolve_clarification;
+	compute --> candidate_news;
+	confirm_action -.-> compute;
+	confirm_action -.-> explain;
+	ensure_signals --> grade_signals;
+	explain --> validate_answer;
+	grade_signals -.-> compute;
+	grade_signals -.-> rewrite_retry;
+	load_context --> router;
+	resolve_clarification -.-> __end__;
+	resolve_clarification -.-> clarify;
+	resolve_clarification -.-> ensure_signals;
+	rewrite_retry --> grade_signals;
+	router -.-> clarify;
+	router -.-> ensure_signals;
+	router -.-> refuse;
+	validate_answer -.-> __end__;
+	validate_answer -.-> explain;
+	refuse --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

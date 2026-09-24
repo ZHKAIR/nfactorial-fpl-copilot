@@ -1,0 +1,64 @@
+# Инфраструктура: Postgres + pgvector (db), Streamlit UI (app), цикл ингеста новостей (ingest).
+#
+#   docker compose up -d db          # только БД (локальная разработка: scripts/dev_up.sh)
+#   uv run python scripts/migrate.py # применить миграции
+#   docker compose up -d             # db + app + ingest -> http://localhost:8501 (docs/ui.md)
+#   docker compose up -d app         # только UI (ingest уже крутится на хосте)
+#
+# Переменные POSTGRES_* и POSTGRES_PORT берутся из .env в корне проекта; app/ingest читают
+# весь .env (OPENAI_API_KEY, FPL_MANAGER_ID, …), DATABASE_URL внутри сети compose переопределён.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: fpl-copilot-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fpl}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fpl}
+      POSTGRES_DB: ${POSTGRES_DB:-fpl}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fpl} -d ${POSTGRES_DB:-fpl}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build: .
+    image: fpl-copilot:latest
+    container_name: fpl-copilot-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-fpl}:${POSTGRES_PASSWORD:-fpl}@db:5432/${POSTGRES_DB:-fpl}
+    ports:
+      - "${APP_PORT:-8501}:8501"
+    volumes:
+      - appcache:/app/.cache
+    depends_on:
+      db:
+        condition: service_healthy
+
+  ingest:
+    image: fpl-copilot:latest
+    build: .
+    container_name: fpl-copilot-ingest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-fpl}:${POSTGRES_PASSWORD:-fpl}@db:5432/${POSTGRES_DB:-fpl}
+    command: ["python", "-m", "fplcopilot.rag.ingest", "--loop", "--every", "30", "--index"]
+    healthcheck:
+      disable: true  # HEALTHCHECK образа проверяет Streamlit на :8501, в ingest его нет
+    volumes:
+      - appcache:/app/.cache
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  appcache:

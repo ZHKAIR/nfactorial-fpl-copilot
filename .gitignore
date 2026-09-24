@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.env
+.cache/
+*.egg-info/
+dist/
+.DS_Store
+# скриншоты ручной проверки браузерным MCP, сырые прогоны evals, логи
+.playwright-mcp/
+evals/runs/
+*.log
+# прод: секреты и дампы БД не коммитим (шаблоны .env.example / .env.prod.example — в git)
+.env.*
+!.env.example
+!.env.prod.example
+backups/
+*.dump

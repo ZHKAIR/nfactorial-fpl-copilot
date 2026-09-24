@@ -1,0 +1,36 @@
+%% Потоки данных: офлайн (ингест, синхронизация, пересчёт) и онлайн (запрос пользователя). Состояние 24.09.2026
+flowchart LR
+    subgraph OFF["Офлайн — по расписанию или вручную"]
+        direction TB
+        RSS["RSS: BBC · Sky · Guardian · FFScout<br/>Google News backfill"] -->|"rag.ingest --loop --every 30 --index"| NA["news_articles (+ fetched_at)<br/>player_status_snapshots (+ snapshot_at)"]
+        FPLS["FPL API: bootstrap news/status"] --> NA
+        NA -->|"chunking 300 токенов + заголовок<br/>text-embedding-3-small"| NC["news_chunks (+embedding)"]
+        NC -->|"rag.refresh (перед демо) или ingest --refresh-signals<br/>dense, лимиты игроков / клубов / $"| SIGB["player_signals<br/>team_news_digests"]
+        ES["FPL API: element-summary × 659"] -->|"core.history --sync<br/>после каждого тура"| PH["player_gw_history<br/>player_season_history"]
+        PH -->|"core.xpts --save<br/>до дедлайна"| XP["xpts_predictions<br/>(+ ep_next_snapshot)"]
+        XP -->|"scripts/gw_review.py --gw N<br/>после финального свистка"| REV["MAE · RMSE · Spearman · top-20<br/>v0 vs ep_next"]
+        KBS["41 URL: premierleague.com · LiveFPL · FPLWatch · …"] -->|"rag.kb --ingest (кэш http)"| KBC["kb_docs · kb_chunks"]
+        US["Understat getLeagueData/EPL/2026"] -->|"кэш 12 ч"| USC[".cache/understat"]
+    end
+
+    subgraph ON["Онлайн — один запрос пользователя"]
+        direction TB
+        Q["Вопрос / клик в UI / MCP-вызов<br/>(чат: + история 6 реплик)"] --> CTX["get_gameweek_context<br/>bootstrap + picks (кэш) + xPts горизонта"]
+        CTX --> SIG["analyze_player_risk<br/>player_signals ≤ 12 ч, иначе extract_signal"]
+        SIG --> OPT["predict_player · optimize_team<br/>recommend_transfers · build_gameweek_plan (BB / TC)<br/>simulate_scenario (MILP) · rank_players / rank_forecast"]
+        OPT --> CN["candidate_news<br/>новости кандидатов и их клубов, ≤ 3 извлечения"]
+        CN -.->|"покупка недоступна по новости:<br/>1 пересчёт с exclude"| OPT
+        CN --> EXP["explain (LLM) → validate_answer"]
+        EXP --> A["Ответ: вердикт · опции · цитаты · оговорки"]
+        SIG -.->|"INSERT"| PS["player_signals"]
+        CN -.->|"INSERT"| PS
+        CN -.->|"INSERT"| TND["team_news_digests"]
+        OPT -.->|"save_plan"| PL["plan_snapshots"]
+    end
+
+    NC -.-> SIG
+    NA -.-> SIG
+    SIGB -.-> SIG
+    PH -.-> CTX
+    USC -.-> CTX
+    XP -.-> REV

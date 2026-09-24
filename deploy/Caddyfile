@@ -1,0 +1,14 @@
+# Caddy перед Streamlit: авто-HTTPS (Let's Encrypt) для {$DOMAIN}, сжатие, заголовки.
+# Вебсокеты Streamlit (/_stcore/stream) reverse_proxy проксирует сам, отдельная настройка не нужна.
+# DOMAIN — домен (fpl.example.com) или <ip>.sslip.io; для локальной проверки — localhost
+# (Caddy выпустит сертификат своим внутренним CA).
+{$DOMAIN} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+	reverse_proxy app:8501
+}

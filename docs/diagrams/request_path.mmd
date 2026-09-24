@@ -1,0 +1,56 @@
+%% Путь запроса «Should I sell Palmer?» — manager 895045, GW5, 17.09.2026
+%% Латентности и токены — из docs/agent_demo_output.md (сценарий 2) и docs/agent.md (замер 17.09, промпты v1/v2).
+%% Шаги с пометкой «v4» добавлены 23–24.09 (история диалога, candidate_news); их стоимость — docs/ARCHITECTURE.md §3, §10.
+sequenceDiagram
+    autonumber
+    actor U as Пользователь
+    participant G as LangGraph-граф
+    participant T as LiveTools
+    participant F as FPL API + кэш
+    participant DB as Postgres + pgvector
+    participant R as News RAG
+    participant L as gpt-4o-mini
+
+    U->>G: Should I sell Palmer? (strategy balanced, v4: + последние 6 реплик чата)
+    G->>T: load_context — get_gameweek_context(895045)
+    T->>F: bootstrap, fixtures, picks GW4 (кэш TTL 1 ч)
+    T->>DB: player_gw_history, player_signals → xPts горизонта 3 GW
+    T-->>G: GW5, дедлайн 18.09 17:30Z, состав 15, bank 0.1, FT 2, issues 4 (0–333 мс)
+    G->>L: router (T=0, structured output, ~1.4k токенов, v4: история → standalone_query, target_gw, chips)
+    L-->>G: intent=transfer, players=[Palmer], horizon=3 (0.85–1.8 с)
+    Note over G: resolve.py без LLM: «Palmer» → Cole или Alex → тот, что в составе (v4: и кириллица «Палмер»)
+    G->>T: ensure_signals — analyze_player_risk(Palmer), analyze_player_risk(João Pedro)
+    T->>DB: последний player_signals моложе 12 ч
+    alt сигнал свежий
+        DB-->>T: cached (2–5 мс, 0 LLM-вызовов)
+    else сигнала нет или старше 12 ч
+        T->>R: extract_signal(hybrid_rerank, k=8, as_of=now)
+        R->>DB: news_chunks: dense + BM25 → RRF → time-decay → top-30
+        R->>R: flashrank rerank → date-aware → cap 2 на статью → abstention?
+        R->>L: prompt v3 (T=0) → SignalDraftV2
+        L-->>R: доступность, цитаты (1.2–2.4 с, ≈ $0.001)
+        R->>DB: validate_draft → summary_check → INSERT player_signals
+        R-->>T: PlayerSignal (2–5 с)
+    end
+    G->>G: grade_signals — детерминированное правило (LLM-грейдер только для спорного случая)
+    G->>T: compute — predict_player(Palmer, horizon 3)
+    T-->>G: xPts GW5 4.76, p_start 0.93, 14.82 за 3 GW (191 мс)
+    G->>T: compute — recommend_transfers(sell=[Palmer])
+    T->>T: MILP HiGHS: constrained_routes t_out[Palmer]=1 + no-good cuts + свободная альтернатива
+    T-->>G: route +3.56 / +9.72 vs альтернатива +4.03 / +9.78, verdict_on_forced_sale (745 мс)
+    Note over G: headline собирает код: «Selling Palmer is fine but not required…»
+    G->>T: candidate_news (v4) — сигналы покупок топ-3 маршрутов + дайджесты их клубов
+    alt сигнал кандидата моложе 12 ч
+        DB-->>T: cached, 0 LLM-вызовов
+    else бюджет AGENT_NEWS_MAX_LLM_CALLS = 3 на запрос
+        T->>R: extract_signal / extract_team_news (≈ $0.0025 и 12–15 с на полный бюджет)
+    end
+    opt рекомендованная покупка injured / suspended / unavailable по новости (confidence ≥ 0.5)
+        G->>T: compute ещё раз с exclude=[покупка] — ровно один пересчёт (+1 solve ≈ 1 с)
+    end
+    G->>G: check_action — хита и Wildcard нет → без HITL
+    G->>L: explain (T=0, промпт v4, max_tokens 2000): FACTS + EVIDENCE + NEWS + история
+    L-->>G: markdown-ответ (замер 17.09: 4.7 с, 5.2k in / 0.7k out при T=0.2)
+    G->>G: validate_answer — имена, числа, туры, капитан, кириллица сверены с фактами → passed
+    G-->>U: ответ на языке вопроса: вердикт, опции, причины с [source, dd.mm], оговорки
+    Note over U,L: Замер 17.09: 2 LLM-вызова, 5.9k токенов, ≈ $0.0012, 6.5 с. Чат v4 на 60 вопросах (прогоны 3–4, 24.09): в среднем 2.15–2.17 вызова, $0.0025–0.0026, p50 7.5–9.3 с

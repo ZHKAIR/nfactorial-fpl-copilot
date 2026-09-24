@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "fpl-intelligence": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}",
+        "python",
+        "-m",
+        "fplcopilot.mcp_server"
+      ]
+    }
+  }
+}

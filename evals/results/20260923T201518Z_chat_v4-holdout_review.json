@@ -1,0 +1,65 @@
+{
+ "reviewer": "manual (agent), same scale as baseline review",
+ "reviews": {
+  "h01": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h02": {
+   "grade": "partial",
+   "reason": "продажа Palmer разумна, но «усилить нападение» проигнорировано — купить предложены DEF и MID"
+  },
+  "h03": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h04": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h05": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h06": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h07": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h08": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h09": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h10": {
+   "grade": "partial",
+   "reason": "ответ верный (дедлайн, 3 FT), но русский заголовок «Почему» в английском ответе"
+  },
+  "h11": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h12": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h13": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h14": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "h15": {
+   "grade": "helpful",
+   "reason": "по делу"
+  }
+ }
+}

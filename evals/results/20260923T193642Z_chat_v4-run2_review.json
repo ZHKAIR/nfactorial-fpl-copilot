@@ -1,0 +1,245 @@
+{
+ "reviewer": "manual (agent), same scale as baseline review",
+ "reviews": {
+  "c01": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c02": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c03": {
+   "grade": "bad",
+   "reason": "снова «основная ошибка — оставили в старте сомнительного игрока» про прошлый тур"
+  },
+  "c04": {
+   "grade": "bad",
+   "reason": "«5 out of 10» пережило регенерацию (вырезание оценки добавлено после прогона)"
+  },
+  "c05": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c06": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c07": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c08": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c09": {
+   "grade": "partial",
+   "reason": "«оставить Saka», но затем «если всё же хотите — варианты»"
+  },
+  "c10": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c11": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c12": {
+   "grade": "bad",
+   "reason": "варианты Gabriel £8.0 / Raya — не из маршрута и выше бюджета 7 млн"
+  },
+  "c13": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c14": {
+   "grade": "partial",
+   "reason": "опечатка «Caka» в первой фразе"
+  },
+  "c15": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c17": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c18": {
+   "grade": "partial",
+   "reason": "скамейка верная, но «Данные на …» буквально и лишний пункт про Palmer"
+  },
+  "c19": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c20": {
+   "grade": "bad",
+   "reason": "таблица «состава на GW7» с чужими xPts и «@EVE» в каждой строке"
+  },
+  "c21": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c22": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c23": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c24": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c25": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c26": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c27": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c28": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c29": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c30": {
+   "grade": "partial",
+   "reason": "русские заголовки в английском ответе; «get Haaland» — он уже в составе"
+  },
+  "c31": {
+   "grade": "partial",
+   "reason": "«Салах не сыграет» + ненужный список состава"
+  },
+  "c32": {
+   "grade": "partial",
+   "reason": "компоненты xPts подписаны «2.29 гола»"
+  },
+  "c33": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c34": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c35": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c36": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c38": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c39": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c40": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c43": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c44": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c45": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c46": {
+   "grade": "partial",
+   "reason": "нерелевантные проблемы состава"
+  },
+  "c47": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c48": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c49": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c50": {
+   "grade": "partial",
+   "reason": "русские заголовки в английском ответе"
+  },
+  "c51": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c52": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c53": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c54": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c55": {
+   "grade": "partial",
+   "reason": "маршрут посчитан к дедлайну GW6, подан как «лучший маршрут на GW7»"
+  },
+  "c56": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c57": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c58": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c59": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c60": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c61": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c62": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c64": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c65": {
+   "grade": "helpful",
+   "reason": "по делу"
+  }
+ }
+}

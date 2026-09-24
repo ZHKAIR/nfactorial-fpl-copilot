@@ -1,0 +1,385 @@
+{
+  "generated_at": "2026-09-17T08:57:24+00:00",
+  "model_version": "v0",
+  "gws": [
+    2,
+    3,
+    4
+  ],
+  "results": [
+    {
+      "gw": 2,
+      "method": "xpts_v0",
+      "n": 626,
+      "mae": 1.104,
+      "rmse": 2.1,
+      "spearman": 0.674,
+      "spearman_played": 0.423,
+      "top20_actual_mean": 5.95,
+      "top20_hits": 6,
+      "mean_pred": 1.226,
+      "mean_actual": 1.423
+    },
+    {
+      "gw": 2,
+      "method": "form3",
+      "n": 626,
+      "mae": 1.423,
+      "rmse": 2.92,
+      "spearman": 0.611,
+      "spearman_played": 0.34,
+      "top20_actual_mean": 4.15,
+      "top20_hits": 3,
+      "mean_pred": 1.514,
+      "mean_actual": 1.423
+    },
+    {
+      "gw": 2,
+      "method": "ppg",
+      "n": 626,
+      "mae": 1.423,
+      "rmse": 2.92,
+      "spearman": 0.611,
+      "spearman_played": 0.34,
+      "top20_actual_mean": 4.15,
+      "top20_hits": 3,
+      "mean_pred": 1.514,
+      "mean_actual": 1.423
+    },
+    {
+      "gw": 2,
+      "method": "pos_avg",
+      "n": 626,
+      "mae": 1.755,
+      "rmse": 2.582,
+      "spearman": 0.05,
+      "spearman_played": -0.124,
+      "top20_actual_mean": 2.4,
+      "top20_hits": 1,
+      "mean_pred": 1.554,
+      "mean_actual": 1.423
+    },
+    {
+      "gw": 3,
+      "method": "xpts_v0",
+      "n": 654,
+      "mae": 1.074,
+      "rmse": 1.961,
+      "spearman": 0.735,
+      "spearman_played": 0.342,
+      "top20_actual_mean": 3.95,
+      "top20_hits": 1,
+      "mean_pred": 1.329,
+      "mean_actual": 1.394
+    },
+    {
+      "gw": 3,
+      "method": "form3",
+      "n": 654,
+      "mae": 1.287,
+      "rmse": 2.432,
+      "spearman": 0.694,
+      "spearman_played": 0.233,
+      "top20_actual_mean": 3.1,
+      "top20_hits": 1,
+      "mean_pred": 1.411,
+      "mean_actual": 1.394
+    },
+    {
+      "gw": 3,
+      "method": "ppg",
+      "n": 654,
+      "mae": 1.34,
+      "rmse": 2.532,
+      "spearman": 0.676,
+      "spearman_played": 0.231,
+      "top20_actual_mean": 3.25,
+      "top20_hits": 1,
+      "mean_pred": 1.53,
+      "mean_actual": 1.394
+    },
+    {
+      "gw": 3,
+      "method": "pos_avg",
+      "n": 654,
+      "mae": 1.69,
+      "rmse": 2.396,
+      "spearman": 0.047,
+      "spearman_played": -0.044,
+      "top20_actual_mean": 1.6,
+      "top20_hits": 1,
+      "mean_pred": 1.49,
+      "mean_actual": 1.394
+    },
+    {
+      "gw": 4,
+      "method": "xpts_v0",
+      "n": 659,
+      "mae": 1.194,
+      "rmse": 2.166,
+      "spearman": 0.688,
+      "spearman_played": 0.38,
+      "top20_actual_mean": 6.4,
+      "top20_hits": 4,
+      "mean_pred": 1.351,
+      "mean_actual": 1.398
+    },
+    {
+      "gw": 4,
+      "method": "form3",
+      "n": 659,
+      "mae": 1.268,
+      "rmse": 2.332,
+      "spearman": 0.673,
+      "spearman_played": 0.34,
+      "top20_actual_mean": 5.4,
+      "top20_hits": 4,
+      "mean_pred": 1.419,
+      "mean_actual": 1.398
+    },
+    {
+      "gw": 4,
+      "method": "ppg",
+      "n": 659,
+      "mae": 1.354,
+      "rmse": 2.462,
+      "spearman": 0.646,
+      "spearman_played": 0.338,
+      "top20_actual_mean": 4.8,
+      "top20_hits": 3,
+      "mean_pred": 1.597,
+      "mean_actual": 1.398
+    },
+    {
+      "gw": 4,
+      "method": "pos_avg",
+      "n": 659,
+      "mae": 1.799,
+      "rmse": 2.652,
+      "spearman": 0.043,
+      "spearman_played": -0.061,
+      "top20_actual_mean": 1.55,
+      "top20_hits": 1,
+      "mean_pred": 1.457,
+      "mean_actual": 1.398
+    }
+  ],
+  "top10": {
+    "gw2": [
+      {
+        "player": "B.Fernandes",
+        "team": "MUN",
+        "pos": "MID",
+        "xpts": 6.48,
+        "actual": 23
+      },
+      {
+        "player": "Guéhi",
+        "team": "MCI",
+        "pos": "DEF",
+        "xpts": 5.22,
+        "actual": 2
+      },
+      {
+        "player": "Haaland",
+        "team": "MCI",
+        "pos": "FWD",
+        "xpts": 5.21,
+        "actual": 13
+      },
+      {
+        "player": "Szoboszlai",
+        "team": "LIV",
+        "pos": "MID",
+        "xpts": 5.09,
+        "actual": 4
+      },
+      {
+        "player": "João Pedro",
+        "team": "CHE",
+        "pos": "FWD",
+        "xpts": 4.96,
+        "actual": 9
+      },
+      {
+        "player": "Mbeumo",
+        "team": "MUN",
+        "pos": "MID",
+        "xpts": 4.9,
+        "actual": 11
+      },
+      {
+        "player": "Palmer",
+        "team": "CHE",
+        "pos": "MID",
+        "xpts": 4.82,
+        "actual": 7
+      },
+      {
+        "player": "Lacroix",
+        "team": "CHE",
+        "pos": "DEF",
+        "xpts": 4.81,
+        "actual": 1
+      },
+      {
+        "player": "Saka",
+        "team": "ARS",
+        "pos": "MID",
+        "xpts": 4.7,
+        "actual": 11
+      },
+      {
+        "player": "Virgil",
+        "team": "LIV",
+        "pos": "DEF",
+        "xpts": 4.66,
+        "actual": 1
+      }
+    ],
+    "gw3": [
+      {
+        "player": "Guéhi",
+        "team": "MCI",
+        "pos": "DEF",
+        "xpts": 6.92,
+        "actual": 8
+      },
+      {
+        "player": "Haaland",
+        "team": "MCI",
+        "pos": "FWD",
+        "xpts": 6.86,
+        "actual": 9
+      },
+      {
+        "player": "B.Fernandes",
+        "team": "MUN",
+        "pos": "MID",
+        "xpts": 6.85,
+        "actual": 2
+      },
+      {
+        "player": "Szoboszlai",
+        "team": "LIV",
+        "pos": "MID",
+        "xpts": 5.9,
+        "actual": 3
+      },
+      {
+        "player": "Foden",
+        "team": "MCI",
+        "pos": "MID",
+        "xpts": 5.65,
+        "actual": 1
+      },
+      {
+        "player": "O'Reilly",
+        "team": "MCI",
+        "pos": "DEF",
+        "xpts": 5.61,
+        "actual": 0
+      },
+      {
+        "player": "Rúben",
+        "team": "MCI",
+        "pos": "DEF",
+        "xpts": 5.2,
+        "actual": 6
+      },
+      {
+        "player": "Saka",
+        "team": "ARS",
+        "pos": "MID",
+        "xpts": 5.13,
+        "actual": 2
+      },
+      {
+        "player": "De Cuyper",
+        "team": "BHA",
+        "pos": "DEF",
+        "xpts": 5.1,
+        "actual": 4
+      },
+      {
+        "player": "Mbeumo",
+        "team": "MUN",
+        "pos": "MID",
+        "xpts": 5.03,
+        "actual": 8
+      }
+    ],
+    "gw4": [
+      {
+        "player": "Palmer",
+        "team": "CHE",
+        "pos": "MID",
+        "xpts": 6.08,
+        "actual": 5
+      },
+      {
+        "player": "Szoboszlai",
+        "team": "LIV",
+        "pos": "MID",
+        "xpts": 5.95,
+        "actual": 3
+      },
+      {
+        "player": "João Pedro",
+        "team": "CHE",
+        "pos": "FWD",
+        "xpts": 5.89,
+        "actual": 12
+      },
+      {
+        "player": "B.Fernandes",
+        "team": "MUN",
+        "pos": "MID",
+        "xpts": 5.84,
+        "actual": 2
+      },
+      {
+        "player": "Rogers",
+        "team": "CHE",
+        "pos": "MID",
+        "xpts": 5.72,
+        "actual": 8
+      },
+      {
+        "player": "Haaland",
+        "team": "MCI",
+        "pos": "FWD",
+        "xpts": 5.64,
+        "actual": 9
+      },
+      {
+        "player": "Saka",
+        "team": "ARS",
+        "pos": "MID",
+        "xpts": 5.42,
+        "actual": 8
+      },
+      {
+        "player": "Gakpo",
+        "team": "LIV",
+        "pos": "MID",
+        "xpts": 5.32,
+        "actual": 1
+      },
+      {
+        "player": "Gabriel",
+        "team": "ARS",
+        "pos": "DEF",
+        "xpts": 5.24,
+        "actual": 9
+      },
+      {
+        "player": "Tavernier",
+        "team": "BOU",
+        "pos": "MID",
+        "xpts": 5.21,
+        "actual": 8
+      }
+    ]
+  }
+}

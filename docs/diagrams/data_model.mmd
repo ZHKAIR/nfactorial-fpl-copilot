@@ -1,0 +1,132 @@
+%% Модель данных Postgres + pgvector (src/fplcopilot/migrations/001–010; 009 — team_news_digests,
+%% 010 — player_signals.form_notes). fetched_at / snapshot_at — время наблюдения, по ним evals
+%% воспроизводят корпус и prior на as_of (--corpus-cutoff, docs/EVALS.md §4.5).
+erDiagram
+    news_articles {
+        bigserial id PK
+        text source
+        text url UK
+        text title
+        text content
+        timestamptz published_at
+        timestamptz fetched_at
+        int_array players
+        int_array teams
+        text content_hash
+    }
+    news_chunks {
+        bigserial id PK
+        bigint article_id FK
+        int chunk_index
+        text text
+        int n_tokens
+        vector1536 embedding
+        int_array players
+        timestamptz published_at
+    }
+    player_status_snapshots {
+        bigserial id PK
+        int player_id
+        text status
+        int chance_next
+        text news
+        timestamptz news_added
+        timestamptz snapshot_at
+    }
+    player_signals {
+        bigserial id PK
+        int player_id
+        timestamptz as_of
+        text availability
+        real start_probability
+        int expected_minutes
+        int return_gw
+        real confidence
+        jsonb evidence
+        text prompt_version
+        text mode
+        int validation_fixes
+        boolean abstained
+        jsonb form_notes
+    }
+    team_news_digests {
+        bigserial id PK
+        int team_id
+        timestamptz as_of
+        text summary
+        jsonb items
+        text prompt_version
+        text mode
+        int_array retrieved_chunk_ids
+        int validation_fixes
+        boolean abstained
+    }
+    player_gw_history {
+        bigserial id PK
+        int player_id
+        text season
+        int fixture
+        int round
+        timestamptz kickoff_time
+        int minutes
+        int total_points
+        real expected_goals
+        real expected_assists
+        int defensive_contribution
+    }
+    player_season_history {
+        bigserial id PK
+        int player_id
+        text season_name
+        int minutes
+        int starts
+        int total_points
+    }
+    xpts_predictions {
+        bigserial id PK
+        int player_id
+        int gw
+        timestamptz as_of
+        text model_version
+        real xpts
+        real p_start
+        jsonb components
+        real variance
+        real ep_next_snapshot
+    }
+    plan_snapshots {
+        bigserial id PK
+        int manager_id
+        int gw
+        text strategy
+        int horizon
+        jsonb plan
+        text inputs_hash
+    }
+    kb_docs {
+        bigserial id PK
+        text source
+        text url UK
+        text title
+        text content
+        text_array tags
+        text content_hash
+    }
+    kb_chunks {
+        bigserial id PK
+        bigint doc_id FK
+        int chunk_index
+        text text
+        vector1536 embedding
+        text_array tags
+    }
+
+    news_articles ||--o{ news_chunks : "chunking"
+    news_chunks }o--o{ player_signals : "retrieved_chunk_ids / evidence"
+    player_status_snapshots }o--o{ player_signals : "fpl_prior: snapshot_at <= as_of"
+    news_chunks }o--o{ team_news_digests : "retrieved_chunk_ids / цитаты клуба"
+    player_gw_history }o--o{ xpts_predictions : "rows_before(gw, as_of)"
+    player_season_history }o--o{ xpts_predictions : "приор per-90"
+    player_signals }o--o{ xpts_predictions : "модель минут"
+    xpts_predictions }o--o{ plan_snapshots : "xPts пула"
+    kb_docs ||--o{ kb_chunks : "chunk_document"

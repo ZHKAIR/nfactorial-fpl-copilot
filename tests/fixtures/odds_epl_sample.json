@@ -1,0 +1,427 @@
+[
+ {
+  "id": "b870dcfba5e5920d3f1551a3aa1ea435",
+  "sport_key": "soccer_epl",
+  "sport_title": "EPL",
+  "commence_time": "2026-10-10T11:30:00Z",
+  "home_team": "Arsenal",
+  "away_team": "Leeds United",
+  "bookmakers": [
+   {
+    "key": "unibet_fr",
+    "title": "Unibet (FR)",
+    "last_update": "2026-09-22T16:41:49Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:49Z",
+      "outcomes": [
+       {
+        "name": "Arsenal",
+        "price": 1.32
+       },
+       {
+        "name": "Leeds United",
+        "price": 6.8
+       },
+       {
+        "name": "Draw",
+        "price": 4.5
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "williamhill",
+    "title": "William Hill",
+    "last_update": "2026-09-22T16:41:27Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:27Z",
+      "outcomes": [
+       {
+        "name": "Arsenal",
+        "price": 1.36
+       },
+       {
+        "name": "Leeds United",
+        "price": 8.0
+       },
+       {
+        "name": "Draw",
+        "price": 4.75
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "pinnacle",
+    "title": "Pinnacle",
+    "last_update": "2026-09-22T16:41:51Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:51Z",
+      "outcomes": [
+       {
+        "name": "Arsenal",
+        "price": 1.36
+       },
+       {
+        "name": "Leeds United",
+        "price": 8.18
+       },
+       {
+        "name": "Draw",
+        "price": 5.05
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "380b8f24ec5430fb545a7490c1017285",
+  "sport_key": "soccer_epl",
+  "sport_title": "EPL",
+  "commence_time": "2026-10-10T14:00:00Z",
+  "home_team": "Sunderland",
+  "away_team": "Brighton and Hove Albion",
+  "bookmakers": [
+   {
+    "key": "unibet_fr",
+    "title": "Unibet (FR)",
+    "last_update": "2026-09-22T16:41:49Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:49Z",
+      "outcomes": [
+       {
+        "name": "Brighton and Hove Albion",
+        "price": 2.3
+       },
+       {
+        "name": "Sunderland",
+        "price": 2.6
+       },
+       {
+        "name": "Draw",
+        "price": 3.2
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "williamhill",
+    "title": "William Hill",
+    "last_update": "2026-09-22T16:41:27Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:27Z",
+      "outcomes": [
+       {
+        "name": "Brighton and Hove Albion",
+        "price": 2.45
+       },
+       {
+        "name": "Sunderland",
+        "price": 2.8
+       },
+       {
+        "name": "Draw",
+        "price": 3.25
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "pinnacle",
+    "title": "Pinnacle",
+    "last_update": "2026-09-22T16:41:51Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:51Z",
+      "outcomes": [
+       {
+        "name": "Brighton and Hove Albion",
+        "price": 2.54
+       },
+       {
+        "name": "Sunderland",
+        "price": 2.68
+       },
+       {
+        "name": "Draw",
+        "price": 3.54
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "22c9b2c43cbe1334381269550dab78e6",
+  "sport_key": "soccer_epl",
+  "sport_title": "EPL",
+  "commence_time": "2026-10-10T16:30:00Z",
+  "home_team": "Manchester United",
+  "away_team": "Tottenham Hotspur",
+  "bookmakers": [
+   {
+    "key": "unibet_fr",
+    "title": "Unibet (FR)",
+    "last_update": "2026-09-22T16:41:49Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:49Z",
+      "outcomes": [
+       {
+        "name": "Manchester United",
+        "price": 1.62
+       },
+       {
+        "name": "Tottenham Hotspur",
+        "price": 4.0
+       },
+       {
+        "name": "Draw",
+        "price": 3.8
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "williamhill",
+    "title": "William Hill",
+    "last_update": "2026-09-22T16:41:27Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:27Z",
+      "outcomes": [
+       {
+        "name": "Manchester United",
+        "price": 1.67
+       },
+       {
+        "name": "Tottenham Hotspur",
+        "price": 4.5
+       },
+       {
+        "name": "Draw",
+        "price": 4.0
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "pinnacle",
+    "title": "Pinnacle",
+    "last_update": "2026-09-22T16:41:51Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:51Z",
+      "outcomes": [
+       {
+        "name": "Manchester United",
+        "price": 1.69
+       },
+       {
+        "name": "Tottenham Hotspur",
+        "price": 4.36
+       },
+       {
+        "name": "Draw",
+        "price": 4.27
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "86effab5c6e7bfd58c8e88b1fb7c6ba9",
+  "sport_key": "soccer_epl",
+  "sport_title": "EPL",
+  "commence_time": "2026-10-11T13:00:00Z",
+  "home_team": "Crystal Palace",
+  "away_team": "Nottingham Forest",
+  "bookmakers": [
+   {
+    "key": "unibet_fr",
+    "title": "Unibet (FR)",
+    "last_update": "2026-09-22T16:41:49Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:49Z",
+      "outcomes": [
+       {
+        "name": "Crystal Palace",
+        "price": 2.55
+       },
+       {
+        "name": "Nottingham Forest",
+        "price": 2.45
+       },
+       {
+        "name": "Draw",
+        "price": 3.1
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "williamhill",
+    "title": "William Hill",
+    "last_update": "2026-09-22T16:41:27Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:27Z",
+      "outcomes": [
+       {
+        "name": "Crystal Palace",
+        "price": 2.62
+       },
+       {
+        "name": "Nottingham Forest",
+        "price": 2.62
+       },
+       {
+        "name": "Draw",
+        "price": 3.2
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "pinnacle",
+    "title": "Pinnacle",
+    "last_update": "2026-09-22T16:41:51Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:51Z",
+      "outcomes": [
+       {
+        "name": "Crystal Palace",
+        "price": 2.62
+       },
+       {
+        "name": "Nottingham Forest",
+        "price": 2.66
+       },
+       {
+        "name": "Draw",
+        "price": 3.43
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "f696a248965373d9071dc0662e5c58a8",
+  "sport_key": "soccer_epl",
+  "sport_title": "EPL",
+  "commence_time": "2026-10-18T15:30:00Z",
+  "home_team": "Nottingham Forest",
+  "away_team": "Arsenal",
+  "bookmakers": [
+   {
+    "key": "unibet_fr",
+    "title": "Unibet (FR)",
+    "last_update": "2026-09-22T16:41:49Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:49Z",
+      "outcomes": [
+       {
+        "name": "Arsenal",
+        "price": 1.52
+       },
+       {
+        "name": "Nottingham Forest",
+        "price": 5.0
+       },
+       {
+        "name": "Draw",
+        "price": 3.7
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "williamhill",
+    "title": "William Hill",
+    "last_update": "2026-09-22T16:41:27Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:27Z",
+      "outcomes": [
+       {
+        "name": "Arsenal",
+        "price": 1.62
+       },
+       {
+        "name": "Nottingham Forest",
+        "price": 5.0
+       },
+       {
+        "name": "Draw",
+        "price": 3.75
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "pinnacle",
+    "title": "Pinnacle",
+    "last_update": "2026-09-22T16:41:51Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-09-22T16:41:51Z",
+      "outcomes": [
+       {
+        "name": "Arsenal",
+        "price": 1.62
+       },
+       {
+        "name": "Nottingham Forest",
+        "price": 5.89
+       },
+       {
+        "name": "Draw",
+        "price": 3.7
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+]

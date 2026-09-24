@@ -1,0 +1,68 @@
+%% FPL Copilot — слоистая архитектура (источник: docs/ARCHITECTURE.md §2, состояние 24.09.2026)
+%% Правило проекта: LLM маршрутизирует, извлекает и объясняет; считает детерминированный код.
+flowchart TB
+    subgraph L1["Интерфейсы"]
+        UI["Streamlit UI (7 экранов)<br/>Мой состав · К дедлайну · План · Игрок · Сравнение · Чат · О системе"]
+        CLI["CLI<br/>agent · optimizer · xpts · rag.signal · rag.refresh · rag.kb · evals.*"]
+        MCP["MCP-сервер fpl-intelligence<br/>14 tools · 5 resources · 1 prompt<br/>stdio / streamable-http"]
+        HOST["MCP-хосты: Cursor, Claude Desktop, Inspector<br/>+ Skill fpl-transfer-analyst"]
+    end
+
+    subgraph L2["Оркестрация — LangGraph"]
+        GRAPH["Граф агента: 14 узлов, 16 интентов, промпты v4, история диалога<br/>router (standalone_query) → (clarify ⇢ resolve_clarification, HITL) → ensure_signals → grade_signals ⟲ rewrite_retry<br/>→ compute (+ Strategy KB) → candidate_news (⟲ 1 пересчёт) → check_action → confirm_action (HITL) → explain → validate_answer"]
+    end
+
+    subgraph L3["Инструменты — agent/tools.py: LiveTools"]
+        TOOLS["11 инструментов (те же в MCP): get_gameweek_context · diagnose_squad · predict_player · compare_players<br/>analyze_player_risk · optimize_team · recommend_transfers · build_gameweek_plan (+ BB / TC)<br/>simulate_scenario · search_strategy_kb · rank_players<br/>+ только для графа: answer_strategy_question · team_news · team_fixtures · chips_status · rank_forecast · transfer_trends · review_gameweek"]
+    end
+
+    subgraph L4["Детерминированное ядро и извлечение"]
+        CORE["core/: xPts v0 (компоненты) · модель минут · Understat-слой<br/>FixtureStrengthProvider · MILP HiGHS (фишки BB / TC) · стратегии · планы · why_facts"]
+        RAG["rag/: News RAG<br/>chunking → pgvector + BM25 → RRF → time-decay → flashrank<br/>→ abstention → gpt-4o-mini → validate_draft → summary_check<br/>+ новости клуба (team_news) · пакетный refresh"]
+        KB["rag/kb: Strategy KB (RAG #2)<br/>41 документ · 622 чанка · цитируемый ответ"]
+        VIS["vision/: скриншот Pick Team → JSON<br/>→ PlayerResolver → правила FPL → Squad"]
+    end
+
+    subgraph L5["Данные и модели"]
+        FPL["FPL API (bootstrap, fixtures, picks, element-summary)<br/>дисковый кэш TTL 1 ч"]
+        NEWS["Новости: BBC · Sky · Guardian · FFScout (RSS)<br/>Google News backfill · FPL API status"]
+        UNDERSTAT["Understat EPL 2026/27<br/>xG / xA / xGA, кэш 12 ч"]
+        OPENAI["OpenAI: gpt-4o-mini · text-embedding-3-small<br/>gpt-4o — только текст «Почему» на «К дедлайну»"]
+        RERANK["flashrank ms-marco-MiniLM-L-12-v2 (ONNX, CPU)"]
+    end
+
+    subgraph L6["Хранение"]
+        PG["Postgres 16 + pgvector (миграции 001–010)<br/>news_articles · news_chunks · player_status_snapshots · player_signals (+ form_notes)<br/>team_news_digests · player_gw_history · player_season_history · xpts_predictions · plan_snapshots<br/>kb_docs · kb_chunks"]
+        SQLITE["SQLite: чекпоинты LangGraph (HITL resume)"]
+        CACHE[".cache: FPL JSON · understat · flashrank · kb/http · why"]
+    end
+
+    UI --> GRAPH
+    UI --> TOOLS
+    UI --> VIS
+    CLI --> GRAPH
+    CLI --> CORE
+    CLI --> RAG
+    HOST --> MCP
+    MCP --> TOOLS
+    GRAPH --> TOOLS
+    GRAPH --> OPENAI
+    GRAPH --> SQLITE
+    TOOLS --> CORE
+    TOOLS --> RAG
+    TOOLS --> KB
+    CORE --> FPL
+    CORE --> UNDERSTAT
+    CORE --> PG
+    CORE -.->|"«Почему» (UI)"| OPENAI
+    RAG --> PG
+    RAG --> OPENAI
+    RAG --> RERANK
+    KB --> PG
+    KB --> OPENAI
+    VIS --> OPENAI
+    VIS --> FPL
+    NEWS -->|"ingest --loop каждые 30 мин"| PG
+    FPL --> CACHE
+    UNDERSTAT --> CACHE
+    RERANK --> CACHE

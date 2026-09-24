@@ -1,0 +1,245 @@
+{
+ "reviewer": "manual (agent), same scale as baseline review",
+ "reviews": {
+  "c01": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c02": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c03": {
+   "grade": "bad",
+   "reason": "снова «основная ошибка в прошлом туре» — разбора прошлых туров нет, модель додумывает (3/3 прогона)"
+  },
+  "c04": {
+   "grade": "partial",
+   "reason": "оценка «из 10» вырезана, но не сказано, что числовой оценки нет"
+  },
+  "c05": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c06": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c07": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c08": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c09": {
+   "grade": "partial",
+   "reason": "«рассмотреть Groß и B.Fernandes», затем «лучше оставить Saka»"
+  },
+  "c10": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c11": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c12": {
+   "grade": "partial",
+   "reason": "маршрут верный и в бюджете, но имена наполовину кириллицей («Регана Слейтера», «Эллиса Simms»)"
+  },
+  "c13": {
+   "grade": "partial",
+   "reason": "Salah нет в игре — не сказано первой фразой"
+  },
+  "c14": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c15": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c17": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c18": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c19": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c20": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c21": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c22": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c23": {
+   "grade": "partial",
+   "reason": "Palmer «75% вероятность отсутствия» — инверсия (второстепенный пункт)"
+  },
+  "c24": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c25": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c26": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c27": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c28": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c29": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c30": {
+   "grade": "partial",
+   "reason": "«consider bringing in Haaland, who is already in your squad» + «Sources (none)»"
+  },
+  "c31": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c32": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c33": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c34": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c35": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c36": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c38": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c39": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c40": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c43": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c44": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c45": {
+   "grade": "bad",
+   "reason": "«игроки, которые подорожают сегодня ночью: Groß +0.1…» — уже случившееся изменение цены подано как прогноз"
+  },
+  "c46": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c47": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c48": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c49": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c50": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c51": {
+   "grade": "bad",
+   "reason": "повторяет «капитан Haaland» из (канонической) истории вопреки фактам (Saka); проверка капитана пропустила — Saka назван как вице"
+  },
+  "c52": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c53": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c54": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c55": {
+   "grade": "partial",
+   "reason": "маршрут к дедлайну GW6 подан как «лучший маршрут на GW7»"
+  },
+  "c56": {
+   "grade": "bad",
+   "reason": "LengthFinishReasonError объяснителя -> фолбэк без объяснения"
+  },
+  "c57": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c58": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c59": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c60": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c61": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c62": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c64": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c65": {
+   "grade": "helpful",
+   "reason": "по делу"
+  }
+ }
+}

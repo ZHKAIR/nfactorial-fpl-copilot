@@ -1,0 +1,245 @@
+{
+ "reviewer": "manual (agent), same scale as 20260923T182924Z_chat_baseline_review.json",
+ "reviews": {
+  "c01": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c02": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c03": {
+   "grade": "bad",
+   "reason": "придумывает разбор «тура 6» (не сыгран) и «ошибку с Palmer»"
+  },
+  "c04": {
+   "grade": "bad",
+   "reason": "«rate around 6 out of 10» — выдуманная оценка (проверка рейтинга в этом прогоне ещё слабая)"
+  },
+  "c05": {
+   "grade": "partial",
+   "reason": "список проблем повторён дважды"
+  },
+  "c06": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c07": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c08": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c09": {
+   "grade": "partial",
+   "reason": "первая фраза предлагает замены, потом «лучше оставить»"
+  },
+  "c10": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c11": {
+   "grade": "partial",
+   "reason": "Salah нет в игре — не сказано; русский заголовок в английском ответе"
+  },
+  "c12": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c13": {
+   "grade": "partial",
+   "reason": "Salah нет в игре — не сказано"
+  },
+  "c14": {
+   "grade": "partial",
+   "reason": "капитан верный, но опечатка «Caka»"
+  },
+  "c15": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c17": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c18": {
+   "grade": "bad",
+   "reason": "«на скамейку Palmer» — Palmer в стартовом XI модели"
+  },
+  "c19": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c20": {
+   "grade": "partial",
+   "reason": "BB недоступен — сказано первой фразой; список состава с перепутанными пометками"
+  },
+  "c21": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c22": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c23": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c24": {
+   "grade": "partial",
+   "reason": "противоречивая фраза про доступные фишки"
+  },
+  "c25": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c26": {
+   "grade": "partial",
+   "reason": "русские заголовки в английском ответе"
+  },
+  "c27": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c28": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c29": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c30": {
+   "grade": "partial",
+   "reason": "русские заголовки; «good time to get Haaland» — он уже в составе"
+  },
+  "c31": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c32": {
+   "grade": "partial",
+   "reason": "компоненты xPts названы «ожидаемые голы 2.29»"
+  },
+  "c33": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c34": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c35": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c36": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c38": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c39": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c40": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c43": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c44": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c45": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c46": {
+   "grade": "partial",
+   "reason": "Salah — «недоступен», плюс нерелевантные проблемы состава"
+  },
+  "c47": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c48": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c49": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c50": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c51": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c52": {
+   "grade": "partial",
+   "reason": "BB недоступен сказано, но позиции в составе GW7 перепутаны"
+  },
+  "c53": {
+   "grade": "bad",
+   "reason": "«Salah можно взять вместо Wissa» — Salah нет в игре; ограничение «вместо Wissa» унаследовано из ответа ассистента"
+  },
+  "c54": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c55": {
+   "grade": "bad",
+   "reason": "вердикт «Wissa -> Thiago» из прошлой реплики противоречит фактам плана"
+  },
+  "c56": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c57": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c58": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c59": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c60": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c61": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c62": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c64": {
+   "grade": "helpful",
+   "reason": "по делу"
+  },
+  "c65": {
+   "grade": "helpful",
+   "reason": "по делу"
+  }
+ }
+}

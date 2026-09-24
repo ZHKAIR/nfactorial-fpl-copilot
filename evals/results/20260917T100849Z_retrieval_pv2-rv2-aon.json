@@ -1,0 +1,4244 @@
+{
+ "created_at": "2026-09-17T10:08:49.243801+00:00",
+ "git_commit": "f40ff5c3e62f19e0ab57a8667d934bbc5710a80c",
+ "k": 8,
+ "modes": [
+  "hybrid_rerank",
+  "dense"
+ ],
+ "as_of": "2026-09-17T09:00:00+00:00",
+ "arm": "pv2-rv2-aon",
+ "config": {
+  "llm_model": "gpt-4o-mini",
+  "prompt_version": "v2",
+  "retrieval_version": "v2",
+  "retrieval": {
+   "per_article_cap": 2,
+   "date_aware_rerank": true,
+   "rerank_decay_floor": 0.5,
+   "candidates": 30
+  },
+  "abstain": true,
+  "abstain_score": 0.2,
+  "abstain_dense_score": 0.4,
+  "embedding_model": "text-embedding-3-small",
+  "reranker": "flashrank:ms-marco-MiniLM-L-12-v2",
+  "half_life_days": 7.0,
+  "candidates": 30,
+  "judge_model": "gpt-4o-mini",
+  "judge_prompt_version": "v1",
+  "judge_budget_per_mode": 25,
+  "price_per_1m_usd": {
+   "gpt-4o-mini": {
+    "prompt": 0.15,
+    "completion": 0.6
+   }
+  }
+ },
+ "corpus": {
+  "articles": 1107,
+  "articles_at_as_of": 1105,
+  "chunks": 1632,
+  "chunks_embedded": 1632,
+  "chunks_at_as_of": 1630,
+  "max_published_at": "2026-09-17T10:28:00+00:00",
+  "articles_by_source_at_as_of": {
+   "google_news": 744,
+   "fpl_api": 198,
+   "bbc_football": 78,
+   "guardian_football": 49,
+   "sky_football": 22,
+   "ffscout": 14
+  },
+  "status_snapshots": 198
+ },
+ "golden": {
+  "signals": {
+   "n": 27,
+   "by_expected_availability": {
+    "doubtful": 9,
+    "injured": 5,
+    "fit": 5,
+    "unknown": 4,
+    "suspended": 3,
+    "unavailable": 1
+   },
+   "by_tag": {
+    "return_date": 8,
+    "ambiguous_name": 7,
+    "injured": 5,
+    "doubtful": 5,
+    "conflict": 5,
+    "heavy_coverage": 4,
+    "fit": 4,
+    "misleading_news": 4,
+    "promoted_club": 4,
+    "goalkeeper": 4,
+    "no_coverage": 4,
+    "suspended": 3,
+    "stale_flag": 2,
+    "fpl_api_only": 2,
+    "unavailable": 1,
+    "fresh_flag": 1,
+    "headline_only": 1
+   },
+   "must_have_evidence": 23
+  },
+  "retrieval": {
+   "n": 18,
+   "with_relevant": 15,
+   "no_relevant": 3,
+   "player_filtered": 15,
+   "team_filtered": 3,
+   "relevant_articles_total": 75
+  }
+ },
+ "suite": "retrieval",
+ "aggregates": {
+  "hybrid_rerank": {
+   "n_queries": 18,
+   "n_with_relevant": 15,
+   "n_no_relevant": 3,
+   "precision_at_k": 0.4666666666666667,
+   "recall_at_k": 0.8395767195767195,
+   "hit_at_k": 1.0,
+   "mrr": 0.888888888888889,
+   "top1_score_relevant_queries": 0.9566354870796203,
+   "top1_score_no_relevant_queries": 0.3040474976102511,
+   "max_score_relevant_queries": 0.9858132362365722,
+   "max_score_no_relevant_queries": 0.30962392936150235,
+   "mean_distinct_articles": 7.222222222222222,
+   "mean_top1_age_days": 1.5352549235873199,
+   "latency_p50_ms": 1021.0724999924423,
+   "latency_p95_ms": 1313.2955839973874,
+   "latency_mean_ms": 1069.2034999988714,
+   "stage_ms_mean": {
+    "embed_ms": 238.4925787797935,
+    "dense_ms": 23.5631897788456,
+    "bm25_ms": 12.845279944788976,
+    "fuse_ms": 0.3563863881734303,
+    "rerank_ms": 793.8032058324703,
+    "total_ms": 1069.1724095530744
+   }
+  },
+  "dense": {
+   "n_queries": 18,
+   "n_with_relevant": 15,
+   "n_no_relevant": 3,
+   "precision_at_k": 0.45,
+   "recall_at_k": 0.8078306878306878,
+   "hit_at_k": 1.0,
+   "mrr": 0.9466666666666667,
+   "top1_score_relevant_queries": 0.7244535274478963,
+   "top1_score_no_relevant_queries": 0.5843592159087141,
+   "max_score_relevant_queries": 0.7244535274478963,
+   "max_score_no_relevant_queries": 0.5843592159087141,
+   "mean_distinct_articles": 7.222222222222222,
+   "mean_top1_age_days": 9.996758276367027,
+   "latency_p50_ms": 260.58316699345596,
+   "latency_p95_ms": 426.77375000494067,
+   "latency_mean_ms": 283.40112255520785,
+   "stage_ms_mean": {
+    "embed_ms": 255.6401804977213,
+    "dense_ms": 27.566236165714347,
+    "total_ms": 283.37574077805687
+   }
+  }
+ },
+ "rows": [
+  {
+   "example_id": "ret_caicedo_injury_return",
+   "mode": "hybrid_rerank",
+   "query": "Moises Caicedo calf injury - is he back for Chelsea against Brentford, expected return date",
+   "player_id": 159,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 6,
+   "retrieved_article_ids": [
+    555,
+    744,
+    169,
+    2083,
+    1181,
+    757,
+    753,
+    1915
+   ],
+   "retrieved_chunk_ids": [
+    2476,
+    2560,
+    2271,
+    3228,
+    2739,
+    2569,
+    2567,
+    3077
+   ],
+   "retrieved": [
+    {
+     "article_id": 555,
+     "chunk_id": 2476,
+     "source": "google_news",
+     "published_at": "2026-09-17T05:30:06+00:00",
+     "relevant": true,
+     "score": 0.9831515246670962
+    },
+    {
+     "article_id": 744,
+     "chunk_id": 2560,
+     "source": "google_news",
+     "published_at": "2026-09-16T05:36:00+00:00",
+     "relevant": true,
+     "score": 0.8963676336060183
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2271,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.8934402586413076
+    },
+    {
+     "article_id": 2083,
+     "chunk_id": 3228,
+     "source": "bbc_football",
+     "published_at": "2026-09-17T07:53:38+00:00",
+     "relevant": false,
+     "score": 0.8405103018046385
+    },
+    {
+     "article_id": 1181,
+     "chunk_id": 2739,
+     "source": "google_news",
+     "published_at": "2026-09-11T12:58:27+00:00",
+     "relevant": true,
+     "score": 0.7602106607118214
+    },
+    {
+     "article_id": 757,
+     "chunk_id": 2569,
+     "source": "google_news",
+     "published_at": "2026-09-08T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6118804781318641
+    },
+    {
+     "article_id": 753,
+     "chunk_id": 2567,
+     "source": "google_news",
+     "published_at": "2026-09-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5878250436039957
+    },
+    {
+     "article_id": 1915,
+     "chunk_id": 3077,
+     "source": "fpl_api",
+     "published_at": "2026-08-30T16:00:08.393562+00:00",
+     "relevant": true,
+     "score": 0.5859947392254992
+    }
+   ],
+   "precision_at_k": 0.625,
+   "recall_at_k": 0.8333333333333334,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9902466535568237,
+   "top1_final_score": 0.9831515246670962,
+   "max_stage_score": 0.9989946484565735,
+   "n_distinct_articles": 8,
+   "top1_article_id": 555,
+   "top1_published_at": "2026-09-17T05:30:06+00:00",
+   "latency_ms": 1211.2997499934863,
+   "timings": {
+    "embed_ms": 230.86545799742453,
+    "dense_ms": 12.725666994811036,
+    "bm25_ms": 13.512459001503885,
+    "fuse_ms": 0.26083299599122256,
+    "rerank_ms": 953.69845800451,
+    "total_ms": 1211.2242500006687
+   }
+  },
+  {
+   "example_id": "ret_foden_suspension_length",
+   "mode": "hybrid_rerank",
+   "query": "How long is Phil Foden suspended after the derby red card and in which gameweek does he return",
+   "player_id": 398,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 3,
+   "retrieved_article_ids": [
+    160,
+    117,
+    1998,
+    25,
+    43,
+    146,
+    42
+   ],
+   "retrieved_chunk_ids": [
+    2207,
+    2017,
+    3160,
+    1701,
+    2209,
+    1736,
+    2191,
+    1735
+   ],
+   "retrieved": [
+    {
+     "article_id": 160,
+     "chunk_id": 2207,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.9497842181098024
+    },
+    {
+     "article_id": 117,
+     "chunk_id": 2017,
+     "source": "guardian_football",
+     "published_at": "2026-09-16T11:40:24+00:00",
+     "relevant": true,
+     "score": 0.8990290356339079
+    },
+    {
+     "article_id": 1998,
+     "chunk_id": 3160,
+     "source": "fpl_api",
+     "published_at": "2026-09-13T17:00:09.433455+00:00",
+     "relevant": true,
+     "score": 0.8293363909482032
+    },
+    {
+     "article_id": 25,
+     "chunk_id": 1701,
+     "source": "bbc_football",
+     "published_at": "2026-09-16T11:07:00+00:00",
+     "relevant": false,
+     "score": 0.7952968475210119
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2209,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.22691633606895534
+    },
+    {
+     "article_id": 43,
+     "chunk_id": 1736,
+     "source": "bbc_football",
+     "published_at": "2026-09-13T18:26:24+00:00",
+     "relevant": false,
+     "score": 0.15261405364518524
+    },
+    {
+     "article_id": 146,
+     "chunk_id": 2191,
+     "source": "guardian_football",
+     "published_at": "2026-09-14T15:00:11+00:00",
+     "relevant": false,
+     "score": 0.08184363898034966
+    },
+    {
+     "article_id": 42,
+     "chunk_id": 1735,
+     "source": "bbc_football",
+     "published_at": "2026-09-13T22:59:17+00:00",
+     "relevant": false,
+     "score": 0.06152138238712897
+    }
+   ],
+   "precision_at_k": 0.375,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9816116690635681,
+   "top1_final_score": 0.9497842181098024,
+   "max_stage_score": 0.9816116690635681,
+   "n_distinct_articles": 7,
+   "top1_article_id": 160,
+   "top1_published_at": "2026-09-16T16:45:00+00:00",
+   "latency_ms": 1202.2082080075052,
+   "timings": {
+    "embed_ms": 257.0477499975823,
+    "dense_ms": 10.074707999592647,
+    "bm25_ms": 10.04283300426323,
+    "fuse_ms": 0.24308300635311753,
+    "rerank_ms": 924.6630829875357,
+    "total_ms": 1202.181415996165
+   }
+  },
+  {
+   "example_id": "ret_joao_pedro_fitness_gw5",
+   "mode": "hybrid_rerank",
+   "query": "Is Joao Pedro fit to start for Chelsea in Gameweek 5 after pulling out of the Brazil squad",
+   "player_id": 165,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 10,
+   "retrieved_article_ids": [
+    159,
+    160,
+    169,
+    1917,
+    167,
+    555
+   ],
+   "retrieved_chunk_ids": [
+    2206,
+    2210,
+    2271,
+    2275,
+    2212,
+    3079,
+    2263,
+    2476
+   ],
+   "retrieved": [
+    {
+     "article_id": 159,
+     "chunk_id": 2206,
+     "source": "ffscout",
+     "published_at": "2026-09-16T18:30:00+00:00",
+     "relevant": true,
+     "score": 0.9708730260877285
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2210,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.9580741706667303
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2271,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.9238108191553551
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2275,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.9191872544872486
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2212,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.9143746791349989
+    },
+    {
+     "article_id": 1917,
+     "chunk_id": 3079,
+     "source": "fpl_api",
+     "published_at": "2026-09-16T19:00:09.919929+00:00",
+     "relevant": true,
+     "score": 0.9049098236254
+    },
+    {
+     "article_id": 167,
+     "chunk_id": 2263,
+     "source": "ffscout",
+     "published_at": "2026-09-16T01:00:00+00:00",
+     "relevant": false,
+     "score": 0.768846126510396
+    },
+    {
+     "article_id": 555,
+     "chunk_id": 2476,
+     "source": "google_news",
+     "published_at": "2026-09-17T05:30:06+00:00",
+     "relevant": true,
+     "score": 0.7368477037970234
+    }
+   ],
+   "precision_at_k": 0.625,
+   "recall_at_k": 0.5,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9999057054519653,
+   "top1_final_score": 0.9708730260877285,
+   "max_stage_score": 0.9999057054519653,
+   "n_distinct_articles": 6,
+   "top1_article_id": 159,
+   "top1_published_at": "2026-09-16T18:30:00+00:00",
+   "latency_ms": 1214.2955409944989,
+   "timings": {
+    "embed_ms": 223.80933399836067,
+    "dense_ms": 12.886750002508052,
+    "bm25_ms": 16.575916000874713,
+    "fuse_ms": 0.26016599440481514,
+    "rerank_ms": 960.5510830006097,
+    "total_ms": 1214.2346659966279
+   }
+  },
+  {
+   "example_id": "ret_mosquera_return",
+   "mode": "hybrid_rerank",
+   "query": "Cristhian Mosquera muscular injury update - when will he return for Arsenal",
+   "player_id": 11,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 5,
+   "retrieved_article_ids": [
+    280,
+    333,
+    1865,
+    163,
+    1864,
+    1742,
+    272,
+    1815
+   ],
+   "retrieved_chunk_ids": [
+    2343,
+    2385,
+    3027,
+    2237,
+    3026,
+    2965,
+    2335,
+    3019
+   ],
+   "retrieved": [
+    {
+     "article_id": 280,
+     "chunk_id": 2343,
+     "source": "google_news",
+     "published_at": "2026-09-15T10:31:35+00:00",
+     "relevant": true,
+     "score": 0.7051879217227763
+    },
+    {
+     "article_id": 333,
+     "chunk_id": 2385,
+     "source": "google_news",
+     "published_at": "2026-09-09T13:39:50+00:00",
+     "relevant": true,
+     "score": 0.7043805918728502
+    },
+    {
+     "article_id": 1865,
+     "chunk_id": 3027,
+     "source": "fpl_api",
+     "published_at": "2026-09-04T14:00:08.080310+00:00",
+     "relevant": true,
+     "score": 0.6345979577648626
+    },
+    {
+     "article_id": 163,
+     "chunk_id": 2237,
+     "source": "ffscout",
+     "published_at": "2026-09-16T11:15:00+00:00",
+     "relevant": true,
+     "score": 0.18926187592573643
+    },
+    {
+     "article_id": 1864,
+     "chunk_id": 3026,
+     "source": "fpl_api",
+     "published_at": "2026-09-15T19:30:09.494382+00:00",
+     "relevant": false,
+     "score": 0.005047001553254327
+    },
+    {
+     "article_id": 1742,
+     "chunk_id": 2965,
+     "source": "google_news",
+     "published_at": "2026-09-15T05:35:59+00:00",
+     "relevant": false,
+     "score": 0.004870035795557261
+    },
+    {
+     "article_id": 272,
+     "chunk_id": 2335,
+     "source": "google_news",
+     "published_at": "2026-09-15T18:47:21+00:00",
+     "relevant": false,
+     "score": 0.0021505539577000698
+    },
+    {
+     "article_id": 1815,
+     "chunk_id": 3019,
+     "source": "google_news",
+     "published_at": "2026-09-11T09:13:30+00:00",
+     "relevant": true,
+     "score": 0.0017399794071738279
+    }
+   ],
+   "precision_at_k": 0.625,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.7725894451141357,
+   "top1_final_score": 0.7051879217227763,
+   "max_stage_score": 0.9901836514472961,
+   "n_distinct_articles": 8,
+   "top1_article_id": 280,
+   "top1_published_at": "2026-09-15T10:31:35+00:00",
+   "latency_ms": 1256.1204170051496,
+   "timings": {
+    "embed_ms": 296.47695799940266,
+    "dense_ms": 45.96045799553394,
+    "bm25_ms": 15.04929100337904,
+    "fuse_ms": 0.2326660032849759,
+    "rerank_ms": 898.2895420049317,
+    "total_ms": 1256.0879579978064
+   }
+  },
+  {
+   "example_id": "ret_doku_return_date",
+   "mode": "hybrid_rerank",
+   "query": "Jeremy Doku calf injury latest - is he close to returning for Man City",
+   "player_id": 400,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 6,
+   "retrieved_article_ids": [
+    160,
+    117,
+    1542,
+    508,
+    1520,
+    1504,
+    1505
+   ],
+   "retrieved_chunk_ids": [
+    2207,
+    2018,
+    2897,
+    2467,
+    2208,
+    2884,
+    2869,
+    2870
+   ],
+   "retrieved": [
+    {
+     "article_id": 160,
+     "chunk_id": 2207,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.9606449020082569
+    },
+    {
+     "article_id": 117,
+     "chunk_id": 2018,
+     "source": "guardian_football",
+     "published_at": "2026-09-16T11:40:24+00:00",
+     "relevant": true,
+     "score": 0.9501065670690979
+    },
+    {
+     "article_id": 1542,
+     "chunk_id": 2897,
+     "source": "google_news",
+     "published_at": "2026-08-22T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5323971978752673
+    },
+    {
+     "article_id": 508,
+     "chunk_id": 2467,
+     "source": "google_news",
+     "published_at": "2026-08-23T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5238927001747246
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2208,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.40485255528202435
+    },
+    {
+     "article_id": 1520,
+     "chunk_id": 2884,
+     "source": "google_news",
+     "published_at": "2026-09-13T14:23:04+00:00",
+     "relevant": true,
+     "score": 0.31491722538679073
+    },
+    {
+     "article_id": 1504,
+     "chunk_id": 2869,
+     "source": "google_news",
+     "published_at": "2026-09-16T08:40:00+00:00",
+     "relevant": true,
+     "score": 0.2904504615832735
+    },
+    {
+     "article_id": 1505,
+     "chunk_id": 2870,
+     "source": "google_news",
+     "published_at": "2026-09-11T09:45:00+00:00",
+     "relevant": true,
+     "score": 0.19067820682180825
+    }
+   ],
+   "precision_at_k": 0.625,
+   "recall_at_k": 0.8333333333333334,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9928362965583801,
+   "top1_final_score": 0.9606449020082569,
+   "max_stage_score": 0.9928362965583801,
+   "n_distinct_articles": 7,
+   "top1_article_id": 160,
+   "top1_published_at": "2026-09-16T16:45:00+00:00",
+   "latency_ms": 988.4917089948431,
+   "timings": {
+    "embed_ms": 228.563500000746,
+    "dense_ms": 13.67416701395996,
+    "bm25_ms": 18.306666999706067,
+    "fuse_ms": 0.35262499295640737,
+    "rerank_ms": 727.436665998539,
+    "total_ms": 988.4522079955786
+   }
+  },
+  {
+   "example_id": "ret_porro_available_villa",
+   "mode": "hybrid_rerank",
+   "query": "Pedro Porro injury update - will he be available against Aston Villa",
+   "player_id": 499,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 6,
+   "retrieved_article_ids": [
+    161,
+    169,
+    1011,
+    2037,
+    1751,
+    1452,
+    555,
+    744
+   ],
+   "retrieved_chunk_ids": [
+    2224,
+    2270,
+    2666,
+    3199,
+    2974,
+    2829,
+    2476,
+    2560
+   ],
+   "retrieved": [
+    {
+     "article_id": 161,
+     "chunk_id": 2224,
+     "source": "ffscout",
+     "published_at": "2026-09-16T13:45:00+00:00",
+     "relevant": true,
+     "score": 0.9589252061883382
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2270,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": false,
+     "score": 0.9030019865084238
+    },
+    {
+     "article_id": 1011,
+     "chunk_id": 2666,
+     "source": "google_news",
+     "published_at": "2026-09-12T16:15:00+00:00",
+     "relevant": true,
+     "score": 0.7981095346756607
+    },
+    {
+     "article_id": 2037,
+     "chunk_id": 3199,
+     "source": "fpl_api",
+     "published_at": "2026-09-11T18:00:09.076279+00:00",
+     "relevant": true,
+     "score": 0.7515475554997475
+    },
+    {
+     "article_id": 1751,
+     "chunk_id": 2974,
+     "source": "google_news",
+     "published_at": "2026-09-12T16:52:29+00:00",
+     "relevant": true,
+     "score": 0.7278071142832404
+    },
+    {
+     "article_id": 1452,
+     "chunk_id": 2829,
+     "source": "google_news",
+     "published_at": "2026-09-14T14:42:51+00:00",
+     "relevant": true,
+     "score": 0.5794096481059734
+    },
+    {
+     "article_id": 555,
+     "chunk_id": 2476,
+     "source": "google_news",
+     "published_at": "2026-09-17T05:30:06+00:00",
+     "relevant": false,
+     "score": 0.4932101582382975
+    },
+    {
+     "article_id": 744,
+     "chunk_id": 2560,
+     "source": "google_news",
+     "published_at": "2026-09-16T05:36:00+00:00",
+     "relevant": false,
+     "score": 0.4758476233770254
+    }
+   ],
+   "precision_at_k": 0.625,
+   "recall_at_k": 0.8333333333333334,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9969856142997742,
+   "top1_final_score": 0.9589252061883382,
+   "max_stage_score": 0.9969856142997742,
+   "n_distinct_articles": 8,
+   "top1_article_id": 161,
+   "top1_published_at": "2026-09-16T13:45:00+00:00",
+   "latency_ms": 1313.2955839973874,
+   "timings": {
+    "embed_ms": 261.78091698966455,
+    "dense_ms": 10.801167009049095,
+    "bm25_ms": 13.252500008093193,
+    "fuse_ms": 0.2842090034391731,
+    "rerank_ms": 1027.0260000106646,
+    "total_ms": 1313.2645829900866
+   }
+  },
+  {
+   "example_id": "ret_arsenal_press_conference_injuries",
+   "mode": "hybrid_rerank",
+   "query": "Mikel Arteta press conference injury news: White, Timber, Mosquera, Saliba fitness ahead of Brighton",
+   "player_id": null,
+   "team_id": 1,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 9,
+   "retrieved_article_ids": [
+    280,
+    287,
+    1815,
+    291,
+    347,
+    198,
+    1803,
+    1804
+   ],
+   "retrieved_chunk_ids": [
+    2343,
+    2350,
+    3019,
+    2354,
+    2395,
+    2303,
+    3015,
+    3016
+   ],
+   "retrieved": [
+    {
+     "article_id": 280,
+     "chunk_id": 2343,
+     "source": "google_news",
+     "published_at": "2026-09-15T10:31:35+00:00",
+     "relevant": true,
+     "score": 0.7511449085207976
+    },
+    {
+     "article_id": 287,
+     "chunk_id": 2350,
+     "source": "google_news",
+     "published_at": "2026-09-13T11:14:54+00:00",
+     "relevant": false,
+     "score": 0.7397033306333012
+    },
+    {
+     "article_id": 1815,
+     "chunk_id": 3019,
+     "source": "google_news",
+     "published_at": "2026-09-11T09:13:30+00:00",
+     "relevant": true,
+     "score": 0.64659789903039
+    },
+    {
+     "article_id": 291,
+     "chunk_id": 2354,
+     "source": "google_news",
+     "published_at": "2026-09-11T10:09:30+00:00",
+     "relevant": false,
+     "score": 0.5438748999059003
+    },
+    {
+     "article_id": 347,
+     "chunk_id": 2395,
+     "source": "google_news",
+     "published_at": "2026-08-27T14:24:20+00:00",
+     "relevant": false,
+     "score": 0.5307282421099794
+    },
+    {
+     "article_id": 198,
+     "chunk_id": 2303,
+     "source": "google_news",
+     "published_at": "2026-09-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5306279429309795
+    },
+    {
+     "article_id": 1803,
+     "chunk_id": 3015,
+     "source": "google_news",
+     "published_at": "2026-09-11T14:18:55+00:00",
+     "relevant": false,
+     "score": 0.5297244639923412
+    },
+    {
+     "article_id": 1804,
+     "chunk_id": 3016,
+     "source": "google_news",
+     "published_at": "2026-09-11T09:26:19+00:00",
+     "relevant": false,
+     "score": 0.5259181021021985
+    }
+   ],
+   "precision_at_k": 0.25,
+   "recall_at_k": 0.2222222222222222,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.8229389786720276,
+   "top1_final_score": 0.7511449085207976,
+   "max_stage_score": 0.9411584138870239,
+   "n_distinct_articles": 8,
+   "top1_article_id": 280,
+   "top1_published_at": "2026-09-15T10:31:35+00:00",
+   "latency_ms": 1041.5036659978796,
+   "timings": {
+    "embed_ms": 234.17562499525957,
+    "dense_ms": 32.43845800170675,
+    "bm25_ms": 8.662457999889739,
+    "fuse_ms": 0.1622500130906701,
+    "rerank_ms": 765.9362080012215,
+    "total_ms": 1041.4682499977062
+   }
+  },
+  {
+   "example_id": "ret_mancity_rotation_norwich",
+   "mode": "hybrid_rerank",
+   "query": "Man City rotation and lineup changes for the Carabao Cup tie against Norwich - fringe players and youngsters",
+   "player_id": null,
+   "team_id": 15,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 5,
+   "retrieved_article_ids": [
+    1502,
+    83,
+    1503,
+    12,
+    160,
+    101,
+    45,
+    1507
+   ],
+   "retrieved_chunk_ids": [
+    2867,
+    1911,
+    2868,
+    1652,
+    2207,
+    1972,
+    1741,
+    2872
+   ],
+   "retrieved": [
+    {
+     "article_id": 1502,
+     "chunk_id": 2867,
+     "source": "google_news",
+     "published_at": "2026-09-16T18:03:30+00:00",
+     "relevant": true,
+     "score": 0.8941759145602346
+    },
+    {
+     "article_id": 83,
+     "chunk_id": 1911,
+     "source": "sky_football",
+     "published_at": "2026-09-16T22:36:00+00:00",
+     "relevant": false,
+     "score": 0.8197197329700829
+    },
+    {
+     "article_id": 1503,
+     "chunk_id": 2868,
+     "source": "google_news",
+     "published_at": "2026-09-16T13:30:00+00:00",
+     "relevant": true,
+     "score": 0.7545038102407797
+    },
+    {
+     "article_id": 12,
+     "chunk_id": 1652,
+     "source": "bbc_football",
+     "published_at": "2026-09-16T21:57:04+00:00",
+     "relevant": false,
+     "score": 0.7406709802561753
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2207,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.6123921516488343
+    },
+    {
+     "article_id": 101,
+     "chunk_id": 1972,
+     "source": "guardian_football",
+     "published_at": "2026-09-16T22:49:14+00:00",
+     "relevant": false,
+     "score": 0.5704803588240532
+    },
+    {
+     "article_id": 45,
+     "chunk_id": 1741,
+     "source": "bbc_football",
+     "published_at": "2026-09-15T06:02:27+00:00",
+     "relevant": false,
+     "score": 0.46644865245251743
+    },
+    {
+     "article_id": 1507,
+     "chunk_id": 2872,
+     "source": "google_news",
+     "published_at": "2026-09-16T10:15:00+00:00",
+     "relevant": true,
+     "score": 0.44149948127348837
+    }
+   ],
+   "precision_at_k": 0.5,
+   "recall_at_k": 0.8,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9217290282249451,
+   "top1_final_score": 0.8941759145602346,
+   "max_stage_score": 0.9217290282249451,
+   "n_distinct_articles": 8,
+   "top1_article_id": 1502,
+   "top1_published_at": "2026-09-16T18:03:30+00:00",
+   "latency_ms": 1301.4211670088116,
+   "timings": {
+    "embed_ms": 236.7658340081107,
+    "dense_ms": 32.185208998271264,
+    "bm25_ms": 20.421958004590124,
+    "fuse_ms": 0.7120829977793619,
+    "rerank_ms": 1011.2060419924092,
+    "total_ms": 1301.3959579984657
+   }
+  },
+  {
+   "example_id": "ret_awoniyi_ban_length",
+   "mode": "hybrid_rerank",
+   "query": "Taiwo Awoniyi red card suspension - how many matches will he miss for Coventry",
+   "player_id": 492,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 4,
+   "retrieved_article_ids": [
+    169,
+    60,
+    1931,
+    39,
+    160,
+    122
+   ],
+   "retrieved_chunk_ids": [
+    2275,
+    1798,
+    3093,
+    2271,
+    1732,
+    2207,
+    2040,
+    1797
+   ],
+   "retrieved": [
+    {
+     "article_id": 169,
+     "chunk_id": 2275,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.9120737123762561
+    },
+    {
+     "article_id": 60,
+     "chunk_id": 1798,
+     "source": "bbc_football",
+     "published_at": "2026-09-13T19:32:55+00:00",
+     "relevant": true,
+     "score": 0.8387053330572476
+    },
+    {
+     "article_id": 1931,
+     "chunk_id": 3093,
+     "source": "fpl_api",
+     "published_at": "2026-09-13T15:00:09.305127+00:00",
+     "relevant": true,
+     "score": 0.8334000563074586
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2271,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.8016005946613751
+    },
+    {
+     "article_id": 39,
+     "chunk_id": 1732,
+     "source": "bbc_football",
+     "published_at": "2026-09-13T19:00:21+00:00",
+     "relevant": true,
+     "score": 0.7568850719196021
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2207,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": false,
+     "score": 0.5134637196698368
+    },
+    {
+     "article_id": 122,
+     "chunk_id": 2040,
+     "source": "guardian_football",
+     "published_at": "2026-09-02T08:30:27+00:00",
+     "relevant": false,
+     "score": 0.37049110120721784
+    },
+    {
+     "article_id": 60,
+     "chunk_id": 1797,
+     "source": "bbc_football",
+     "published_at": "2026-09-13T19:32:55+00:00",
+     "relevant": true,
+     "score": 0.1495446307177746
+    }
+   ],
+   "precision_at_k": 0.5,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.983426570892334,
+   "top1_final_score": 0.9120737123762561,
+   "max_stage_score": 0.9863747358322144,
+   "n_distinct_articles": 6,
+   "top1_article_id": 169,
+   "top1_published_at": "2026-09-15T19:00:00+00:00",
+   "latency_ms": 986.0700420103967,
+   "timings": {
+    "embed_ms": 232.23137500463054,
+    "dense_ms": 10.823125005117618,
+    "bm25_ms": 6.936999998288229,
+    "fuse_ms": 0.25749999622348696,
+    "rerank_ms": 735.6700829986949,
+    "total_ms": 986.038582996116
+   }
+  },
+  {
+   "example_id": "ret_henderson_gk_return",
+   "mode": "hybrid_rerank",
+   "query": "Dean Henderson foot injury - when is the Crystal Palace goalkeeper expected back",
+   "player_id": 198,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 3,
+   "retrieved_article_ids": [
+    1933,
+    918,
+    1942,
+    1935,
+    160,
+    1898,
+    1897
+   ],
+   "retrieved_chunk_ids": [
+    3095,
+    2630,
+    3104,
+    3097,
+    2209,
+    3060,
+    3059,
+    2208
+   ],
+   "retrieved": [
+    {
+     "article_id": 1933,
+     "chunk_id": 3095,
+     "source": "fpl_api",
+     "published_at": "2026-09-12T14:00:09.378740+00:00",
+     "relevant": true,
+     "score": 0.8108689865413206
+    },
+    {
+     "article_id": 918,
+     "chunk_id": 2630,
+     "source": "google_news",
+     "published_at": "2026-09-12T19:33:37+00:00",
+     "relevant": true,
+     "score": 0.8064652774577569
+    },
+    {
+     "article_id": 1942,
+     "chunk_id": 3104,
+     "source": "fpl_api",
+     "published_at": "2026-08-28T21:00:08.020382+00:00",
+     "relevant": false,
+     "score": 0.5566060317446226
+    },
+    {
+     "article_id": 1935,
+     "chunk_id": 3097,
+     "source": "fpl_api",
+     "published_at": "2026-08-22T18:00:07.352049+00:00",
+     "relevant": false,
+     "score": 0.2415115959588656
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2209,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.11127074672144321
+    },
+    {
+     "article_id": 1898,
+     "chunk_id": 3060,
+     "source": "fpl_api",
+     "published_at": "2026-08-27T19:30:07.780933+00:00",
+     "relevant": false,
+     "score": 0.0874773091067332
+    },
+    {
+     "article_id": 1897,
+     "chunk_id": 3059,
+     "source": "fpl_api",
+     "published_at": "2026-08-14T18:00:06.418033+00:00",
+     "relevant": false,
+     "score": 0.07910331731416882
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2208,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.07814200730719746
+    }
+   ],
+   "precision_at_k": 0.375,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9997041821479797,
+   "top1_final_score": 0.8108689865413206,
+   "max_stage_score": 0.9997041821479797,
+   "n_distinct_articles": 7,
+   "top1_article_id": 1933,
+   "top1_published_at": "2026-09-12T14:00:09.378740+00:00",
+   "latency_ms": 970.3577920008684,
+   "timings": {
+    "embed_ms": 227.9941669985419,
+    "dense_ms": 28.196875005960464,
+    "bm25_ms": 14.594249994843267,
+    "fuse_ms": 0.26783299108501524,
+    "rerank_ms": 699.1987079964019,
+    "total_ms": 970.337249993463
+   }
+  },
+  {
+   "example_id": "ret_reinildo_domestic_ban",
+   "mode": "hybrid_rerank",
+   "query": "Reinildo suspension - is he banned for Sunderland's next Premier League match",
+   "player_id": 536,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 2,
+   "retrieved_article_ids": [
+    2051,
+    106,
+    58,
+    169,
+    160,
+    1801
+   ],
+   "retrieved_chunk_ids": [
+    3213,
+    1991,
+    1791,
+    2270,
+    2271,
+    1792,
+    2207,
+    3013
+   ],
+   "retrieved": [
+    {
+     "article_id": 2051,
+     "chunk_id": 3213,
+     "source": "fpl_api",
+     "published_at": "2026-09-12T21:30:09.421687+00:00",
+     "relevant": true,
+     "score": 0.8203459019470553
+    },
+    {
+     "article_id": 106,
+     "chunk_id": 1991,
+     "source": "guardian_football",
+     "published_at": "2026-09-16T21:06:31+00:00",
+     "relevant": false,
+     "score": 0.4314951433485899
+    },
+    {
+     "article_id": 58,
+     "chunk_id": 1791,
+     "source": "bbc_football",
+     "published_at": "2026-09-15T08:12:05+00:00",
+     "relevant": false,
+     "score": 0.27841050099923176
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2270,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.18947803505811311
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2271,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.15540306440468088
+    },
+    {
+     "article_id": 58,
+     "chunk_id": 1792,
+     "source": "bbc_football",
+     "published_at": "2026-09-15T08:12:05+00:00",
+     "relevant": false,
+     "score": 0.08629187298290338
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2207,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": false,
+     "score": 0.0698196574798017
+    },
+    {
+     "article_id": 1801,
+     "chunk_id": 3013,
+     "source": "google_news",
+     "published_at": "2026-09-16T05:30:00+00:00",
+     "relevant": false,
+     "score": 0.046137141738392916
+    }
+   ],
+   "precision_at_k": 0.25,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9993415474891663,
+   "top1_final_score": 0.8203459019470553,
+   "max_stage_score": 0.9993415474891663,
+   "n_distinct_articles": 6,
+   "top1_article_id": 2051,
+   "top1_published_at": "2026-09-12T21:30:09.421687+00:00",
+   "latency_ms": 1180.6989169999724,
+   "timings": {
+    "embed_ms": 230.8790420065634,
+    "dense_ms": 80.24866699997801,
+    "bm25_ms": 13.994042004924268,
+    "fuse_ms": 0.18229101260658354,
+    "rerank_ms": 855.3029159957077,
+    "total_ms": 1180.6774590077111
+   }
+  },
+  {
+   "example_id": "ret_gomes_availability",
+   "mode": "hybrid_rerank",
+   "query": "Joao Gomes availability for Aston Villa after his domestic ban and calf issue",
+   "player_id": 54,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 2,
+   "retrieved_article_ids": [
+    1878,
+    169,
+    107,
+    122,
+    382,
+    370
+   ],
+   "retrieved_chunk_ids": [
+    3040,
+    2274,
+    2270,
+    1996,
+    2033,
+    2042,
+    2423,
+    2413
+   ],
+   "retrieved": [
+    {
+     "article_id": 1878,
+     "chunk_id": 3040,
+     "source": "fpl_api",
+     "published_at": "2026-09-16T19:30:08.742410+00:00",
+     "relevant": true,
+     "score": 0.9575882958056724
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2274,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.8994380843317737
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2270,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.29662304747449675
+    },
+    {
+     "article_id": 107,
+     "chunk_id": 1996,
+     "source": "guardian_football",
+     "published_at": "2026-09-16T21:02:19+00:00",
+     "relevant": false,
+     "score": 0.005858122103555024
+    },
+    {
+     "article_id": 122,
+     "chunk_id": 2033,
+     "source": "guardian_football",
+     "published_at": "2026-09-02T08:30:27+00:00",
+     "relevant": false,
+     "score": 0.0016887623178077301
+    },
+    {
+     "article_id": 122,
+     "chunk_id": 2042,
+     "source": "guardian_football",
+     "published_at": "2026-09-02T08:30:27+00:00",
+     "relevant": false,
+     "score": 0.0011713401262640655
+    },
+    {
+     "article_id": 382,
+     "chunk_id": 2423,
+     "source": "google_news",
+     "published_at": "2026-09-08T14:06:05+00:00",
+     "relevant": false,
+     "score": 0.0007504973901827464
+    },
+    {
+     "article_id": 370,
+     "chunk_id": 2413,
+     "source": "google_news",
+     "published_at": "2026-09-13T11:36:32+00:00",
+     "relevant": false,
+     "score": 0.00037082558679244344
+    }
+   ],
+   "precision_at_k": 0.25,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9842451214790344,
+   "top1_final_score": 0.9575882958056724,
+   "max_stage_score": 0.9842451214790344,
+   "n_distinct_articles": 6,
+   "top1_article_id": 1878,
+   "top1_published_at": "2026-09-16T19:30:08.742410+00:00",
+   "latency_ms": 962.721165997209,
+   "timings": {
+    "embed_ms": 235.27216599904932,
+    "dense_ms": 10.981665996951051,
+    "bm25_ms": 13.221333007095382,
+    "fuse_ms": 0.309124996419996,
+    "rerank_ms": 702.8364160069032,
+    "total_ms": 962.699416995747
+   }
+  },
+  {
+   "example_id": "ret_shaw_fitness_brighton",
+   "mode": "hybrid_rerank",
+   "query": "Luke Shaw injury - could he return for Manchester United against Brighton",
+   "player_id": 423,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 3,
+   "retrieved_article_ids": [
+    85,
+    15,
+    648,
+    169,
+    2010,
+    122,
+    200
+   ],
+   "retrieved_chunk_ids": [
+    1915,
+    1656,
+    2505,
+    2272,
+    2270,
+    3172,
+    2054,
+    2305
+   ],
+   "retrieved": [
+    {
+     "article_id": 85,
+     "chunk_id": 1915,
+     "source": "sky_football",
+     "published_at": "2026-09-16T23:20:00+00:00",
+     "relevant": false,
+     "score": 0.9684374299959505
+    },
+    {
+     "article_id": 15,
+     "chunk_id": 1656,
+     "source": "bbc_football",
+     "published_at": "2026-09-16T19:53:12+00:00",
+     "relevant": false,
+     "score": 0.9660863129523521
+    },
+    {
+     "article_id": 648,
+     "chunk_id": 2505,
+     "source": "google_news",
+     "published_at": "2026-09-16T05:00:00+00:00",
+     "relevant": true,
+     "score": 0.9420009956956847
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2272,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.9112332904002733
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2270,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.8859121164632316
+    },
+    {
+     "article_id": 2010,
+     "chunk_id": 3172,
+     "source": "fpl_api",
+     "published_at": "2026-09-11T13:00:09.030120+00:00",
+     "relevant": true,
+     "score": 0.6906072504830523
+    },
+    {
+     "article_id": 122,
+     "chunk_id": 2054,
+     "source": "guardian_football",
+     "published_at": "2026-09-02T08:30:27+00:00",
+     "relevant": false,
+     "score": 0.5554936821491204
+    },
+    {
+     "article_id": 200,
+     "chunk_id": 2305,
+     "source": "google_news",
+     "published_at": "2026-09-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.551318683010443
+    }
+   ],
+   "precision_at_k": 0.375,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 0.3333333333333333,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9877471923828125,
+   "top1_final_score": 0.9684374299959505,
+   "max_stage_score": 0.9963526725769043,
+   "n_distinct_articles": 7,
+   "top1_article_id": 85,
+   "top1_published_at": "2026-09-16T23:20:00+00:00",
+   "latency_ms": 971.2206249969313,
+   "timings": {
+    "embed_ms": 202.38916701055132,
+    "dense_ms": 12.528332998044789,
+    "bm25_ms": 11.786457995185629,
+    "fuse_ms": 0.7822909974493086,
+    "rerank_ms": 743.6391669907607,
+    "total_ms": 971.194124998874
+   }
+  },
+  {
+   "example_id": "ret_tonali_knock",
+   "mode": "hybrid_rerank",
+   "query": "Sandro Tonali knock - will he play for Spurs this weekend",
+   "player_id": 455,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 4,
+   "retrieved_article_ids": [
+    36,
+    2035,
+    1452,
+    73,
+    1748,
+    1742,
+    122,
+    142
+   ],
+   "retrieved_chunk_ids": [
+    1722,
+    3197,
+    2829,
+    1845,
+    2971,
+    2965,
+    2056,
+    2163
+   ],
+   "retrieved": [
+    {
+     "article_id": 36,
+     "chunk_id": 1722,
+     "source": "bbc_football",
+     "published_at": "2026-09-16T10:56:23+00:00",
+     "relevant": false,
+     "score": 0.8927220292655207
+    },
+    {
+     "article_id": 2035,
+     "chunk_id": 3197,
+     "source": "fpl_api",
+     "published_at": "2026-09-14T14:30:07.387706+00:00",
+     "relevant": true,
+     "score": 0.8785186592974719
+    },
+    {
+     "article_id": 1452,
+     "chunk_id": 2829,
+     "source": "google_news",
+     "published_at": "2026-09-14T14:42:51+00:00",
+     "relevant": true,
+     "score": 0.7718195079635115
+    },
+    {
+     "article_id": 73,
+     "chunk_id": 1845,
+     "source": "bbc_football",
+     "published_at": "2026-09-05T19:08:30+00:00",
+     "relevant": false,
+     "score": 0.5797826436018265
+    },
+    {
+     "article_id": 1748,
+     "chunk_id": 2971,
+     "source": "google_news",
+     "published_at": "2026-09-14T13:31:36+00:00",
+     "relevant": true,
+     "score": 0.48852311272802956
+    },
+    {
+     "article_id": 1742,
+     "chunk_id": 2965,
+     "source": "google_news",
+     "published_at": "2026-09-15T05:35:59+00:00",
+     "relevant": true,
+     "score": 0.37420935199784805
+    },
+    {
+     "article_id": 122,
+     "chunk_id": 2056,
+     "source": "guardian_football",
+     "published_at": "2026-09-02T08:30:27+00:00",
+     "relevant": false,
+     "score": 0.236888386831382
+    },
+    {
+     "article_id": 142,
+     "chunk_id": 2163,
+     "source": "guardian_football",
+     "published_at": "2026-09-10T06:00:18+00:00",
+     "relevant": false,
+     "score": 0.07616332716200805
+    }
+   ],
+   "precision_at_k": 0.5,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 0.5,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9333208799362183,
+   "top1_final_score": 0.8927220292655207,
+   "max_stage_score": 0.9982845187187195,
+   "n_distinct_articles": 8,
+   "top1_article_id": 36,
+   "top1_published_at": "2026-09-16T10:56:23+00:00",
+   "latency_ms": 1021.0724999924423,
+   "timings": {
+    "embed_ms": 241.99733301065862,
+    "dense_ms": 10.095874997205101,
+    "bm25_ms": 9.522124993964098,
+    "fuse_ms": 0.3676250053104013,
+    "rerank_ms": 758.9420829899609,
+    "total_ms": 1021.0413750028238
+   }
+  },
+  {
+   "example_id": "ret_chelsea_missed_training",
+   "mode": "hybrid_rerank",
+   "query": "Which Chelsea players missed training this week ahead of the Brentford match",
+   "player_id": null,
+   "team_id": 6,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 7,
+   "retrieved_article_ids": [
+    2083,
+    159,
+    558,
+    169,
+    160,
+    560,
+    167
+   ],
+   "retrieved_chunk_ids": [
+    3228,
+    2206,
+    2479,
+    2270,
+    2271,
+    2210,
+    2481,
+    2263
+   ],
+   "retrieved": [
+    {
+     "article_id": 2083,
+     "chunk_id": 3228,
+     "source": "bbc_football",
+     "published_at": "2026-09-17T07:53:38+00:00",
+     "relevant": false,
+     "score": 0.9806657038690836
+    },
+    {
+     "article_id": 159,
+     "chunk_id": 2206,
+     "source": "ffscout",
+     "published_at": "2026-09-16T18:30:00+00:00",
+     "relevant": true,
+     "score": 0.9668027477349254
+    },
+    {
+     "article_id": 558,
+     "chunk_id": 2479,
+     "source": "google_news",
+     "published_at": "2026-09-16T09:48:01+00:00",
+     "relevant": true,
+     "score": 0.9538735647463449
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2270,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.9214166419679701
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2271,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.9199636069328647
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2210,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": false,
+     "score": 0.9002781322166817
+    },
+    {
+     "article_id": 560,
+     "chunk_id": 2481,
+     "source": "google_news",
+     "published_at": "2026-09-16T10:06:48+00:00",
+     "relevant": true,
+     "score": 0.8423233496161706
+    },
+    {
+     "article_id": 167,
+     "chunk_id": 2263,
+     "source": "ffscout",
+     "published_at": "2026-09-16T01:00:00+00:00",
+     "relevant": false,
+     "score": 0.7994244789138611
+    }
+   ],
+   "precision_at_k": 0.5,
+   "recall_at_k": 0.5714285714285714,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 0.5,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.9829034209251404,
+   "top1_final_score": 0.9806657038690836,
+   "max_stage_score": 0.9994907379150391,
+   "n_distinct_articles": 7,
+   "top1_article_id": 2083,
+   "top1_published_at": "2026-09-17T07:53:38+00:00",
+   "latency_ms": 1003.5632079961943,
+   "timings": {
+    "embed_ms": 242.6813340134686,
+    "dense_ms": 21.222042007138953,
+    "bm25_ms": 12.046082993037999,
+    "fuse_ms": 0.27779099764302373,
+    "rerank_ms": 727.2130000055768,
+    "total_ms": 1003.5429160052445
+   }
+  },
+  {
+   "example_id": "ret_kinsky_no_relevant",
+   "mode": "hybrid_rerank",
+   "query": "Antonin Kinsky injury or fitness doubt for Spurs",
+   "player_id": 496,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": false,
+   "n_relevant": 0,
+   "retrieved_article_ids": [
+    1780,
+    1684,
+    1771,
+    1744,
+    1747,
+    1755,
+    181,
+    1765
+   ],
+   "retrieved_chunk_ids": [
+    3000,
+    2953,
+    2993,
+    2967,
+    2970,
+    2978,
+    2291,
+    2988
+   ],
+   "retrieved": [
+    {
+     "article_id": 1780,
+     "chunk_id": 3000,
+     "source": "google_news",
+     "published_at": "2026-09-11T13:23:57+00:00",
+     "relevant": false,
+     "score": 0.07269147109164582
+    },
+    {
+     "article_id": 1684,
+     "chunk_id": 2953,
+     "source": "google_news",
+     "published_at": "2026-09-02T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.05145390202022019
+    },
+    {
+     "article_id": 1771,
+     "chunk_id": 2993,
+     "source": "google_news",
+     "published_at": "2026-09-11T21:19:51+00:00",
+     "relevant": false,
+     "score": 0.016532897063030568
+    },
+    {
+     "article_id": 1744,
+     "chunk_id": 2967,
+     "source": "google_news",
+     "published_at": "2026-09-16T15:47:32+00:00",
+     "relevant": false,
+     "score": 0.01589753213438937
+    },
+    {
+     "article_id": 1747,
+     "chunk_id": 2970,
+     "source": "google_news",
+     "published_at": "2026-09-11T17:43:37+00:00",
+     "relevant": false,
+     "score": 0.013490611552977481
+    },
+    {
+     "article_id": 1755,
+     "chunk_id": 2978,
+     "source": "google_news",
+     "published_at": "2026-09-03T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.010901557705421725
+    },
+    {
+     "article_id": 181,
+     "chunk_id": 2291,
+     "source": "google_news",
+     "published_at": "2026-08-28T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.008402598046864962
+    },
+    {
+     "article_id": 1765,
+     "chunk_id": 2988,
+     "source": "google_news",
+     "published_at": "2026-09-15T11:52:38+00:00",
+     "relevant": false,
+     "score": 0.008142037707431608
+    }
+   ],
+   "precision_at_k": 0.0,
+   "recall_at_k": null,
+   "hit_at_k": null,
+   "reciprocal_rank": null,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.09306556731462479,
+   "top1_final_score": 0.07269147109164582,
+   "max_stage_score": 0.09306556731462479,
+   "n_distinct_articles": 8,
+   "top1_article_id": 1780,
+   "top1_published_at": "2026-09-11T13:23:57+00:00",
+   "latency_ms": 511.6442919970723,
+   "timings": {
+    "embed_ms": 247.91704199742526,
+    "dense_ms": 22.36341600655578,
+    "bm25_ms": 10.920207991148345,
+    "fuse_ms": 0.5777079932158813,
+    "rerank_ms": 229.7162920003757,
+    "total_ms": 511.6234169981908
+   }
+  },
+  {
+   "example_id": "ret_tarkowski_no_relevant",
+   "mode": "hybrid_rerank",
+   "query": "James Tarkowski injury update Everton",
+   "player_id": 229,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": false,
+   "n_relevant": 0,
+   "retrieved_article_ids": [
+    169,
+    1081,
+    1009,
+    201,
+    191,
+    744,
+    1047
+   ],
+   "retrieved_chunk_ids": [
+    2270,
+    2274,
+    2702,
+    2664,
+    2306,
+    2299,
+    2560,
+    2691
+   ],
+   "retrieved": [
+    {
+     "article_id": 169,
+     "chunk_id": 2270,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": false,
+     "score": 0.6745762000284479
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2274,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": false,
+     "score": 0.5420698527485244
+    },
+    {
+     "article_id": 1081,
+     "chunk_id": 2702,
+     "source": "google_news",
+     "published_at": "2026-09-08T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5233837554199814
+    },
+    {
+     "article_id": 1009,
+     "chunk_id": 2664,
+     "source": "google_news",
+     "published_at": "2026-09-13T23:40:33+00:00",
+     "relevant": false,
+     "score": 0.5199230789672902
+    },
+    {
+     "article_id": 201,
+     "chunk_id": 2306,
+     "source": "google_news",
+     "published_at": "2026-09-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.3698131510759665
+    },
+    {
+     "article_id": 191,
+     "chunk_id": 2299,
+     "source": "google_news",
+     "published_at": "2026-09-05T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.323158242136863
+    },
+    {
+     "article_id": 744,
+     "chunk_id": 2560,
+     "source": "google_news",
+     "published_at": "2026-09-16T05:36:00+00:00",
+     "relevant": false,
+     "score": 0.28581142547934185
+    },
+    {
+     "article_id": 1047,
+     "chunk_id": 2691,
+     "source": "google_news",
+     "published_at": "2026-09-11T14:11:30+00:00",
+     "relevant": false,
+     "score": 0.25762315609987557
+    }
+   ],
+   "precision_at_k": 0.0,
+   "recall_at_k": null,
+   "hit_at_k": null,
+   "reciprocal_rank": null,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.7273492813110352,
+   "top1_final_score": 0.6745762000284479,
+   "max_stage_score": 0.7440785765647888,
+   "n_distinct_articles": 7,
+   "top1_article_id": 169,
+   "top1_published_at": "2026-09-15T19:00:00+00:00",
+   "latency_ms": 997.3535829922184,
+   "timings": {
+    "embed_ms": 226.8177500081947,
+    "dense_ms": 26.24087499862071,
+    "bm25_ms": 11.784999995143153,
+    "fuse_ms": 0.45754198799841106,
+    "rerank_ms": 731.9437080004718,
+    "total_ms": 997.339915993507
+   }
+  },
+  {
+   "example_id": "ret_botman_no_relevant",
+   "mode": "hybrid_rerank",
+   "query": "Sven Botman fitness - is he a doubt for Newcastle this weekend",
+   "player_id": 447,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": false,
+   "n_relevant": 0,
+   "retrieved_article_ids": [
+    2084,
+    167,
+    2017,
+    28,
+    2021,
+    2016,
+    1613,
+    161
+   ],
+   "retrieved_chunk_ids": [
+    3234,
+    2262,
+    3179,
+    1706,
+    3183,
+    3178,
+    2929,
+    2219
+   ],
+   "retrieved": [
+    {
+     "article_id": 2084,
+     "chunk_id": 3234,
+     "source": "ffscout",
+     "published_at": "2026-09-17T07:50:00+00:00",
+     "relevant": false,
+     "score": 0.09150740816515851
+    },
+    {
+     "article_id": 167,
+     "chunk_id": 2262,
+     "source": "ffscout",
+     "published_at": "2026-09-16T01:00:00+00:00",
+     "relevant": false,
+     "score": 0.05036041582646146
+    },
+    {
+     "article_id": 2017,
+     "chunk_id": 3179,
+     "source": "fpl_api",
+     "published_at": "2026-09-10T16:00:09.127466+00:00",
+     "relevant": false,
+     "score": 0.007622468319821632
+    },
+    {
+     "article_id": 28,
+     "chunk_id": 1706,
+     "source": "bbc_football",
+     "published_at": "2026-09-14T22:08:27+00:00",
+     "relevant": false,
+     "score": 0.006069870546170416
+    },
+    {
+     "article_id": 2021,
+     "chunk_id": 3183,
+     "source": "fpl_api",
+     "published_at": "2026-09-15T09:00:08.191022+00:00",
+     "relevant": false,
+     "score": 0.005626419346137943
+    },
+    {
+     "article_id": 2016,
+     "chunk_id": 3178,
+     "source": "fpl_api",
+     "published_at": "2026-09-14T21:30:07.343728+00:00",
+     "relevant": false,
+     "score": 0.0040530119129347265
+    },
+    {
+     "article_id": 1613,
+     "chunk_id": 2929,
+     "source": "google_news",
+     "published_at": "2026-09-14T22:36:44+00:00",
+     "relevant": false,
+     "score": 0.002116705742804304
+    },
+    {
+     "article_id": 161,
+     "chunk_id": 2219,
+     "source": "ffscout",
+     "published_at": "2026-09-16T13:45:00+00:00",
+     "relevant": false,
+     "score": 0.0010837501282161411
+    }
+   ],
+   "precision_at_k": 0.0,
+   "recall_at_k": null,
+   "hit_at_k": null,
+   "reciprocal_rank": null,
+   "top1_stage": "rerank_score",
+   "top1_score": 0.09172764420509338,
+   "top1_final_score": 0.09150740816515851,
+   "max_stage_score": 0.09172764420509338,
+   "n_distinct_articles": 8,
+   "top1_article_id": 2084,
+   "top1_published_at": "2026-09-17T07:50:00+00:00",
+   "latency_ms": 1112.3248329968192,
+   "timings": {
+    "embed_ms": 235.2016660006484,
+    "dense_ms": 30.68995798821561,
+    "bm25_ms": 10.584458010271192,
+    "fuse_ms": 0.42733400186989456,
+    "rerank_ms": 835.1882499991916,
+    "total_ms": 1112.2996249905555
+   }
+  },
+  {
+   "example_id": "ret_caicedo_injury_return",
+   "mode": "dense",
+   "query": "Moises Caicedo calf injury - is he back for Chelsea against Brentford, expected return date",
+   "player_id": 159,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 6,
+   "retrieved_article_ids": [
+    1915,
+    757,
+    796,
+    753,
+    749,
+    774,
+    744,
+    555
+   ],
+   "retrieved_chunk_ids": [
+    3077,
+    2569,
+    2594,
+    2567,
+    2564,
+    2580,
+    2560,
+    2476
+   ],
+   "retrieved": [
+    {
+     "article_id": 1915,
+     "chunk_id": 3077,
+     "source": "fpl_api",
+     "published_at": "2026-08-30T16:00:08.393562+00:00",
+     "relevant": true,
+     "score": 0.7586858196929357
+    },
+    {
+     "article_id": 757,
+     "chunk_id": 2569,
+     "source": "google_news",
+     "published_at": "2026-09-08T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6461499984864915
+    },
+    {
+     "article_id": 796,
+     "chunk_id": 2594,
+     "source": "google_news",
+     "published_at": "2026-08-27T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6190696825078766
+    },
+    {
+     "article_id": 753,
+     "chunk_id": 2567,
+     "source": "google_news",
+     "published_at": "2026-09-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.616595134754724
+    },
+    {
+     "article_id": 749,
+     "chunk_id": 2564,
+     "source": "google_news",
+     "published_at": "2026-08-25T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6146274739660634
+    },
+    {
+     "article_id": 774,
+     "chunk_id": 2580,
+     "source": "google_news",
+     "published_at": "2026-09-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.604537953864006
+    },
+    {
+     "article_id": 744,
+     "chunk_id": 2560,
+     "source": "google_news",
+     "published_at": "2026-09-16T05:36:00+00:00",
+     "relevant": true,
+     "score": 0.6039865395338105
+    },
+    {
+     "article_id": 555,
+     "chunk_id": 2476,
+     "source": "google_news",
+     "published_at": "2026-09-17T05:30:06+00:00",
+     "relevant": true,
+     "score": 0.5982196432291231
+    }
+   ],
+   "precision_at_k": 0.375,
+   "recall_at_k": 0.5,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.7586858196929357,
+   "top1_final_score": 0.7586858196929357,
+   "max_stage_score": 0.7586858196929357,
+   "n_distinct_articles": 8,
+   "top1_article_id": 1915,
+   "top1_published_at": "2026-08-30T16:00:08.393562+00:00",
+   "latency_ms": 245.01616600900888,
+   "timings": {
+    "embed_ms": 232.80199999862816,
+    "dense_ms": 12.108249997254461,
+    "total_ms": 244.99679199652746
+   }
+  },
+  {
+   "example_id": "ret_foden_suspension_length",
+   "mode": "dense",
+   "query": "How long is Phil Foden suspended after the derby red card and in which gameweek does he return",
+   "player_id": 398,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 3,
+   "retrieved_article_ids": [
+    1998,
+    160,
+    117,
+    43,
+    38,
+    1546,
+    1535
+   ],
+   "retrieved_chunk_ids": [
+    3160,
+    2207,
+    2017,
+    1736,
+    2209,
+    1731,
+    2900,
+    2894
+   ],
+   "retrieved": [
+    {
+     "article_id": 1998,
+     "chunk_id": 3160,
+     "source": "fpl_api",
+     "published_at": "2026-09-13T17:00:09.433455+00:00",
+     "relevant": true,
+     "score": 0.7071339783344546
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2207,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.6073624796087518
+    },
+    {
+     "article_id": 117,
+     "chunk_id": 2017,
+     "source": "guardian_football",
+     "published_at": "2026-09-16T11:40:24+00:00",
+     "relevant": true,
+     "score": 0.5632627080543081
+    },
+    {
+     "article_id": 43,
+     "chunk_id": 1736,
+     "source": "bbc_football",
+     "published_at": "2026-09-13T18:26:24+00:00",
+     "relevant": false,
+     "score": 0.5270780211135011
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2209,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.5085866634135107
+    },
+    {
+     "article_id": 38,
+     "chunk_id": 1731,
+     "source": "bbc_football",
+     "published_at": "2026-09-13T19:06:08+00:00",
+     "relevant": false,
+     "score": 0.47926449869664167
+    },
+    {
+     "article_id": 1546,
+     "chunk_id": 2900,
+     "source": "google_news",
+     "published_at": "2026-07-24T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.4480131177914657
+    },
+    {
+     "article_id": 1535,
+     "chunk_id": 2894,
+     "source": "google_news",
+     "published_at": "2026-08-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.439111569947109
+    }
+   ],
+   "precision_at_k": 0.375,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.7071339783344546,
+   "top1_final_score": 0.7071339783344546,
+   "max_stage_score": 0.7071339783344546,
+   "n_distinct_articles": 7,
+   "top1_article_id": 1998,
+   "top1_published_at": "2026-09-13T17:00:09.433455+00:00",
+   "latency_ms": 407.24041700013913,
+   "timings": {
+    "embed_ms": 390.5264159984654,
+    "dense_ms": 16.246333994786255,
+    "total_ms": 407.18116601055954
+   }
+  },
+  {
+   "example_id": "ret_joao_pedro_fitness_gw5",
+   "mode": "dense",
+   "query": "Is Joao Pedro fit to start for Chelsea in Gameweek 5 after pulling out of the Brazil squad",
+   "player_id": 165,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 10,
+   "retrieved_article_ids": [
+    159,
+    1917,
+    169,
+    171,
+    89,
+    744,
+    558
+   ],
+   "retrieved_chunk_ids": [
+    2206,
+    3079,
+    2271,
+    2275,
+    2281,
+    1927,
+    2560,
+    2479
+   ],
+   "retrieved": [
+    {
+     "article_id": 159,
+     "chunk_id": 2206,
+     "source": "ffscout",
+     "published_at": "2026-09-16T18:30:00+00:00",
+     "relevant": true,
+     "score": 0.741225456432407
+    },
+    {
+     "article_id": 1917,
+     "chunk_id": 3079,
+     "source": "fpl_api",
+     "published_at": "2026-09-16T19:00:09.919929+00:00",
+     "relevant": true,
+     "score": 0.6649213009757415
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2271,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.6565344714828969
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2275,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.5962402648645827
+    },
+    {
+     "article_id": 171,
+     "chunk_id": 2281,
+     "source": "google_news",
+     "published_at": "2026-09-16T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.58559627264971
+    },
+    {
+     "article_id": 89,
+     "chunk_id": 1927,
+     "source": "sky_football",
+     "published_at": "2026-09-17T00:01:00+00:00",
+     "relevant": true,
+     "score": 0.5681803175031455
+    },
+    {
+     "article_id": 744,
+     "chunk_id": 2560,
+     "source": "google_news",
+     "published_at": "2026-09-16T05:36:00+00:00",
+     "relevant": true,
+     "score": 0.561446105760844
+    },
+    {
+     "article_id": 558,
+     "chunk_id": 2479,
+     "source": "google_news",
+     "published_at": "2026-09-16T09:48:01+00:00",
+     "relevant": true,
+     "score": 0.557153080275671
+    }
+   ],
+   "precision_at_k": 0.875,
+   "recall_at_k": 0.7,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.741225456432407,
+   "top1_final_score": 0.741225456432407,
+   "max_stage_score": 0.741225456432407,
+   "n_distinct_articles": 7,
+   "top1_article_id": 159,
+   "top1_published_at": "2026-09-16T18:30:00+00:00",
+   "latency_ms": 245.00870899646543,
+   "timings": {
+    "embed_ms": 228.8078329875134,
+    "dense_ms": 16.044207994127646,
+    "total_ms": 244.98312499781605
+   }
+  },
+  {
+   "example_id": "ret_mosquera_return",
+   "mode": "dense",
+   "query": "Cristhian Mosquera muscular injury update - when will he return for Arsenal",
+   "player_id": 11,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 5,
+   "retrieved_article_ids": [
+    1865,
+    280,
+    333,
+    277,
+    163,
+    1815,
+    166
+   ],
+   "retrieved_chunk_ids": [
+    3027,
+    2343,
+    2385,
+    2340,
+    2237,
+    3019,
+    2236,
+    2252
+   ],
+   "retrieved": [
+    {
+     "article_id": 1865,
+     "chunk_id": 3027,
+     "source": "fpl_api",
+     "published_at": "2026-09-04T14:00:08.080310+00:00",
+     "relevant": true,
+     "score": 0.72593093781615
+    },
+    {
+     "article_id": 280,
+     "chunk_id": 2343,
+     "source": "google_news",
+     "published_at": "2026-09-15T10:31:35+00:00",
+     "relevant": true,
+     "score": 0.6313911645688641
+    },
+    {
+     "article_id": 333,
+     "chunk_id": 2385,
+     "source": "google_news",
+     "published_at": "2026-09-09T13:39:50+00:00",
+     "relevant": true,
+     "score": 0.6153745353971983
+    },
+    {
+     "article_id": 277,
+     "chunk_id": 2340,
+     "source": "google_news",
+     "published_at": "2026-09-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.613384301849925
+    },
+    {
+     "article_id": 163,
+     "chunk_id": 2237,
+     "source": "ffscout",
+     "published_at": "2026-09-16T11:15:00+00:00",
+     "relevant": true,
+     "score": 0.4896349354848979
+    },
+    {
+     "article_id": 1815,
+     "chunk_id": 3019,
+     "source": "google_news",
+     "published_at": "2026-09-11T09:13:30+00:00",
+     "relevant": true,
+     "score": 0.4819866777885019
+    },
+    {
+     "article_id": 163,
+     "chunk_id": 2236,
+     "source": "ffscout",
+     "published_at": "2026-09-16T11:15:00+00:00",
+     "relevant": true,
+     "score": 0.45471869898168527
+    },
+    {
+     "article_id": 166,
+     "chunk_id": 2252,
+     "source": "ffscout",
+     "published_at": "2026-09-16T03:00:00+00:00",
+     "relevant": false,
+     "score": 0.32696352816787866
+    }
+   ],
+   "precision_at_k": 0.625,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.72593093781615,
+   "top1_final_score": 0.72593093781615,
+   "max_stage_score": 0.72593093781615,
+   "n_distinct_articles": 7,
+   "top1_article_id": 1865,
+   "top1_published_at": "2026-09-04T14:00:08.080310+00:00",
+   "latency_ms": 301.4144579938147,
+   "timings": {
+    "embed_ms": 234.08299998845905,
+    "dense_ms": 67.18283300870098,
+    "total_ms": 301.39408400282264
+   }
+  },
+  {
+   "example_id": "ret_doku_return_date",
+   "mode": "dense",
+   "query": "Jeremy Doku calf injury latest - is he close to returning for Man City",
+   "player_id": 400,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 6,
+   "retrieved_article_ids": [
+    1999,
+    1542,
+    1520,
+    1505,
+    508,
+    1504,
+    117,
+    460
+   ],
+   "retrieved_chunk_ids": [
+    3161,
+    2897,
+    2884,
+    2870,
+    2467,
+    2869,
+    2018,
+    2449
+   ],
+   "retrieved": [
+    {
+     "article_id": 1999,
+     "chunk_id": 3161,
+     "source": "fpl_api",
+     "published_at": "2026-08-18T17:00:08.385597+00:00",
+     "relevant": true,
+     "score": 0.7822605016768983
+    },
+    {
+     "article_id": 1542,
+     "chunk_id": 2897,
+     "source": "google_news",
+     "published_at": "2026-08-22T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.7319928261957883
+    },
+    {
+     "article_id": 1520,
+     "chunk_id": 2884,
+     "source": "google_news",
+     "published_at": "2026-09-13T14:23:04+00:00",
+     "relevant": true,
+     "score": 0.687353154261329
+    },
+    {
+     "article_id": 1505,
+     "chunk_id": 2870,
+     "source": "google_news",
+     "published_at": "2026-09-11T09:45:00+00:00",
+     "relevant": true,
+     "score": 0.6696487276532411
+    },
+    {
+     "article_id": 508,
+     "chunk_id": 2467,
+     "source": "google_news",
+     "published_at": "2026-08-23T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6339674816750724
+    },
+    {
+     "article_id": 1504,
+     "chunk_id": 2869,
+     "source": "google_news",
+     "published_at": "2026-09-16T08:40:00+00:00",
+     "relevant": true,
+     "score": 0.6300818285820625
+    },
+    {
+     "article_id": 117,
+     "chunk_id": 2018,
+     "source": "guardian_football",
+     "published_at": "2026-09-16T11:40:24+00:00",
+     "relevant": true,
+     "score": 0.6204474159327921
+    },
+    {
+     "article_id": 460,
+     "chunk_id": 2449,
+     "source": "google_news",
+     "published_at": "2026-08-21T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.584377346155383
+    }
+   ],
+   "precision_at_k": 0.625,
+   "recall_at_k": 0.8333333333333334,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.7822605016768983,
+   "top1_final_score": 0.7822605016768983,
+   "max_stage_score": 0.7822605016768983,
+   "n_distinct_articles": 8,
+   "top1_article_id": 1999,
+   "top1_published_at": "2026-08-18T17:00:08.385597+00:00",
+   "latency_ms": 226.10316598729696,
+   "timings": {
+    "embed_ms": 213.8325830019312,
+    "dense_ms": 12.137500001699664,
+    "total_ms": 226.08270800265018
+   }
+  },
+  {
+   "example_id": "ret_porro_available_villa",
+   "mode": "dense",
+   "query": "Pedro Porro injury update - will he be available against Aston Villa",
+   "player_id": 499,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 6,
+   "retrieved_article_ids": [
+    1011,
+    2037,
+    609,
+    565,
+    1751,
+    161,
+    1452,
+    1759
+   ],
+   "retrieved_chunk_ids": [
+    2666,
+    3199,
+    2498,
+    2485,
+    2974,
+    2224,
+    2829,
+    2982
+   ],
+   "retrieved": [
+    {
+     "article_id": 1011,
+     "chunk_id": 2666,
+     "source": "google_news",
+     "published_at": "2026-09-12T16:15:00+00:00",
+     "relevant": true,
+     "score": 0.7254161167225227
+    },
+    {
+     "article_id": 2037,
+     "chunk_id": 3199,
+     "source": "fpl_api",
+     "published_at": "2026-09-11T18:00:09.076279+00:00",
+     "relevant": true,
+     "score": 0.7034365135548976
+    },
+    {
+     "article_id": 609,
+     "chunk_id": 2498,
+     "source": "google_news",
+     "published_at": "2026-08-21T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6658243855642945
+    },
+    {
+     "article_id": 565,
+     "chunk_id": 2485,
+     "source": "google_news",
+     "published_at": "2026-08-21T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6510295840442712
+    },
+    {
+     "article_id": 1751,
+     "chunk_id": 2974,
+     "source": "google_news",
+     "published_at": "2026-09-12T16:52:29+00:00",
+     "relevant": true,
+     "score": 0.6155499208454306
+    },
+    {
+     "article_id": 161,
+     "chunk_id": 2224,
+     "source": "ffscout",
+     "published_at": "2026-09-16T13:45:00+00:00",
+     "relevant": true,
+     "score": 0.575628415909915
+    },
+    {
+     "article_id": 1452,
+     "chunk_id": 2829,
+     "source": "google_news",
+     "published_at": "2026-09-14T14:42:51+00:00",
+     "relevant": true,
+     "score": 0.5585532657078441
+    },
+    {
+     "article_id": 1759,
+     "chunk_id": 2982,
+     "source": "google_news",
+     "published_at": "2026-08-25T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.557066015454122
+    }
+   ],
+   "precision_at_k": 0.625,
+   "recall_at_k": 0.8333333333333334,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.7254161167225227,
+   "top1_final_score": 0.7254161167225227,
+   "max_stage_score": 0.7254161167225227,
+   "n_distinct_articles": 8,
+   "top1_article_id": 1011,
+   "top1_published_at": "2026-09-12T16:15:00+00:00",
+   "latency_ms": 295.7765410101274,
+   "timings": {
+    "embed_ms": 277.7005420066416,
+    "dense_ms": 17.767458004527725,
+    "total_ms": 295.74654099997133
+   }
+  },
+  {
+   "example_id": "ret_arsenal_press_conference_injuries",
+   "mode": "dense",
+   "query": "Mikel Arteta press conference injury news: White, Timber, Mosquera, Saliba fitness ahead of Brighton",
+   "player_id": null,
+   "team_id": 1,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 9,
+   "retrieved_article_ids": [
+    277,
+    347,
+    276,
+    245,
+    280,
+    310,
+    272,
+    289
+   ],
+   "retrieved_chunk_ids": [
+    2340,
+    2395,
+    2339,
+    2328,
+    2343,
+    2369,
+    2335,
+    2352
+   ],
+   "retrieved": [
+    {
+     "article_id": 277,
+     "chunk_id": 2340,
+     "source": "google_news",
+     "published_at": "2026-09-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.7076949627671099
+    },
+    {
+     "article_id": 347,
+     "chunk_id": 2395,
+     "source": "google_news",
+     "published_at": "2026-08-27T14:24:20+00:00",
+     "relevant": false,
+     "score": 0.6927169474032479
+    },
+    {
+     "article_id": 276,
+     "chunk_id": 2339,
+     "source": "google_news",
+     "published_at": "2026-08-27T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6699126779804212
+    },
+    {
+     "article_id": 245,
+     "chunk_id": 2328,
+     "source": "google_news",
+     "published_at": "2026-08-20T16:00:04+00:00",
+     "relevant": false,
+     "score": 0.6686210361701218
+    },
+    {
+     "article_id": 280,
+     "chunk_id": 2343,
+     "source": "google_news",
+     "published_at": "2026-09-15T10:31:35+00:00",
+     "relevant": true,
+     "score": 0.6662882620007424
+    },
+    {
+     "article_id": 310,
+     "chunk_id": 2369,
+     "source": "google_news",
+     "published_at": "2026-08-20T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.649552070185378
+    },
+    {
+     "article_id": 272,
+     "chunk_id": 2335,
+     "source": "google_news",
+     "published_at": "2026-09-15T18:47:21+00:00",
+     "relevant": true,
+     "score": 0.6365721931286018
+    },
+    {
+     "article_id": 289,
+     "chunk_id": 2352,
+     "source": "google_news",
+     "published_at": "2026-08-25T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6339747616643573
+    }
+   ],
+   "precision_at_k": 0.25,
+   "recall_at_k": 0.2222222222222222,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 0.2,
+   "top1_stage": "dense_score",
+   "top1_score": 0.7076949627671099,
+   "top1_final_score": 0.7076949627671099,
+   "max_stage_score": 0.7076949627671099,
+   "n_distinct_articles": 8,
+   "top1_article_id": 277,
+   "top1_published_at": "2026-09-04T07:00:00+00:00",
+   "latency_ms": 274.9702500004787,
+   "timings": {
+    "embed_ms": 239.36270899139345,
+    "dense_ms": 35.40845800307579,
+    "total_ms": 274.94287499575876
+   }
+  },
+  {
+   "example_id": "ret_mancity_rotation_norwich",
+   "mode": "dense",
+   "query": "Man City rotation and lineup changes for the Carabao Cup tie against Norwich - fringe players and youngsters",
+   "player_id": null,
+   "team_id": 15,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 5,
+   "retrieved_article_ids": [
+    1503,
+    1502,
+    2147,
+    1543,
+    1511,
+    160,
+    938,
+    1544
+   ],
+   "retrieved_chunk_ids": [
+    2868,
+    2867,
+    3273,
+    2898,
+    2876,
+    2207,
+    2650,
+    2899
+   ],
+   "retrieved": [
+    {
+     "article_id": 1503,
+     "chunk_id": 2868,
+     "source": "google_news",
+     "published_at": "2026-09-16T13:30:00+00:00",
+     "relevant": true,
+     "score": 0.7391779707533797
+    },
+    {
+     "article_id": 1502,
+     "chunk_id": 2867,
+     "source": "google_news",
+     "published_at": "2026-09-16T18:03:30+00:00",
+     "relevant": true,
+     "score": 0.7217192862674024
+    },
+    {
+     "article_id": 2147,
+     "chunk_id": 3273,
+     "source": "sky_football",
+     "published_at": "2026-09-16T08:00:00+00:00",
+     "relevant": false,
+     "score": 0.6121637191093487
+    },
+    {
+     "article_id": 1543,
+     "chunk_id": 2898,
+     "source": "google_news",
+     "published_at": "2026-08-04T02:45:20+00:00",
+     "relevant": false,
+     "score": 0.6078899539633498
+    },
+    {
+     "article_id": 1511,
+     "chunk_id": 2876,
+     "source": "google_news",
+     "published_at": "2026-09-14T09:00:00+00:00",
+     "relevant": false,
+     "score": 0.6050000999039746
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2207,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.5984258374293218
+    },
+    {
+     "article_id": 938,
+     "chunk_id": 2650,
+     "source": "google_news",
+     "published_at": "2026-08-28T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5974263046385254
+    },
+    {
+     "article_id": 1544,
+     "chunk_id": 2899,
+     "source": "google_news",
+     "published_at": "2026-08-04T12:22:07+00:00",
+     "relevant": false,
+     "score": 0.5937228746410916
+    }
+   ],
+   "precision_at_k": 0.375,
+   "recall_at_k": 0.6,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.7391779707533797,
+   "top1_final_score": 0.7391779707533797,
+   "max_stage_score": 0.7391779707533797,
+   "n_distinct_articles": 8,
+   "top1_article_id": 1503,
+   "top1_published_at": "2026-09-16T13:30:00+00:00",
+   "latency_ms": 260.58316699345596,
+   "timings": {
+    "embed_ms": 224.28470799059141,
+    "dense_ms": 36.125749989878386,
+    "total_ms": 260.52679200074635
+   }
+  },
+  {
+   "example_id": "ret_awoniyi_ban_length",
+   "mode": "dense",
+   "query": "Taiwo Awoniyi red card suspension - how many matches will he miss for Coventry",
+   "player_id": 492,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 4,
+   "retrieved_article_ids": [
+    1931,
+    60,
+    39,
+    122,
+    169,
+    166
+   ],
+   "retrieved_chunk_ids": [
+    3093,
+    1798,
+    1732,
+    1799,
+    2040,
+    2271,
+    2275,
+    2257
+   ],
+   "retrieved": [
+    {
+     "article_id": 1931,
+     "chunk_id": 3093,
+     "source": "fpl_api",
+     "published_at": "2026-09-13T15:00:09.305127+00:00",
+     "relevant": true,
+     "score": 0.7102690144303643
+    },
+    {
+     "article_id": 60,
+     "chunk_id": 1798,
+     "source": "bbc_football",
+     "published_at": "2026-09-13T19:32:55+00:00",
+     "relevant": true,
+     "score": 0.5646505855669111
+    },
+    {
+     "article_id": 39,
+     "chunk_id": 1732,
+     "source": "bbc_football",
+     "published_at": "2026-09-13T19:00:21+00:00",
+     "relevant": true,
+     "score": 0.5195329188283758
+    },
+    {
+     "article_id": 60,
+     "chunk_id": 1799,
+     "source": "bbc_football",
+     "published_at": "2026-09-13T19:32:55+00:00",
+     "relevant": true,
+     "score": 0.5125512795585787
+    },
+    {
+     "article_id": 122,
+     "chunk_id": 2040,
+     "source": "guardian_football",
+     "published_at": "2026-09-02T08:30:27+00:00",
+     "relevant": false,
+     "score": 0.5034844032969761
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2271,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.4684629694763598
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2275,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.46750172125916856
+    },
+    {
+     "article_id": 166,
+     "chunk_id": 2257,
+     "source": "ffscout",
+     "published_at": "2026-09-16T03:00:00+00:00",
+     "relevant": false,
+     "score": 0.4378602506092184
+    }
+   ],
+   "precision_at_k": 0.5,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.7102690144303643,
+   "top1_final_score": 0.7102690144303643,
+   "max_stage_score": 0.7102690144303643,
+   "n_distinct_articles": 6,
+   "top1_article_id": 1931,
+   "top1_published_at": "2026-09-13T15:00:09.305127+00:00",
+   "latency_ms": 275.51195900014136,
+   "timings": {
+    "embed_ms": 259.90941700001713,
+    "dense_ms": 15.476125001441687,
+    "total_ms": 275.4888339986792
+   }
+  },
+  {
+   "example_id": "ret_henderson_gk_return",
+   "mode": "dense",
+   "query": "Dean Henderson foot injury - when is the Crystal Palace goalkeeper expected back",
+   "player_id": 198,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 3,
+   "retrieved_article_ids": [
+    1933,
+    918,
+    160,
+    1942,
+    1908,
+    1935,
+    1919
+   ],
+   "retrieved_chunk_ids": [
+    3095,
+    2630,
+    2208,
+    2209,
+    3104,
+    3070,
+    3097,
+    3081
+   ],
+   "retrieved": [
+    {
+     "article_id": 1933,
+     "chunk_id": 3095,
+     "source": "fpl_api",
+     "published_at": "2026-09-12T14:00:09.378740+00:00",
+     "relevant": true,
+     "score": 0.750392812928857
+    },
+    {
+     "article_id": 918,
+     "chunk_id": 2630,
+     "source": "google_news",
+     "published_at": "2026-09-12T19:33:37+00:00",
+     "relevant": true,
+     "score": 0.6988098156961992
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2208,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.5172308827800866
+    },
+    {
+     "article_id": 160,
+     "chunk_id": 2209,
+     "source": "ffscout",
+     "published_at": "2026-09-16T16:45:00+00:00",
+     "relevant": true,
+     "score": 0.42606739689068374
+    },
+    {
+     "article_id": 1942,
+     "chunk_id": 3104,
+     "source": "fpl_api",
+     "published_at": "2026-08-28T21:00:08.020382+00:00",
+     "relevant": false,
+     "score": 0.6042849375291471
+    },
+    {
+     "article_id": 1908,
+     "chunk_id": 3070,
+     "source": "fpl_api",
+     "published_at": "2026-08-09T09:30:07.136250+00:00",
+     "relevant": false,
+     "score": 0.5717333219659549
+    },
+    {
+     "article_id": 1935,
+     "chunk_id": 3097,
+     "source": "fpl_api",
+     "published_at": "2026-08-22T18:00:07.352049+00:00",
+     "relevant": false,
+     "score": 0.5513765986912624
+    },
+    {
+     "article_id": 1919,
+     "chunk_id": 3081,
+     "source": "fpl_api",
+     "published_at": "2026-09-09T15:00:09.063849+00:00",
+     "relevant": false,
+     "score": 0.5355799322242005
+    }
+   ],
+   "precision_at_k": 0.375,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.750392812928857,
+   "top1_final_score": 0.750392812928857,
+   "max_stage_score": 0.750392812928857,
+   "n_distinct_articles": 7,
+   "top1_article_id": 1933,
+   "top1_published_at": "2026-09-12T14:00:09.378740+00:00",
+   "latency_ms": 257.4341660074424,
+   "timings": {
+    "embed_ms": 230.95854099665303,
+    "dense_ms": 26.25679199991282,
+    "total_ms": 257.4057919991901
+   }
+  },
+  {
+   "example_id": "ret_reinildo_domestic_ban",
+   "mode": "dense",
+   "query": "Reinildo suspension - is he banned for Sunderland's next Premier League match",
+   "player_id": 536,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 2,
+   "retrieved_article_ids": [
+    2051,
+    169,
+    1126,
+    1798,
+    1931,
+    1801,
+    1932
+   ],
+   "retrieved_chunk_ids": [
+    3213,
+    2273,
+    2274,
+    2724,
+    3010,
+    3093,
+    3013,
+    3094
+   ],
+   "retrieved": [
+    {
+     "article_id": 2051,
+     "chunk_id": 3213,
+     "source": "fpl_api",
+     "published_at": "2026-09-12T21:30:09.421687+00:00",
+     "relevant": true,
+     "score": 0.7447065078134639
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2273,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.4336495307473873
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2274,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.43272171962840045
+    },
+    {
+     "article_id": 1126,
+     "chunk_id": 2724,
+     "source": "google_news",
+     "published_at": "2026-08-28T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.528666789717109
+    },
+    {
+     "article_id": 1798,
+     "chunk_id": 3010,
+     "source": "google_news",
+     "published_at": "2026-09-12T02:04:44+00:00",
+     "relevant": false,
+     "score": 0.5212645112429165
+    },
+    {
+     "article_id": 1931,
+     "chunk_id": 3093,
+     "source": "fpl_api",
+     "published_at": "2026-09-13T15:00:09.305127+00:00",
+     "relevant": false,
+     "score": 0.5184450954734848
+    },
+    {
+     "article_id": 1801,
+     "chunk_id": 3013,
+     "source": "google_news",
+     "published_at": "2026-09-16T05:30:00+00:00",
+     "relevant": false,
+     "score": 0.514753797205289
+    },
+    {
+     "article_id": 1932,
+     "chunk_id": 3094,
+     "source": "fpl_api",
+     "published_at": "2026-09-12T15:30:09.445078+00:00",
+     "relevant": false,
+     "score": 0.5111903332142266
+    }
+   ],
+   "precision_at_k": 0.25,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.7447065078134639,
+   "top1_final_score": 0.7447065078134639,
+   "max_stage_score": 0.7447065078134639,
+   "n_distinct_articles": 7,
+   "top1_article_id": 2051,
+   "top1_published_at": "2026-09-12T21:30:09.421687+00:00",
+   "latency_ms": 242.3472079972271,
+   "timings": {
+    "embed_ms": 213.52950000436977,
+    "dense_ms": 28.31020900339354,
+    "total_ms": 242.32299999857787
+   }
+  },
+  {
+   "example_id": "ret_gomes_availability",
+   "mode": "dense",
+   "query": "Joao Gomes availability for Aston Villa after his domestic ban and calf issue",
+   "player_id": 54,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 2,
+   "retrieved_article_ids": [
+    1878,
+    169,
+    122
+   ],
+   "retrieved_chunk_ids": [
+    3040,
+    2274,
+    2271,
+    2032,
+    2045,
+    2272,
+    2275,
+    2270
+   ],
+   "retrieved": [
+    {
+     "article_id": 1878,
+     "chunk_id": 3040,
+     "source": "fpl_api",
+     "published_at": "2026-09-16T19:30:08.742410+00:00",
+     "relevant": true,
+     "score": 0.6991284459644355
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2274,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.5543704128195583
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2271,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.5169107278081985
+    },
+    {
+     "article_id": 122,
+     "chunk_id": 2032,
+     "source": "guardian_football",
+     "published_at": "2026-09-02T08:30:27+00:00",
+     "relevant": false,
+     "score": 0.43524999450727386
+    },
+    {
+     "article_id": 122,
+     "chunk_id": 2045,
+     "source": "guardian_football",
+     "published_at": "2026-09-02T08:30:27+00:00",
+     "relevant": false,
+     "score": 0.37348361276822417
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2272,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.5001508241564967
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2275,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.49959519073808467
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2270,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.49858041468607384
+    }
+   ],
+   "precision_at_k": 0.25,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.6991284459644355,
+   "top1_final_score": 0.6991284459644355,
+   "max_stage_score": 0.6991284459644355,
+   "n_distinct_articles": 3,
+   "top1_article_id": 1878,
+   "top1_published_at": "2026-09-16T19:30:08.742410+00:00",
+   "latency_ms": 268.9024160063127,
+   "timings": {
+    "embed_ms": 232.50662499049213,
+    "dense_ms": 36.34583299572114,
+    "total_ms": 268.8929589930922
+   }
+  },
+  {
+   "example_id": "ret_shaw_fitness_brighton",
+   "mode": "dense",
+   "query": "Luke Shaw injury - could he return for Manchester United against Brighton",
+   "player_id": 423,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 3,
+   "retrieved_article_ids": [
+    648,
+    2010,
+    200,
+    169,
+    85,
+    122,
+    15
+   ],
+   "retrieved_chunk_ids": [
+    2505,
+    3172,
+    2305,
+    2272,
+    1915,
+    2270,
+    2054,
+    1656
+   ],
+   "retrieved": [
+    {
+     "article_id": 648,
+     "chunk_id": 2505,
+     "source": "google_news",
+     "published_at": "2026-09-16T05:00:00+00:00",
+     "relevant": true,
+     "score": 0.6939690879292972
+    },
+    {
+     "article_id": 2010,
+     "chunk_id": 3172,
+     "source": "fpl_api",
+     "published_at": "2026-09-11T13:00:09.030120+00:00",
+     "relevant": true,
+     "score": 0.6330096250353894
+    },
+    {
+     "article_id": 200,
+     "chunk_id": 2305,
+     "source": "google_news",
+     "published_at": "2026-09-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6167267676615542
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2272,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.5618658302766796
+    },
+    {
+     "article_id": 85,
+     "chunk_id": 1915,
+     "source": "sky_football",
+     "published_at": "2026-09-16T23:20:00+00:00",
+     "relevant": false,
+     "score": 0.5457032513203283
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2270,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.5215359693940389
+    },
+    {
+     "article_id": 122,
+     "chunk_id": 2054,
+     "source": "guardian_football",
+     "published_at": "2026-09-02T08:30:27+00:00",
+     "relevant": false,
+     "score": 0.4127355075084941
+    },
+    {
+     "article_id": 15,
+     "chunk_id": 1656,
+     "source": "bbc_football",
+     "published_at": "2026-09-16T19:53:12+00:00",
+     "relevant": false,
+     "score": 0.40605694491521604
+    }
+   ],
+   "precision_at_k": 0.375,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.6939690879292972,
+   "top1_final_score": 0.6939690879292972,
+   "max_stage_score": 0.6939690879292972,
+   "n_distinct_articles": 7,
+   "top1_article_id": 648,
+   "top1_published_at": "2026-09-16T05:00:00+00:00",
+   "latency_ms": 241.45383299037348,
+   "timings": {
+    "embed_ms": 226.90150000562426,
+    "dense_ms": 14.374292004504241,
+    "total_ms": 241.43725000612903
+   }
+  },
+  {
+   "example_id": "ret_tonali_knock",
+   "mode": "dense",
+   "query": "Sandro Tonali knock - will he play for Spurs this weekend",
+   "player_id": 455,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 4,
+   "retrieved_article_ids": [
+    2035,
+    1742,
+    1748,
+    1452,
+    73,
+    122,
+    166,
+    36
+   ],
+   "retrieved_chunk_ids": [
+    3197,
+    2965,
+    2971,
+    2829,
+    1847,
+    2056,
+    2259,
+    1722
+   ],
+   "retrieved": [
+    {
+     "article_id": 2035,
+     "chunk_id": 3197,
+     "source": "fpl_api",
+     "published_at": "2026-09-14T14:30:07.387706+00:00",
+     "relevant": true,
+     "score": 0.7499034996051402
+    },
+    {
+     "article_id": 1742,
+     "chunk_id": 2965,
+     "source": "google_news",
+     "published_at": "2026-09-15T05:35:59+00:00",
+     "relevant": true,
+     "score": 0.6064236693138557
+    },
+    {
+     "article_id": 1748,
+     "chunk_id": 2971,
+     "source": "google_news",
+     "published_at": "2026-09-14T13:31:36+00:00",
+     "relevant": true,
+     "score": 0.5852282922005324
+    },
+    {
+     "article_id": 1452,
+     "chunk_id": 2829,
+     "source": "google_news",
+     "published_at": "2026-09-14T14:42:51+00:00",
+     "relevant": true,
+     "score": 0.5112079710923444
+    },
+    {
+     "article_id": 73,
+     "chunk_id": 1847,
+     "source": "bbc_football",
+     "published_at": "2026-09-05T19:08:30+00:00",
+     "relevant": false,
+     "score": 0.40011629345157784
+    },
+    {
+     "article_id": 122,
+     "chunk_id": 2056,
+     "source": "guardian_football",
+     "published_at": "2026-09-02T08:30:27+00:00",
+     "relevant": false,
+     "score": 0.3992685801048015
+    },
+    {
+     "article_id": 166,
+     "chunk_id": 2259,
+     "source": "ffscout",
+     "published_at": "2026-09-16T03:00:00+00:00",
+     "relevant": false,
+     "score": 0.3902196189983551
+    },
+    {
+     "article_id": 36,
+     "chunk_id": 1722,
+     "source": "bbc_football",
+     "published_at": "2026-09-16T10:56:23+00:00",
+     "relevant": false,
+     "score": 0.389677350335375
+    }
+   ],
+   "precision_at_k": 0.5,
+   "recall_at_k": 1.0,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.7499034996051402,
+   "top1_final_score": 0.7499034996051402,
+   "max_stage_score": 0.7499034996051402,
+   "n_distinct_articles": 8,
+   "top1_article_id": 2035,
+   "top1_published_at": "2026-09-14T14:30:07.387706+00:00",
+   "latency_ms": 256.619125008001,
+   "timings": {
+    "embed_ms": 238.52662499120925,
+    "dense_ms": 17.936249991180375,
+    "total_ms": 256.599374988582
+   }
+  },
+  {
+   "example_id": "ret_chelsea_missed_training",
+   "mode": "dense",
+   "query": "Which Chelsea players missed training this week ahead of the Brentford match",
+   "player_id": null,
+   "team_id": 6,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": true,
+   "n_relevant": 7,
+   "retrieved_article_ids": [
+    558,
+    560,
+    1368,
+    169,
+    185,
+    746,
+    176
+   ],
+   "retrieved_chunk_ids": [
+    2479,
+    2481,
+    2791,
+    2271,
+    2294,
+    2562,
+    2270,
+    2286
+   ],
+   "retrieved": [
+    {
+     "article_id": 558,
+     "chunk_id": 2479,
+     "source": "google_news",
+     "published_at": "2026-09-16T09:48:01+00:00",
+     "relevant": true,
+     "score": 0.630907798851029
+    },
+    {
+     "article_id": 560,
+     "chunk_id": 2481,
+     "source": "google_news",
+     "published_at": "2026-09-16T10:06:48+00:00",
+     "relevant": true,
+     "score": 0.6215937170130753
+    },
+    {
+     "article_id": 1368,
+     "chunk_id": 2791,
+     "source": "google_news",
+     "published_at": "2026-09-08T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6173054927868441
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2271,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.5882910814447895
+    },
+    {
+     "article_id": 185,
+     "chunk_id": 2294,
+     "source": "google_news",
+     "published_at": "2026-09-16T13:56:00+00:00",
+     "relevant": false,
+     "score": 0.5834459636386249
+    },
+    {
+     "article_id": 746,
+     "chunk_id": 2562,
+     "source": "google_news",
+     "published_at": "2026-08-24T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5540987712240107
+    },
+    {
+     "article_id": 169,
+     "chunk_id": 2270,
+     "source": "ffscout",
+     "published_at": "2026-09-15T19:00:00+00:00",
+     "relevant": true,
+     "score": 0.5506470482392245
+    },
+    {
+     "article_id": 176,
+     "chunk_id": 2286,
+     "source": "google_news",
+     "published_at": "2026-09-05T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.545479819415289
+    }
+   ],
+   "precision_at_k": 0.375,
+   "recall_at_k": 0.42857142857142855,
+   "hit_at_k": 1.0,
+   "reciprocal_rank": 1.0,
+   "top1_stage": "dense_score",
+   "top1_score": 0.630907798851029,
+   "top1_final_score": 0.630907798851029,
+   "max_stage_score": 0.630907798851029,
+   "n_distinct_articles": 7,
+   "top1_article_id": 558,
+   "top1_published_at": "2026-09-16T09:48:01+00:00",
+   "latency_ms": 257.9988750076154,
+   "timings": {
+    "embed_ms": 234.40658301115036,
+    "dense_ms": 23.24416699411813,
+    "total_ms": 257.96133300173096
+   }
+  },
+  {
+   "example_id": "ret_kinsky_no_relevant",
+   "mode": "dense",
+   "query": "Antonin Kinsky injury or fitness doubt for Spurs",
+   "player_id": 496,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": false,
+   "n_relevant": 0,
+   "retrieved_article_ids": [
+    1773,
+    1759,
+    1746,
+    1742,
+    181,
+    2049,
+    2045,
+    1771
+   ],
+   "retrieved_chunk_ids": [
+    2994,
+    2982,
+    2969,
+    2965,
+    2291,
+    3211,
+    3207,
+    2993
+   ],
+   "retrieved": [
+    {
+     "article_id": 1773,
+     "chunk_id": 2994,
+     "source": "google_news",
+     "published_at": "2026-08-14T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5627372993499383
+    },
+    {
+     "article_id": 1759,
+     "chunk_id": 2982,
+     "source": "google_news",
+     "published_at": "2026-08-25T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5579266100881966
+    },
+    {
+     "article_id": 1746,
+     "chunk_id": 2969,
+     "source": "google_news",
+     "published_at": "2026-09-12T18:00:38+00:00",
+     "relevant": false,
+     "score": 0.5550205474234302
+    },
+    {
+     "article_id": 1742,
+     "chunk_id": 2965,
+     "source": "google_news",
+     "published_at": "2026-09-15T05:35:59+00:00",
+     "relevant": false,
+     "score": 0.5488932304639074
+    },
+    {
+     "article_id": 181,
+     "chunk_id": 2291,
+     "source": "google_news",
+     "published_at": "2026-08-28T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5427978840135771
+    },
+    {
+     "article_id": 2049,
+     "chunk_id": 3211,
+     "source": "fpl_api",
+     "published_at": "2026-09-11T18:00:09.154412+00:00",
+     "relevant": false,
+     "score": 0.540739381860419
+    },
+    {
+     "article_id": 2045,
+     "chunk_id": 3207,
+     "source": "fpl_api",
+     "published_at": "2026-07-23T12:01:23.895175+00:00",
+     "relevant": false,
+     "score": 0.5397257790181653
+    },
+    {
+     "article_id": 1771,
+     "chunk_id": 2993,
+     "source": "google_news",
+     "published_at": "2026-09-11T21:19:51+00:00",
+     "relevant": false,
+     "score": 0.5388405213792482
+    }
+   ],
+   "precision_at_k": 0.0,
+   "recall_at_k": null,
+   "hit_at_k": null,
+   "reciprocal_rank": null,
+   "top1_stage": "dense_score",
+   "top1_score": 0.5627372993499383,
+   "top1_final_score": 0.5627372993499383,
+   "max_stage_score": 0.5627372993499383,
+   "n_distinct_articles": 8,
+   "top1_article_id": 1773,
+   "top1_published_at": "2026-08-14T07:00:00+00:00",
+   "latency_ms": 335.69712498865556,
+   "timings": {
+    "embed_ms": 310.7959170010872,
+    "dense_ms": 24.81320800143294,
+    "total_ms": 335.68041599937715
+   }
+  },
+  {
+   "example_id": "ret_tarkowski_no_relevant",
+   "mode": "dense",
+   "query": "James Tarkowski injury update Everton",
+   "player_id": 229,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": false,
+   "n_relevant": 0,
+   "retrieved_article_ids": [
+    1081,
+    1014,
+    1009,
+    1047,
+    1039,
+    191,
+    1011,
+    200
+   ],
+   "retrieved_chunk_ids": [
+    2702,
+    2669,
+    2664,
+    2691,
+    2688,
+    2299,
+    2666,
+    2305
+   ],
+   "retrieved": [
+    {
+     "article_id": 1081,
+     "chunk_id": 2702,
+     "source": "google_news",
+     "published_at": "2026-09-08T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.6553870498994321
+    },
+    {
+     "article_id": 1014,
+     "chunk_id": 2669,
+     "source": "google_news",
+     "published_at": "2026-09-11T18:12:17+00:00",
+     "relevant": false,
+     "score": 0.6266061595057923
+    },
+    {
+     "article_id": 1009,
+     "chunk_id": 2664,
+     "source": "google_news",
+     "published_at": "2026-09-13T23:40:33+00:00",
+     "relevant": false,
+     "score": 0.611884170328301
+    },
+    {
+     "article_id": 1047,
+     "chunk_id": 2691,
+     "source": "google_news",
+     "published_at": "2026-09-11T14:11:30+00:00",
+     "relevant": false,
+     "score": 0.5934513574224916
+    },
+    {
+     "article_id": 1039,
+     "chunk_id": 2688,
+     "source": "google_news",
+     "published_at": "2026-09-11T12:37:06+00:00",
+     "relevant": false,
+     "score": 0.5934513574224916
+    },
+    {
+     "article_id": 191,
+     "chunk_id": 2299,
+     "source": "google_news",
+     "published_at": "2026-09-05T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5646370139344039
+    },
+    {
+     "article_id": 1011,
+     "chunk_id": 2666,
+     "source": "google_news",
+     "published_at": "2026-09-12T16:15:00+00:00",
+     "relevant": false,
+     "score": 0.5640402628182806
+    },
+    {
+     "article_id": 200,
+     "chunk_id": 2305,
+     "source": "google_news",
+     "published_at": "2026-09-04T07:00:00+00:00",
+     "relevant": false,
+     "score": 0.5474672718818724
+    }
+   ],
+   "precision_at_k": 0.0,
+   "recall_at_k": null,
+   "hit_at_k": null,
+   "reciprocal_rank": null,
+   "top1_stage": "dense_score",
+   "top1_score": 0.6553870498994321,
+   "top1_final_score": 0.6553870498994321,
+   "max_stage_score": 0.6553870498994321,
+   "n_distinct_articles": 8,
+   "top1_article_id": 1081,
+   "top1_published_at": "2026-09-08T07:00:00+00:00",
+   "latency_ms": 426.77375000494067,
+   "timings": {
+    "embed_ms": 346.9780419982271,
+    "dense_ms": 79.73279200086836,
+    "total_ms": 426.76341701007914
+   }
+  },
+  {
+   "example_id": "ret_botman_no_relevant",
+   "mode": "dense",
+   "query": "Sven Botman fitness - is he a doubt for Newcastle this weekend",
+   "player_id": 447,
+   "team_id": null,
+   "as_of": "2026-09-17T09:00:00+00:00",
+   "has_relevant": false,
+   "n_relevant": 0,
+   "retrieved_article_ids": [
+    1541,
+    1612,
+    170,
+    2016,
+    1613,
+    2084,
+    2017,
+    1651
+   ],
+   "retrieved_chunk_ids": [
+    2896,
+    2928,
+    2276,
+    3178,
+    2929,
+    3234,
+    3179,
+    2943
+   ],
+   "retrieved": [
+    {
+     "article_id": 1541,
+     "chunk_id": 2896,
+     "source": "google_news",
+     "published_at": "2026-08-13T02:49:42+00:00",
+     "relevant": false,
+     "score": 0.5349532984767719
+    },
+    {
+     "article_id": 1612,
+     "chunk_id": 2928,
+     "source": "google_news",
+     "published_at": "2026-09-11T14:39:31+00:00",
+     "relevant": false,
+     "score": 0.5101222259650278
+    },
+    {
+     "article_id": 170,
+     "chunk_id": 2276,
+     "source": "ffscout",
+     "published_at": "2026-09-15T16:45:00+00:00",
+     "relevant": false,
+     "score": 0.5000318707545224
+    },
+    {
+     "article_id": 2016,
+     "chunk_id": 3178,
+     "source": "fpl_api",
+     "published_at": "2026-09-14T21:30:07.343728+00:00",
+     "relevant": false,
+     "score": 0.49199705120329185
+    },
+    {
+     "article_id": 1613,
+     "chunk_id": 2929,
+     "source": "google_news",
+     "published_at": "2026-09-14T22:36:44+00:00",
+     "relevant": false,
+     "score": 0.49043003058074197
+    },
+    {
+     "article_id": 2084,
+     "chunk_id": 3234,
+     "source": "ffscout",
+     "published_at": "2026-09-17T07:50:00+00:00",
+     "relevant": false,
+     "score": 0.4888896305981114
+    },
+    {
+     "article_id": 2017,
+     "chunk_id": 3179,
+     "source": "fpl_api",
+     "published_at": "2026-09-10T16:00:09.127466+00:00",
+     "relevant": false,
+     "score": 0.48530944496079953
+    },
+    {
+     "article_id": 1651,
+     "chunk_id": 2943,
+     "source": "google_news",
+     "published_at": "2026-08-04T11:25:34+00:00",
+     "relevant": false,
+     "score": 0.47746348747353506
+    }
+   ],
+   "precision_at_k": 0.0,
+   "recall_at_k": null,
+   "hit_at_k": null,
+   "reciprocal_rank": null,
+   "top1_stage": "dense_score",
+   "top1_score": 0.5349532984767719,
+   "top1_final_score": 0.5349532984767719,
+   "max_stage_score": 0.5349532984767719,
+   "n_distinct_articles": 8,
+   "top1_article_id": 1541,
+   "top1_published_at": "2026-08-13T02:49:42+00:00",
+   "latency_ms": 282.36887499224395,
+   "timings": {
+    "embed_ms": 265.6107079965295,
+    "dense_ms": 16.681791996234097,
+    "total_ms": 282.35687500273343
+   }
+  }
+ ]
+}
