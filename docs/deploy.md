@@ -167,7 +167,8 @@ docker stats                                                # память по 
 ```
 
 Логи Docker ограничены (json-file, 3 × 10 MB на контейнер), память — `mem_limit` в compose (db 1 GB,
-app 1.6 GB, ingest 768 MB, caddy 128 MB).
+app 1.6 GB, ingest 768 MB, caddy 128 MB; на сервере с 8 GB поднимите через `DB_MEM_LIMIT`,
+`APP_MEM_LIMIT`, `INGEST_MEM_LIMIT` в `.env`).
 
 | симптом | что проверить |
 |---|---|

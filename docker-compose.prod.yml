@@ -34,7 +34,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 12
-    mem_limit: 1g
+    mem_limit: ${DB_MEM_LIMIT:-1g}
     logging: *logging
 
   app:
@@ -50,7 +50,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    mem_limit: 1600m
+    mem_limit: ${APP_MEM_LIMIT:-1600m}
     logging: *logging
 
   ingest:
@@ -69,7 +69,7 @@ services:
         condition: service_healthy
       app:
         condition: service_started  # образ собирается сервисом app
-    mem_limit: 768m
+    mem_limit: ${INGEST_MEM_LIMIT:-768m}
     logging: *logging
 
   caddy:
