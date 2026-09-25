@@ -1,9 +1,10 @@
 # ARCHITECTURE — FPL Copilot
 
-Документ описывает, как устроена система на 24 сентября 2026 (GW1–5 сыграны, дедлайн GW6 —
+Документ описывает, как устроена система на 25 сентября 2026 (GW1–5 сыграны, дедлайн GW6 —
 10.10 10:00 UTC, пауза на матчи сборных). Первая версия написана 17.09; изменения 23–24.09
-(чат v4, узел `candidate_news`, новости клуба, фишки в плане, MCP 14) внесены точечно, а числа
-замеров 17.09 оставлены с датой. Каждое утверждение ниже опирается на код в `src/fplcopilot/` и на подробные
+(чат v4, узел `candidate_news`, новости клуба, фишки в плане, MCP 14) и 24–25.09 (стартовая
+страница «Брифинг», «План на тур», правило «ценный актив» в оптимизаторе, прод на VPS со входом по
+паролю и суточным лимитом ИИ — §13) внесены точечно, а числа замеров 17.09 оставлены с датой. Каждое утверждение ниже опирается на код в `src/fplcopilot/` и на подробные
 документы по компонентам: [`docs/sources.md`](sources.md), [`docs/rag.md`](rag.md),
 [`docs/xpts.md`](xpts.md), [`docs/optimizer.md`](optimizer.md), [`docs/agent.md`](agent.md),
 [`docs/mcp.md`](mcp.md), [`docs/vision.md`](vision.md), [`docs/strategy_kb.md`](strategy_kb.md),
@@ -13,7 +14,9 @@
 
 Исходники диаграмм (mermaid) лежат в [`docs/diagrams/`](diagrams/):
 `architecture.mmd` (слои), `request_path.mmd` (путь запроса), `data_flow.mmd` (офлайн/онлайн),
-`data_model.mmd` (таблицы), `agent_graph.mmd` (граф LangGraph, сгенерирован кодом).
+`data_model.mmd` (таблицы), `agent_graph.mmd` (граф LangGraph, сгенерирован кодом),
+`deploy.mmd` (прод-стек, §13). Упрощённая схема для защиты — `overview.png` (слайд 6
+[`docs/presentation/slides.html`](presentation/slides.html)).
 
 ## 1. Принцип, из которого следует всё остальное
 
@@ -30,6 +33,9 @@
 | кто из клуба выбыл и до какого тура; что говорит тренер | выбывшие — код по статусам FPL и календарю; мягкий контекст — LLM-дайджест с проверкой цитат кодом | `rag/team_news.py` |
 | ожидаемые очки игрока на тур | компонентная модель xPts v0 (без LLM) | `core/xpts.py`, `core/minutes.py` |
 | лучшие 11, трансферы, план на 5 туров, хит или нет | MILP (PuLP + HiGHS) | `core/optimizer.py` |
+| придержать травмированного топ-игрока, купить того, кого сбрасывают из-за лёгкой травмы (25.09) | код: очки «если здоров», пороги позиции, бонус в цель MILP (`asset_bonus`) | `core/assets.py`, `core/minutes.py: fit_minutes`, `docs/optimizer.md` |
+| «План на тур» на «К дедлайну»: что сделать и почему, цена продажи против выкупа (25.09) | код по выходам инструментов, без LLM; цены продажи — по истории трансферов и правилу FPL | `app/deadline_plan.py`, `data/prices.py` |
+| лента новостей на «Брифинге» (25.09) | код: сохранённые разборы сигналов по составу + свежие заголовки корпуса с оценкой по ключевым словам и источнику, без LLM | `app/briefing.py` |
 | прочитать скриншот состава | vision-LLM читает, код резолвит имена и проверяет правила | `vision/` |
 | объяснить ответ | LLM (T = 0, промпт v4) — только числами из фактов, с проверкой кодом | `agent/llm.py: explain_llm`, `agent/validate.py` |
 | текст «Почему» на карточке маршрута («К дедлайну») | факты — код (FPL, Understat, без LLM); склейка текста — `gpt-4o` по этим фактам; `validate_why_text` пускает только числа и имена из фактов, ≤ 4 предложений, без штампов; один повтор, затем запасной текст без LLM; дисковый кэш | `core/why_facts.py`, `core/why_narrate.py` |
@@ -43,7 +49,7 @@
 ```mermaid
 flowchart TB
     subgraph L1["Интерфейсы"]
-        UI["Streamlit UI (7 экранов)<br/>Мой состав · К дедлайну · План · Игрок · Сравнение · Чат · О системе"]
+        UI["Streamlit UI (8 экранов, прод — за паролем и суточным лимитом ИИ, §13)<br/>Брифинг · Мой состав · К дедлайну · План · Игрок · Сравнение · Чат · О системе"]
         CLI["CLI<br/>agent · optimizer · xpts · rag.signal · rag.refresh · rag.kb · evals.*"]
         MCP["MCP-сервер fpl-intelligence<br/>14 tools · 5 resources · 1 prompt<br/>stdio / streamable-http"]
         HOST["MCP-хосты: Cursor, Claude Desktop, Inspector<br/>+ Skill fpl-transfer-analyst"]
@@ -58,7 +64,7 @@ flowchart TB
     end
 
     subgraph L4["Детерминированное ядро и извлечение"]
-        CORE["core/: xPts v0 (компоненты) · модель минут · Understat-слой<br/>FixtureStrengthProvider · MILP HiGHS (фишки BB / TC) · стратегии · планы · why_facts"]
+        CORE["core/: xPts v0 (компоненты, + очки «если здоров») · модель минут · Understat-слой<br/>FixtureStrengthProvider · MILP HiGHS (фишки BB / TC, бонус «ценного актива») · стратегии · планы · why_facts"]
         RAG["rag/: News RAG<br/>chunking → pgvector + BM25 → RRF → time-decay → flashrank<br/>→ abstention → gpt-4o-mini → validate_draft → summary_check<br/>+ новости клуба (team_news) · пакетный refresh"]
         KB["rag/kb: Strategy KB (RAG #2)<br/>41 документ · 622 чанка · цитируемый ответ"]
         VIS["vision/: скриншот Pick Team → JSON<br/>→ PlayerResolver → правила FPL → Squad"]
@@ -292,7 +298,8 @@ Understat (TTL 12 ч); `.cache/why` — тексты «Почему» по хэ�
 | xPts | **компонентная модель v0** (per-90 ставки со сжатием к приорам + модель минут + сила фикстур) без ML-обучения | `gaps.md` предлагал `ep_next` FPL + поправка новостей — но `ep_next` не раскладывается на компоненты, а агент должен объяснять «почему»; LightGBM v1 (`project_context.md` §5) — 4 тура данных, обучать нечего; v0 бьёт бейзлайны form3/ppg/pos_avg по MAE, RMSE, Spearman на GW2–4 | `docs/xpts.md`, `docs/xpts_backtest.json` |
 | сила фикстур | `TeamRatingProvider`: рейтинги FPL (`strength_overall`, показатель 0.75) + xG сезона, масштаб к L = 1.45 | Букмекерские коэффициенты (`OddsProvider`, The Odds API v4, с 22.09 работает с ключом): медиана 1X2 по букмекерам → снятие маржи → сетка Пуассона, покрывает 1–2 ближайших тура, дальше — рейтинги; включается `XPTS_FIXTURE_PROVIDER=odds`, дефолт остаётся `team_rating` до разбора GW6 (`v0-odds` сохранён рядом с `v0`); пользователю показывается только индекс FSI 1–5 | `docs/xpts.md`, `core/odds.py` |
 | оптимизатор | **PuLP 3.3 + HiGHS (`highspy`)**, одна MILP на XI / трансфер / план, no-good cuts для top-3 | OR-Tools (`project_context.md` §9) — тяжелее в установке, а формулировка open-fpl-solver уже на PuLP; CBC из комплекта PuLP не запускается на macOS arm64 (`Bad CPU type`) — остался запасным для Linux; жадные эвристики не дают гарантий по бюджету/квотам клуба | `docs/optimizer.md` |
-| UI | **Streamlit** (7 экранов, `st.navigation`; ID менеджера — в адресе `?manager=` и cookie) | Next.js + FastAPI (`project_context.md` §15) — два репозитория и API-слой ради демо на одного пользователя; `gaps.md` §2 рекомендовал Streamlit как снижение риска; UI не содержит бизнес-логики — только вызовы `LiveTools` | `docs/ui.md` |
+| UI | **Streamlit** (8 экранов, `st.navigation`, стартовая — «Брифинг»; ID менеджера — в адресе `?manager=` и cookie) | Next.js + FastAPI (`project_context.md` §15) — два репозитория и API-слой ради демо на одного пользователя; `gaps.md` §2 рекомендовал Streamlit как снижение риска; UI не содержит бизнес-логики — только вызовы `LiveTools` | `docs/ui.md` |
+| деплой (25.09) | **один VPS** (Hetzner, класс CX22: 2 vCPU / 4 GB, ≈ €5 в месяц) + `docker-compose.prod.yml`: `db`, `app`, `ingest`, `caddy` (авто-HTTPS Let's Encrypt) | PaaS (Railway / Render / Fly) — отдельно платный managed Postgres с pgvector, фоновый `ingest --loop` и тома для кэша ONNX / FPL / чекпоинтов — это три сервиса вместо одного compose-файла, который и так проверен локально; Kubernetes — избыточно для одного процесса Streamlit; 2 GB RAM не хватает на сборку образа | §13, [`docs/deploy.md`](deploy.md) |
 | MCP | собственный сервер **`fpl-intelligence`** на `mcp[cli] >= 2.2` (`MCPServer`), stdio + streamable-http; отдаёт **решения**, а не факты | Чужие FPL-MCP (обёртки над REST) отдают bootstrap/picks — их мы не дублируем, факты читает свой тонкий `data/fpl_client.py` с кэшем; REST API вместо MCP — не подключается к Cursor/Claude Desktop без клиента | `docs/mcp.md` |
 | трейсинг | **LangSmith**: `wrap_openai` + `@traceable` в RAG/vision, callbacks langchain-core в графе с тегами `intent:*`, `model:*`, `strategy:*`; включается непустым `LANGSMITH_API_KEY` | Langfuse — равнозначен; выбран LangSmith как нативный для LangGraph. На 24.09 **месячная квота трейсов проекта LangSmith исчерпана (429)** — риск для требования «показать дашборд с реальными трейсами»; варианты (новый проект / организация, платный план, Langfuse) и решение владельца — `docs/PLAN_STATUS.md` §4. Приложение от этого не ломается: при отказах загрузки трейсинг в процессе выключается сам (`tracing._LangSmithFailureGuard`: квота — сразу, 429 по частоте — после 3 подряд), сайдбар показывает честный статус | `rag/llm.py`, `agent/tracing.py`, `docs/agent.md` |
 | чекпоинты HITL | `langgraph-checkpoint-sqlite` в `.cache/agent_checkpoints.sqlite` | `MemorySaver` — только в тестах; Postgres-checkpointer — ещё одна зависимость ради одного пользователя | `docs/agent.md` |
@@ -360,6 +367,7 @@ Understat (TTL 12 ч); `.cache/why` — тексты «Почему» по хэ�
 | солвер | `OPTIMIZER_SOLVER=auto`: HiGHS, иначе CBC; лимит 90 с на solve → план помечается `time_limit_hit`; `ScenarioInfeasible`/`InfeasibleError` → hint «ослабить ограничения» | `core/optimizer.py`, `config.py` |
 | Postgres недоступен | UI показывает «База данных недоступна» с подсказкой `docker compose up -d db`; MCP отдаёт `db_unavailable`. Фактически без БД не работают сигналы, планы, KB **и xPts** — `core/xpts.make_context` читает `player_gw_history`/`player_season_history` через `load_history` (пустая таблица → предупреждение «запустите `core.history --sync`», недоступная БД → `SQLAlchemyError`). Подсказка в `app/common.py` исправлена 17.09: без БД работают только состав из FPL API и детерминированные отказы чата | `app/common.guarded`, `mcp_server/runtime.py`, `core/xpts.py` |
 | нет `OPENAI_API_KEY` | чат, извлечение сигналов и скриншот отключены явным сообщением; страницы состава/дедлайна/плана/игрока работают на кэшированных сигналах | `docs/ui.md`, «Ошибки» |
+| публичный URL и траты на LLM (прод, 25.09) | вход по паролю `APP_PASSWORD` (до верного пароля не выполняется ни один инструмент и ни один вызов OpenAI; растущая задержка после неверных попыток); суточный лимит `APP_DAILY_LLM_LIMIT` на запросы к LLM из интерфейса (чат, скриншот, обновление новостей, объяснение сравнения) — сверх лимита понятное сообщение, страницы без LLM работают; жёсткий потолок — лимит трат в кабинете OpenAI | `app/auth.py`, `app/llm_budget.py`, §13 |
 | ошибка инструмента внутри графа | `call_tool` пишет ошибку в `tool_log`, граф не падает — ошибка становится оговоркой в ответе | `agent/graph.py` |
 | ошибка в MCP-инструменте | контракт: инструмент **никогда** не бросает исключение наружу — всегда dict `{error, hint}` (`invalid_input`, `ambiguous`, `unknown_player`, `squad_unavailable`, `infeasible`, `invalid_chip_plan`, `history_unavailable`, `fpl_api_*`, `db_unavailable`, `internal`) | `docs/mcp.md` |
 | prompt injection через новости | документы передаются как ДАННЫЕ в тегах `<document …>` с нейтрализацией вложенных тегов; инструкции внутри игнорируются (правило (a) промптов сигнала v1–v4 и дайджеста клуба, то же в KB) | `prompts/v3/signal_extraction.system.md`, `prompts/v1/team_news.system.md`, `rag/kb/prompts/v1/strategy_answer.system.md` |
@@ -370,8 +378,8 @@ Understat (TTL 12 ч); `.cache/why` — тексты «Почему» по хэ�
 клиента с переключателем провайдера, JSON-режим вместо strict schema с валидацией теми же
 pydantic-моделями, порядок «primary → same-vendor → cross-vendor» по ролям — описан в
 `docs/LLM_CHOICE.md` §8, не реализован); семантического кэша ответов (есть кэш инструментов и
-сигналов, но не текстов); аутентификации (MCP streamable-http слушает `127.0.0.1`). Всё это — в
-roadmap (`README.md`).
+сигналов, но не текстов); учётных записей и ролей — в проде один общий пароль входа (§13), MCP
+streamable-http слушает `127.0.0.1`. Всё это — в roadmap (`README.md`).
 
 ## 9. Правила против утечки из будущего
 
@@ -472,16 +480,68 @@ $0.144–0.168), а ручная оценка «полезен» выросла 
 | отдельное поле `form_notes` (промпт сигнала v4) уберёт цитаты формы из доказательств доступности без потери точности | **Отклонена по точности**: цитаты формы в evidence 4/78 → 2/73 (ручная разметка), confidence fit-игроков без новостей о здоровье 0.93–0.98 → 0.83, но точность 25/27 → 23/27 в обоих повторах (Reece James: «not seen in training» уходит в «форму» → нет доказательств → `unknown`). v4 — опция, дефолт остаётся v3 | `EVALS.md` §4.6, `rag.md` |
 | сигналов, извлечённых до расчёта (упомянутые + проблемные игроки), хватит, чтобы новости влияли на совет | **Нет**: кандидаты оптимизатора известны только после `compute`, и совет «кого взять» шёл без новостей о тех, кого берут. Добавлен узел `candidate_news` с бюджетом 3 извлечения на запрос и одним пересчётом, если рекомендованная покупка недоступна по новости | `agent.md`, `rag.md` |
 | чат слабый из-за «плохого промпта» или шума модели роутера | **Нет, причины структурные**: 0 нестабильных строк из 29 × 5 вызовов роутера; нет памяти диалога (6 из 7 многоходовых — «криво»), закрытый список интентов с `off_topic` как корзиной (ложных отказов 10/55 на v3, 16/55 на v2), жёсткий шаблон объяснителя, узкий валидатор; вдобавок UI работал на старом коде (v2) до перезапуска. После v4 (история, 5 новых интентов, гибкий объяснитель, строже валидатор): ложные отказы 0/55, «полезен» 17 → 49 (прогон 3) → 54 (прогон 4) из 60 | `chat_diagnosis.md`, `EVALS.md` §9 |
+| (25.09) горизонта в 3 тура достаточно, чтобы оптимизатор не продавал травмированных звёзд «на дне» | **Нет**: статус «под вопросом 75 %» режет очки на весь горизонт, и MILP предлагал продать Palmer и João Pedro (команда 2558291), которых через тур-два пришлось бы выкупать дороже. Добавлено правило «ценный актив» — бонус в цель за удержание и покупка тех, кого сбрасывают из-за лёгкой травмы; на живом GW6 оба ушли из top-3 маршрутов. Пороги и веса — стартовые значения, **на прошлых турах не проверялись** | `docs/optimizer.md`, `core/assets.py` |
 | передача истории закроет многоходовые уточнения | **В основном**: 4/7 «полезен» в прогоне 3 (c51 повторил из истории «капитан Haaland» против FACTS, c56 упёрся в `max_tokens`), после правок — 6/7 в прогоне 4; c55 недетерминированно наследует совет ассистента из истории вопреки правилу роутера (полезен в прогоне 2, криво в 1 и 4) | `EVALS.md` §9 |
 
 ## 12. Что ещё стоит знать читателю кода
 
-- Тесты (снимок 24.09, `--collect-only`): 822 собранных, 812 без сети (`uv run pytest -q -m "not network"`);
-  маркеры `db` (14, скипаются без Postgres), `llm` (3, реальные вызовы OpenAI). Все тесты графа, чата,
-  UI и MCP идут на фейках `AgentTools`. Число растёт — параллельно дописываются тесты чата.
+- Тесты (снимок 25.09): 877 собранных; `uv run pytest -q -m "not network and not llm"` — 853 прошли,
+  14 пропущены (маркер `db` без Postgres), 10 отобраны маркерами `network` / `llm` (реальные вызовы
+  FPL API и OpenAI). Все тесты графа, чата, UI и MCP идут на фейках `AgentTools`.
 - Размер (24.09): `src/` ≈ 36.7k строк Python, `tests/` ≈ 17.4k, `evals/` ≈ 5.0k (17.09 было
   19.9k / 8.7k / 3.7k).
 - Docker: образ `python:3.12-slim` + `uv sync --frozen`, 1.37 GB, health через 4 с после
-  `docker compose up -d app`; сервисы `db`, `app`, `ingest` (`docker compose config --services`).
+  `docker compose up -d app`; локально сервисы `db`, `app`, `ingest`, в проде + `caddy` (§13).
 - Все документы компонентов заканчиваются разделом «Ограничения» / «Что дальше» — это и есть
   backlog, сведённый в `README.md` (Roadmap) и `docs/PLAN_STATUS.md`.
+
+## 13. Прод-развёртывание (25.09)
+
+Публичная версия — https://fpl-copilot.duckdns.org (тот же сервер — https://178.104.144.124.sslip.io).
+Пошаговая инструкция — [`docs/deploy.md`](deploy.md), схема — `diagrams/deploy.mmd`.
+
+```mermaid
+flowchart LR
+    USER["Браузер менеджера / ментора"]
+
+    subgraph VPS["VPS Hetzner · Ubuntu 26.04 · 2 vCPU / 4 GB · ufw: 22, 80, 443"]
+        CADDY["caddy<br/>авто-HTTPS Let's Encrypt · HSTS · gzip/zstd"]
+        APP["app — Streamlit :8501<br/>вход по паролю → суточный лимит LLM<br/>LangGraph-агент · LiveTools · MILP"]
+        INGEST["ingest<br/>rag.ingest --loop --every 30 --index"]
+        DB[("db — Postgres 16 + pgvector<br/>порт наружу не открыт")]
+        CACHE[("том appcache<br/>FPL JSON · flashrank · чекпоинты HITL")]
+        CRON["cron 03:15 — db_backup.sh<br/>pg_dump, хранится 14 дней"]
+    end
+
+    OPENAI["OpenAI API<br/>gpt-4o-mini · embeddings · vision"]
+    DATA["FPL API · Understat · The Odds API"]
+    NEWS["RSS: BBC · Sky · Guardian · FFScout"]
+    LS["LangSmith (трейсы)"]
+
+    USER -->|"HTTPS: fpl-copilot.duckdns.org<br/>или 178.104.144.124.sslip.io"| CADDY
+    CADDY -->|"reverse_proxy app:8501<br/>(вебсокеты Streamlit)"| APP
+    APP --> DB
+    APP --- CACHE
+    INGEST --> DB
+    CRON --> DB
+    APP --> OPENAI
+    APP --> DATA
+    APP -.-> LS
+    INGEST --> NEWS
+    INGEST --> OPENAI
+```
+
+| что | как сделано | где |
+|---|---|---|
+| стек | тот же образ, что локально (`Dockerfile`), и `docker-compose.prod.yml`: `db` без опубликованного порта, `app` без публичного порта (только за Caddy), `ingest` — цикл новостей каждые 30 мин, `caddy` на 80/443; `restart: unless-stopped`, ротация логов, лимиты памяти под 4 GB (`DB_MEM_LIMIT` 1g, `APP_MEM_LIMIT` 1600m, `INGEST_MEM_LIMIT` 768m) | `docker-compose.prod.yml`, `.env.prod.example` |
+| HTTPS | Caddy сам получает сертификаты Let's Encrypt на каждый адрес из `DOMAIN` (через запятую); вебсокеты Streamlit проксируются без отдельной настройки | `deploy/Caddyfile` |
+| вход | один общий пароль `APP_PASSWORD`: до верного пароля не выполняются ни скрипты страниц, ни OpenAI; сравнение `hmac.compare_digest`, растущая задержка после неверных попыток; после входа — cookie `fplc_auth` (HMAC от пароля со сроком 14 дней), потому что ссылки на карточку игрока — обычные переходы и открывают новую сессию Streamlit; смена пароля обесценивает все cookie | `app/auth.py`, `tests/test_app_auth.py` |
+| траты | `APP_DAILY_LLM_LIMIT` = 200 запросов к LLM в сутки на процесс (чат, скриншот, обновление новостей, объяснение сравнения); счётчик в памяти и обнуляется при перезапуске, поэтому жёсткий потолок — лимит трат в кабинете OpenAI | `app/llm_budget.py` |
+| данные | база перенесена с ноутбука дампом (`scripts/db_dump.sh` → `db_restore.sh`), дальше её пополняет `ingest`; ежедневный бэкап по cron | `scripts/db_*.sh`, `docs/deploy.md` |
+| обновление кода | `git pull` + `docker compose -f docker-compose.prod.yml up -d --build app` (или `scripts/deploy.sh`); миграции применяет entrypoint | `scripts/deploy.sh`, `scripts/docker-entrypoint.sh` |
+| что видит пользователь | в чате — только ответ и кнопки HITL: лог узлов графа и футер «Как получен ответ» (интент, инструменты, LLM-вызовы, стоимость, валидация) с 25.09 скрыты; те же данные остаются в состоянии графа, в прогонах evals и в трейсах LangSmith | `app/views/5_chat.py`, `app/format.py: run_summary` |
+
+Ограничения прода: один процесс `LiveTools` на всех пользователей (§7), один общий пароль без
+учётных записей, лимит LLM считается на процесс, а не на пользователя. Для курса и нескольких
+десятков менеджеров этого достаточно; для открытого сервиса нужны учётные записи и лимит на
+пользователя.

@@ -1,0 +1,29 @@
+%% FPL Copilot — прод-развёртывание (источник: docs/ARCHITECTURE.md §13, docker-compose.prod.yml, состояние 25.09.2026)
+flowchart LR
+    USER["Браузер менеджера / ментора"]
+
+    subgraph VPS["VPS Hetzner · Ubuntu 26.04 · 2 vCPU / 4 GB · ufw: 22, 80, 443"]
+        CADDY["caddy<br/>авто-HTTPS Let's Encrypt · HSTS · gzip/zstd"]
+        APP["app — Streamlit :8501<br/>вход по паролю → суточный лимит LLM<br/>LangGraph-агент · LiveTools · MILP"]
+        INGEST["ingest<br/>rag.ingest --loop --every 30 --index"]
+        DB[("db — Postgres 16 + pgvector<br/>порт наружу не открыт")]
+        CACHE[("том appcache<br/>FPL JSON · flashrank · чекпоинты HITL")]
+        CRON["cron 03:15 — db_backup.sh<br/>pg_dump, хранится 14 дней"]
+    end
+
+    OPENAI["OpenAI API<br/>gpt-4o-mini · embeddings · vision"]
+    DATA["FPL API · Understat · The Odds API"]
+    NEWS["RSS: BBC · Sky · Guardian · FFScout"]
+    LS["LangSmith (трейсы)"]
+
+    USER -->|"HTTPS: fpl-copilot.duckdns.org<br/>или 178.104.144.124.sslip.io"| CADDY
+    CADDY -->|"reverse_proxy app:8501<br/>(вебсокеты Streamlit)"| APP
+    APP --> DB
+    APP --- CACHE
+    INGEST --> DB
+    CRON --> DB
+    APP --> OPENAI
+    APP --> DATA
+    APP -.-> LS
+    INGEST --> NEWS
+    INGEST --> OPENAI
