@@ -77,3 +77,39 @@ def test_home_wrong_password_error_then_right_password_opens_briefing(home):
     assert not at.error
     assert at.title[0].value.endswith(", Test.")  # Брифинг
     assert at.session_state[auth.AUTH_KEY] is True
+    assert at.session_state[auth.COOKIE_WRITTEN_KEY] is True
+    scripts = [h.proto.body for h in at.get("html") if auth.COOKIE_NAME in h.proto.body]
+    assert scripts and f"{auth.COOKIE_NAME}=" in scripts[0] and "SameSite=Lax" in scripts[0]
+
+
+def test_issue_token_roundtrip_and_rejects_tamper_or_expiry():
+    token, age = auth.issue_token("s3cret", now=1_000_000, max_age=100)
+    assert age == 100 and token.startswith("1000100.")
+    assert auth.token_ok("s3cret", token, now=1_000_050)
+    assert not auth.token_ok("s3cret", token, now=1_000_101)  # истек
+    assert not auth.token_ok("other", token, now=1_000_050)
+    exp, _, mac = token.partition(".")
+    assert not auth.token_ok("s3cret", f"{exp}.{mac[:-1]}0", now=1_000_050)
+    assert not auth.token_ok("s3cret", None) and not auth.token_ok("s3cret", "nope")
+    assert not auth.token_ok("", token) and not auth.token_ok("s3cret", "abc.short")
+
+
+def test_cookie_script_sets_signed_cookie():
+    js = auth.cookie_script("1000100.abc", max_age=99)
+    assert "fplc_auth=1000100.abc; Path=/; Max-Age=99; SameSite=Lax" in js
+    assert "Secure" in js and "document.cookie=c" in js
+
+
+def test_home_valid_cookie_skips_login(fakes, monkeypatch):  # noqa: F811
+    token, _ = auth.issue_token("s3cret")  # срок от «сейчас», иначе token_ok в gate() отвергнет
+    agent = make_agent(fakes, FakeRouter(router_output("captain")))
+    monkeypatch.setattr(common, "get_agent", lambda: agent)
+    monkeypatch.setattr(common.settings, "app_password", "s3cret")
+    monkeypatch.setattr(auth, "session_cookie", lambda: token)
+    monkeypatch.setattr(auth, "failure_delay", lambda attempts: 0.0)
+    at = AppTest.from_file(str(APP / "Home.py"), default_timeout=TIMEOUT)
+    at.run()
+    assert not at.exception, [e.value for e in at.exception]
+    assert at.session_state[auth.AUTH_KEY] is True
+    assert at.title[0].value.endswith(", Test.")
+    assert not [t for t in at.text_input if t.key == "login_password"]
