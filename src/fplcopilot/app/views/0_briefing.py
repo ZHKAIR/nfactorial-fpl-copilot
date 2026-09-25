@@ -123,16 +123,15 @@ def watch_card(rows: list[dict[str, Any]]) -> None:
 
 
 def news_card(items: list[dict[str, Any]]) -> None:
-    """Лента важных новостей по игрокам состава: сохранённые разборы, без LLM при показе."""
+    """Лента: важные новости состава + свежие заголовки из корпуса RAG."""
     with st.container(border=True, key="card_news"):
         st.markdown(
-            ui_kit.section_label(f"Новости состава за {briefing.NEWS_DAYS} дней")
+            ui_kit.section_label(f"Новости за {briefing.NEWS_DAYS} дней")
             + (
                 ui_kit.news_ticker_html(items, fmt.PLAYER_URL)
                 if items
                 else ui_kit.text(
-                    "Важных новостей по игрокам состава нет: ни травм, ни сомнений, ни "
-                    "ротации в сохранённых разборах.",
+                    "Свежих новостей пока нет — ни по составу, ни в корпусе за эти дни.",
                     muted=True,
                 )
             ),
@@ -231,7 +230,8 @@ with right:
     watch_card(briefing.watch_rows(problems, signals))
 
 names = {p.id: p.name for p in ctx.squad or []}
-news_card(briefing.news_feed(signals, names, ui.now))
+articles = common.guarded(common.cached_recent_articles, briefing.NEWS_DAYS) or []
+news_card(briefing.briefing_news(signals, names, ui.now, articles))
 
 share = briefing.rank_share(
     (entry or {}).get("rank"), getattr(common.get_tools().bootstrap, "total_players", None)

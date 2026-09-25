@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import httpx
@@ -229,6 +229,36 @@ def save_plan_snapshot(
         save=True,
     )
     return squad_call(tools.build_gameweek_plan, inp, current_override())
+
+
+@st.cache_data(ttl=CACHE_TTL, show_spinner=False)
+def cached_recent_articles(days: int) -> list[dict[str, Any]]:
+    """Свежие статьи корпуса RAG для ленты на главной (без эмбеддингов и LLM)."""
+    cutoff = datetime.now(UTC) - timedelta(days=int(days))
+    try:
+        with session_scope() as s:
+            rows = s.execute(
+                text(
+                    "SELECT source, url, title, summary, published_at "
+                    "FROM news_articles "
+                    "WHERE published_at >= :cutoff AND source <> 'fpl_api' "
+                    "ORDER BY published_at DESC LIMIT 80"
+                ),
+                {"cutoff": cutoff},
+            ).mappings()
+            return [
+                {
+                    "source": r["source"],
+                    "url": r["url"],
+                    "title": r["title"],
+                    "summary": r["summary"] or "",
+                    "published_at": r["published_at"].isoformat() if r["published_at"] else "",
+                }
+                for r in rows
+            ]
+    except Exception:
+        log.warning("cached_recent_articles failed", exc_info=True)
+        return []
 
 
 @st.cache_data(ttl=60, show_spinner=False)

@@ -159,8 +159,8 @@ def test_briefing_page_cards_from_tools(fakes):
     # «Следить до дедлайна» — строка на игрока старта со ссылкой на карточку
     assert '<a href="/player?pid=165" target="_self">João Pedro</a>' in md
     assert "под вопросом (75 %)" in md and "fpl-watch-row" in md
-    # лента важных новостей: сохранённые разборы по составу (без LLM)
-    assert "Новости состава за 10 дней" in md and "fpl-ticker" in md
+    # лента: важные новости состава + заголовки из корпуса
+    assert "Новости за 10 дней" in md and "fpl-ticker" in md
     assert "Knee problem, 75% chance" in md
     assert all(inp.cached_only for inp in fakes.called("analyze_player_risk"))
     assert "Прогноз на GW5" in md and "лучший состав из ваших 15" in md

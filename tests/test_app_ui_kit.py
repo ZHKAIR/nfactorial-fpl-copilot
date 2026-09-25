@@ -323,6 +323,74 @@ def test_is_important_and_news_feed():
     assert feed[1]["status"] == "травма" and feed[1]["tone"] == "bad"
     assert len(feed[1]["quote"]) <= 150 and feed[1]["quote"].endswith("…")
     assert feed[1]["meta"] == "bbc · 01.01" and feed[1]["url"] == "https://n/1"
+    junk = {
+        9: risk_with(
+            9,
+            "fit",
+            "medium",
+            quote="Emerson | Ipswich Town | 5.5m | 51.0% ↑ | Unlikely to change",
+        ).model_copy(
+            update={"summary": "Emerson is unlikely to start while the other full-back keeps his place."}
+        ),
+        10: risk_with(10, "doubtful", quote="the latter seems to have the edge for now."),
+    }
+    cleaned = briefing.news_feed(junk, {9: "Emerson", 10: "Guehi"}, NOW)
+    assert [i["player"] for i in cleaned] == ["Emerson"]
+    assert "Unlikely to change" not in cleaned[0]["quote"]
+    assert "keeps his place" in cleaned[0]["quote"]
+    assert not briefing.quote_is_informative("the latter seems to have the edge for now.")
+    assert not briefing.quote_is_informative("Emerson | Ipswich Town | 5.5m | 51.0% ↑")
+
+
+def test_briefing_news_adds_league_headlines():
+    squad = {1: risk_with(1, "injured", quote="Ruled out for a month with a hamstring tear")}
+    articles = [
+        {
+            "source": "bbc_football",
+            "url": "https://bbc/1",
+            "title": "Saka ruled out of Arsenal's trip to Liverpool",
+            "summary": "Mikel Arteta will be without Bukayo Saka after a hamstring injury.",
+            "published_at": NOW.isoformat(),
+        },
+        {
+            "source": "ffscout",
+            "url": "https://ffs/table",
+            "title": "Emerson | Ipswich Town | 5.5m | 51.0%",
+            "summary": "",
+            "published_at": NOW.isoformat(),
+        },
+        {
+            "source": "sky_football",
+            "url": "https://sky/cap",
+            "title": "Haaland named captain for Manchester City",
+            "summary": "",
+            "published_at": NOW.isoformat(),
+        },
+        {
+            "source": "fpl_api",
+            "url": "https://fpl/n",
+            "title": "Knee injury - 75% chance of playing",
+            "summary": "",
+            "published_at": NOW.isoformat(),
+        },
+        {
+            "source": "bbc_football",
+            "url": "https://bbc/w",
+            "title": "Unanswered questions for English teams after Women's Champions League returns",
+            "summary": "Arsenal, Chelsea and Manchester City start bids for European glory.",
+            "published_at": NOW.isoformat(),
+        },
+    ]
+    feed = briefing.briefing_news(squad, {1: "Saka"}, NOW, articles)
+    assert feed[0]["kind"] == "squad" and feed[0]["player"] == "Saka"
+    extras = [i for i in feed if i["kind"] == "league"]
+    assert [i["player"] for i in extras] == [
+        "Saka ruled out of Arsenal's trip to Liverpool",
+        "Haaland named captain for Manchester City",
+    ]
+    assert extras[0]["id"] is None and extras[0]["status"] == "лига"
+    assert "hamstring injury" in extras[0]["quote"]
+    assert all("Women" not in i["player"] for i in extras)
 
 
 def test_watch_list_and_ticker_html():
@@ -349,10 +417,26 @@ def test_watch_list_and_ticker_html():
     }
     static = ui_kit.news_ticker_html([item, item], fmt.PLAYER_URL)
     assert 'class="fpl-ticker static"' in static and "dup" not in static
+    assert 'class="item squad bad"' in static and "важно" in static
     moving = ui_kit.news_ticker_html([item] * 4, fmt.PLAYER_URL)
     assert "animation-duration:28s" in moving and 'class="dup" aria-hidden="true"' in moving
     assert moving.count("«Out»") == 8  # вторая копия для бесшовного цикла
+    league = {
+        "id": None,
+        "kind": "league",
+        "player": "Haaland named captain",
+        "status": "лига",
+        "tone": "",
+        "quote": "City confirm the change.",
+        "meta": "sky_football · 17.09",
+        "url": "https://sky/cap",
+    }
+    html = ui_kit.news_ticker_html([league], fmt.PLAYER_URL)
+    assert 'href="https://sky/cap" target="_blank">Haaland named captain</a>' in html
+    assert "«City confirm" not in html and "City confirm the change." in html
+    assert 'class="item league"' in html and "важно" not in html
     css = theme.global_css()
+    assert ".fpl-ticker .item.squad" in css
     assert "prefers-reduced-motion" in css and "animation-play-state: paused" in css
 
 

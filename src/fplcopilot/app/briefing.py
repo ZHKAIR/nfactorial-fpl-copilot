@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping, Sequence
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from fplcopilot.agent.tools import (
@@ -333,6 +334,83 @@ def watch_rows(
 
 IMPORTANT_AVAILABILITY = frozenset({"doubtful", "injured", "suspended", "unavailable"})
 NEWS_DAYS = 10  # новости старше — не в ленте
+EXTRA_HEADLINES = 5  # сколько лиговых заголовков из корпуса добавить к важным
+PREFERRED_NEWS_SOURCES = frozenset(
+    {"bbc_football", "sky_football", "guardian_football", "ffscout"}
+)
+_HEADLINE_MARKERS = (
+    "fpl",
+    "fantasy",
+    "gameweek",
+    "injur",
+    "ruled out",
+    "doubt",
+    "return",
+    "suspend",
+    "banned",
+    "captain",
+    "deadline",
+    "boost",
+    "fixture",
+    "blank",
+    "double gw",
+    "hat-trick",
+    "hat trick",
+    "debut",
+    "recall",
+    "rotation",
+    "rested",
+    "price rise",
+    "price fall",
+    "ownership",
+    "differential",
+    "team news",
+    "line-up",
+    "lineup",
+    "dropped",
+    "out for",
+    "fit again",
+    "back in",
+)
+_CLUB_MARKERS = (
+    "arsenal",
+    "chelsea",
+    "liverpool",
+    "manchester city",
+    "man city",
+    "manchester united",
+    "tottenham",
+    "spurs",
+    "newcastle",
+    "aston villa",
+    "brighton",
+    "west ham",
+    "crystal palace",
+    "fulham",
+    "brentford",
+    "bournemouth",
+    "wolves",
+    "everton",
+    "nottingham",
+    "forest",
+    "leeds",
+    "sunderland",
+    "burnley",
+    "ipswich",
+)
+_DEMOTE_MARKERS = (
+    "women",
+    "wsl",
+    "women's",
+    "uefa",
+    "teenager",
+    "academy",
+    "non-league",
+    "cricket",
+    "rugby",
+    "nations league",
+    "sofascore nations",
+)
 
 
 def is_important(risk: PlayerRisk) -> bool:
@@ -349,7 +427,45 @@ def is_important(risk: PlayerRisk) -> bool:
 
 def _clip(text: str, n: int) -> str:
     text = " ".join((text or "").split())
+    text = re.split(r"\s+The post\s+", text, maxsplit=1)[0].strip()
     return text if len(text) <= n else text[: n - 1].rstrip(" ,.;:") + "…"
+
+
+def quote_is_informative(text: str) -> bool:
+    """Отсекает обрывки и строки из таблиц FPL («Name | Club | 5.5m | 51.0%»), которые
+    извлечение иногда кладёт в evidence.quote вместо нормальной цитаты."""
+    q = " ".join((text or "").split())
+    if len(q) < 24:
+        return False
+    if q.count("|") >= 2:
+        return False
+    if re.search(r"\d+\.?\d*\s*m\b", q, re.IGNORECASE) and "%" in q:
+        return False
+    low = q.lower()
+    if low.startswith(("the latter", "the former", "the other", "this one", "that one")):
+        return False
+    return not ("unlikely to change" in low and ("|" in q or "%" in q))
+
+
+def _parse_dt(value: Any, now: Any) -> datetime | None:
+    if isinstance(value, datetime):
+        dt = value
+    else:
+        try:
+            dt = datetime.fromisoformat(str(value))
+        except ValueError:
+            return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=getattr(now, "tzinfo", None) or UTC)
+    return dt
+
+
+def _squad_status(risk: PlayerRisk) -> tuple[str, str]:
+    status = fmt.AVAILABILITY_RU.get(risk.availability, risk.availability)
+    if risk.availability == "fit" and risk.rotation_risk in ("medium", "high"):
+        status = "риск ротации"
+    tone = "bad" if risk.availability in ("injured", "suspended", "unavailable") else "warn"
+    return status, tone
 
 
 def news_feed(
@@ -361,37 +477,35 @@ def news_feed(
     limit: int = 12,
     clip: int = 150,
 ) -> list[dict[str, Any]]:
-    """Лента важных новостей по игрокам состава из сохранённых разборов (без LLM): по каждой
-    цитате-доказательству не старше `days` дней — игрок, статус, цитата (обрезанная), источник ·
-    дата, ссылка; свежие сверху, дубли цитат убраны."""
-    from datetime import datetime, timedelta
-
+    """Важные новости по игрокам состава из сохранённых разборов (без LLM): информативные
+    цитаты не старше `days` дней; если все цитаты игрока — мусор, берём summary разбора.
+    Свежие сверху, дубли убраны."""
     cutoff = now - timedelta(days=days)
     seen: set[tuple[int, str]] = set()
-    items = []
+    items: list[dict[str, Any]] = []
+    covered: set[int] = set()
     for pid, risk in signals.items():
         if not is_important(risk):
             continue
-        status = fmt.AVAILABILITY_RU.get(risk.availability, risk.availability)
-        if risk.availability == "fit" and risk.rotation_risk in ("medium", "high"):
-            status = "риск ротации"
-        tone = "bad" if risk.availability in ("injured", "suspended", "unavailable") else "warn"
+        status, tone = _squad_status(risk)
+        latest: tuple[Any, Any] | None = None
         for ev in risk.evidence:
-            try:
-                published = datetime.fromisoformat(str(ev.published_at))
-            except ValueError:
+            published = _parse_dt(ev.published_at, now)
+            if published is None or published < cutoff:
                 continue
-            if published.tzinfo is None:
-                published = published.replace(tzinfo=now.tzinfo)
-            if published < cutoff or not ev.quote:
+            if latest is None or published > latest[0]:
+                latest = (published, ev)
+            if not ev.quote or not quote_is_informative(ev.quote):
                 continue
             key = (pid, ev.quote.strip()[:80])
             if key in seen:
                 continue
             seen.add(key)
+            covered.add(pid)
             items.append(
                 {
                     "id": pid,
+                    "kind": "squad",
                     "player": names.get(pid, risk.player),
                     "status": status,
                     "tone": tone,
@@ -401,10 +515,123 @@ def news_feed(
                     "_at": published,
                 }
             )
+        if pid not in covered and latest is not None and quote_is_informative(risk.summary or ""):
+            published, ev = latest
+            items.append(
+                {
+                    "id": pid,
+                    "kind": "squad",
+                    "player": names.get(pid, risk.player),
+                    "status": status,
+                    "tone": tone,
+                    "quote": _clip(risk.summary, clip),
+                    "meta": f"{ev.source} · {ev.date}",
+                    "url": ev.url,
+                    "_at": published,
+                }
+            )
     items.sort(key=lambda i: i["_at"], reverse=True)
     for i in items:
         i.pop("_at")
     return items[:limit]
+
+
+def _headline_score(title: str, source: str, published: datetime, now: Any) -> float:
+    low = title.lower()
+    score = sum(3.0 for mark in _HEADLINE_MARKERS if mark in low)
+    if any(club in low for club in _CLUB_MARKERS):
+        score += 2.0
+    if source == "ffscout":
+        score += 4.0
+    elif source in PREFERRED_NEWS_SOURCES:
+        score += 2.0
+    age_h = max((now - published).total_seconds() / 3600.0, 0.0)
+    if age_h < 36:
+        score += 2.0
+    elif age_h < 72:
+        score += 1.0
+    return score + min(len(title), 80) / 80.0
+
+
+def league_headlines(
+    articles: Sequence[Mapping[str, Any]],
+    now: Any,
+    *,
+    days: int = NEWS_DAYS,
+    limit: int = EXTRA_HEADLINES,
+    exclude_urls: set[str] | None = None,
+    clip: int = 150,
+) -> list[dict[str, Any]]:
+    """4–5 свежих заголовков из корпуса RAG: не статусы FPL API и не табличные строки,
+    предпочтение — BBC / Sky / Guardian / FFScout и темы вроде травм, капитана, календаря."""
+    cutoff = now - timedelta(days=days)
+    skip = exclude_urls or set()
+    seen_titles: set[str] = set()
+    ranked: list[tuple[float, dict[str, Any]]] = []
+    for art in articles:
+        source = str(art.get("source") or "")
+        if source in {"fpl_api", "google_news"}:
+            continue
+        title = " ".join(str(art.get("title") or "").split())
+        url = str(art.get("url") or "")
+        if not title or url in skip or not quote_is_informative(title):
+            continue
+        if any(mark in title.lower() for mark in _DEMOTE_MARKERS):
+            continue
+        published = _parse_dt(art.get("published_at"), now)
+        if published is None or published < cutoff:
+            continue
+        key = title.lower()[:72]
+        if key in seen_titles:
+            continue
+        seen_titles.add(key)
+        summary = " ".join(str(art.get("summary") or "").split())
+        quote = ""
+        if summary and quote_is_informative(summary) and summary.lower() != title.lower():
+            quote = _clip(summary, clip)
+        ranked.append(
+            (
+                _headline_score(title, source, published, now),
+                {
+                    "id": None,
+                    "kind": "league",
+                    "player": _clip(title, 110),
+                    "status": "лига",
+                    "tone": "",
+                    "quote": quote,
+                    "meta": f"{source} · {published.strftime('%d.%m')}",
+                    "url": url,
+                    "_at": published,
+                },
+            )
+        )
+    ranked.sort(key=lambda row: (row[0], row[1]["_at"]), reverse=True)
+    out = []
+    for _score, item in ranked[:limit]:
+        item.pop("_at")
+        out.append(item)
+    return out
+
+
+def briefing_news(
+    signals: Mapping[int, PlayerRisk],
+    names: Mapping[int, str],
+    now: Any,
+    articles: Sequence[Mapping[str, Any]] | None = None,
+    *,
+    days: int = NEWS_DAYS,
+    extra: int = EXTRA_HEADLINES,
+) -> list[dict[str, Any]]:
+    """Главная лента: важные новости состава + до `extra` интересных заголовков из корпуса."""
+    squad = news_feed(signals, names, now, days=days, limit=8)
+    extras = league_headlines(
+        articles or [],
+        now,
+        days=days,
+        limit=extra,
+        exclude_urls={str(i["url"]) for i in squad if i.get("url")},
+    )
+    return squad + extras
 
 
 def lead_text(

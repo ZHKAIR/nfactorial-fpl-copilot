@@ -331,12 +331,33 @@ def news_ticker_html(items: Sequence[Mapping[str, Any]], player_url: str) -> str
     анимации."""
 
     def one(i: Mapping[str, Any]) -> str:
-        link = f' · <a href="{esc(i["url"])}" target="_blank">источник</a>' if i.get("url") else ""
+        url = str(i.get("url") or "")
+        link = f' · <a href="{esc(url)}" target="_blank">источник</a>' if url else ""
+        pid = i.get("id")
+        name = esc(str(i.get("player") or ""))
+        if pid is not None:
+            name_html = f'<a href="{player_url.format(pid=pid)}" target="_self">{name}</a>'
+        elif url:
+            name_html = f'<a href="{esc(url)}" target="_blank">{name}</a>'
+        else:
+            name_html = f"<strong>{name}</strong>"
+        status = str(i.get("status") or "")
+        status_html = f'<span class="st">{esc(status)}</span>' if status else ""
+        quote = str(i.get("quote") or "")
+        important = i.get("kind") != "league"
+        if quote and important:
+            quote_html = f"<p>«{esc(quote)}»</p>"
+        elif quote:
+            quote_html = f"<p>{esc(quote)}</p>"
+        else:
+            quote_html = ""
+        mark = '<span class="imp">важно</span>' if important else ""
+        tone = esc(str(i.get("tone") or ""))
+        cls = f"item squad {tone}".strip() if important else "item league"
         return (
-            f'<div class="item"><div class="h"><span class="dot {esc(i["tone"])}"></span>'
-            f'<a href="{player_url.format(pid=i["id"])}" target="_self">{esc(i["player"])}</a>'
-            f'<span class="st">{esc(i["status"])}</span></div>'
-            f"<p>«{esc(i['quote'])}»</p><small>{esc(i['meta'])}{link}</small></div>"
+            f'<div class="{cls}"><div class="h"><span class="dot {tone}"></span>'
+            f"{name_html}{status_html}{mark}</div>{quote_html}"
+            f"<small>{esc(str(i.get('meta') or ''))}{link}</small></div>"
         )
 
     body = "".join(one(i) for i in items)
@@ -860,9 +881,29 @@ a.fpl-token:hover > strong { box-shadow: 0 0 0 2px var(--fpl-brand); }
 .fpl-bench .fpl-token > small em { color: var(--fpl-text); }
 
 /* карточки туров плана */
+.fpl-ticker .item.squad {
+  padding: 11px 12px 11px 13px; margin: 8px 0; border: 1px solid var(--fpl-warn-line);
+  border-radius: 10px; background: var(--fpl-warn-bg); box-shadow: inset 3px 0 0 var(--fpl-warn);
+}
+.fpl-ticker .item.squad.bad {
+  background: var(--fpl-bad-bg); border-color: color-mix(in srgb, var(--fpl-bad) 35%, var(--fpl-line));
+  box-shadow: inset 3px 0 0 var(--fpl-bad);
+}
+.fpl-ticker .item.league { opacity: 0.92; }
 .fpl-gw-grid { display: flex; gap: 12px; align-items: stretch; overflow-x: auto; padding: 2px 0 10px; }
 .fpl-gw {
+.fpl-ticker .item.squad .h a { font-weight: 750; }
   min-width: 210px; flex: 1; background: var(--fpl-surface); border: 1px solid var(--fpl-line-strong);
+.fpl-ticker .item.squad .st { color: var(--fpl-warn); }
+.fpl-ticker .item.squad.bad .st { color: var(--fpl-bad); }
+.fpl-ticker .imp {
+  font-size: 10.5px; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--fpl-warn); background: color-mix(in srgb, var(--fpl-warn) 12%, transparent);
+  border-radius: 999px; padding: 2px 7px;
+}
+.fpl-ticker .item.squad.bad .imp {
+  color: var(--fpl-bad); background: color-mix(in srgb, var(--fpl-bad) 12%, transparent);
+}
   border-radius: 12px; display: flex; flex-direction: column; box-shadow: var(--fpl-shadow);
 }
 .fpl-gw.current { border-color: var(--fpl-accent-line); box-shadow: inset 0 3px var(--fpl-brand); }
