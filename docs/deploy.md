@@ -15,7 +15,8 @@
 ## 1. Что арендовать
 
 - Любой облачный VPS: **Hetzner Cloud** (Create Server → Falkenstein / Nuremberg / Helsinki),
-  Gcore, DigitalOcean и т.п. Живое демо работает на Gcore Cloud (x86_64, Ubuntu 26.04 LTS).
+  Gcore, DigitalOcean и т.п. Живое демо работает на Hetzner VPS (2 vCPU / 4 GB, Ubuntu 26.04 LTS):
+  https://fpl-copilot.duckdns.org и https://178.104.144.124.sslip.io.
 - Образ: **Ubuntu 24.04 или 26.04 LTS**.
 - Тариф: **2 vCPU / 4 GB RAM** — x86 (линейка CX, например CX22) или ARM (линейка CAX,
   например CAX11). Подходят оба: образ собирается на сервере под его архитектуру
@@ -180,7 +181,7 @@ app 1.6 GB, ingest 768 MB, caddy 128 MB; на сервере с 8 GB подни�
 | «Суточный лимит запросов к ИИ исчерпан» | увеличьте `APP_DAILY_LLM_LIMIT` в `.env` и `docker compose -f docker-compose.prod.yml up -d` |
 | кончилась память при сборке на 2 GB | используйте тариф 4 GB или добавьте swap: `sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile` |
 
-## Проверено локально (25.09.2026)
+## Проверено локально
 
 Стек поднят в изолированном проекте `docker compose -f docker-compose.prod.yml -p fplc-prodtest`
 на Apple Silicon (arm64) с `DOMAIN=localhost` (внутренний CA Caddy) и портами 18080/18443: дамп
@@ -188,4 +189,4 @@ app 1.6 GB, ingest 768 MB, caddy 128 MB; на сервере с 8 GB подни�
 статей, 308 сигналов, 3216 строк истории), `app` healthy, `https://localhost:18443/_stcore/health`
 = 200, экран входа → неверный пароль → «Неверный пароль», верный → «Брифинг» с живыми данными;
 один цикл `ingest --once --limit 2` — 9 новых статей. Образ `fpl-copilot:prod` — 1.36 GB.
-После проверки тестовый стек и его тома удалены (`down -v`).
+Тестовый стек удаляется вместе с томами: `docker compose -f docker-compose.prod.yml -p fplc-prodtest down -v`.

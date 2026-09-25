@@ -1,16 +1,16 @@
 # Evals: golden dataset v1, automated RAG metrics, A/B #1 (retrieval modes), A/B #2 (RAG v2), A/B #3 (summary check, prompt v3, reproducible corpus), A/B #4 (form_notes, prompt v4), hyperparameters, model comparison, chat A/B, live GW5 xPts test
 
-Step 5a. Everything lives in `evals/` (package) + `evals/golden/` (labels) + `evals/results/` (JSON
+Everything lives in `evals/` (package) + `evals/golden/` (labels) + `evals/results/` (JSON
 evidence). §3 (A/B #1) uses `evals/results/20260917T091040Z_retrieval.json` and
-`evals/results/20260917T091040Z_signals.json` (run 17 Sep 2026 09:10Z on commit `5f33ce9`, corpus
-snapshot: 1102 articles / 1622 chunks visible at `as_of`, `max(published_at)` = 08:30Z, 198 status snapshots).
+`evals/results/20260917T091040Z_signals.json` (corpus snapshot: 1102 articles / 1622 chunks visible at
+`as_of`, `max(published_at)` = 08:30Z, 198 status snapshots).
 §4 (A/B #2, RAG v2) uses the `20260917T09515*`–`20260917T1014*` files listed there. §7
 (hyperparameters: temperature / top_p / max_tokens / determinism) and §8 (model comparison) use the
-`20260917T1157*`–`20260917T1206*` files (`evals.run_hparams`, `evals.run_models`, commit `49b2b82`,
+`20260917T1157*`–`20260917T1206*` files (`evals.run_hparams`, `evals.run_models`,
 corpus 1109 / 1639); the per-role decisions they support are collected in
-[`docs/LLM_CHOICE.md`](LLM_CHOICE.md). §4.5–§4.6 (23 Sep) use `20260923T18*` files; since §4.5 every
-`evals.run_rag` run is pinned to the corpus the system had at `as_of` (`--corpus-cutoff`, default `as_of`),
-so reruns reproduce the numbers instead of drifting with the live corpus.
+[`docs/LLM_CHOICE.md`](LLM_CHOICE.md). §4.5–§4.6 use `20260923T18*` files. `evals.run_rag` pins a run to
+the corpus the system had at `as_of` (`--corpus-cutoff`, default `as_of`), so reruns reproduce the
+numbers instead of drifting with the live corpus; the `20260917T*` files were produced without a cutoff (§5).
 
 ```
 golden/*.jsonl ──▶ evals.run_rag [--prompt v1..v4 --retrieval v1|v2 --abstain on|off --corpus-cutoff as_of|<ISO>|none]
@@ -18,7 +18,7 @@ golden/*.jsonl ──▶ evals.run_rag [--prompt v1..v4 --retrieval v1|v2 --abst
                                   ├─ retrieval: dedupe chunks→articles, P@k R@k hit@k MRR, top-1 score, distinct articles, latency
                                   ├─ signals:   availability acc / macro-F1, ranges, evidence, return GW (+source), abstentions, LLM calls, cost
                                   ├─ faithfulness: gpt-4o-mini judge over (summary, quotes, FPL status)
-                                  └─ results/<UTC>_<suite>_p<prompt>-r<retrieval>-a<on|off>.json (rows + aggregates + commit + corpus + arm config)
+                                  └─ results/<UTC>_<suite>_p<prompt>-r<retrieval>-a<on|off>.json (rows + aggregates + git_commit + corpus + arm config)
 ```
 
 ## 1. Golden dataset
@@ -200,7 +200,7 @@ line, and the reranker's extra recall arrives as *more chunks of the same articl
 **Decision.**
 - `hybrid_rerank` **stays the default for the interactive path** (one player, one question): +0.7 s on a
   ~2.8 s request is acceptable, recall/freshness are better, and the rerank score is the only usable
-  abstention signal we have (planned: threshold ≈ 0.2 → `unknown` without an LLM call, saving the cost
+  abstention signal we have (candidate for A/B #2: threshold ≈ 0.2 → `unknown` without an LLM call, saving the cost
   on no-coverage players).
 - **`dense` becomes the batch-path mode** (refreshing signals for hundreds of players before a deadline):
   no accuracy loss on this set, 3× cheaper retrieval (0.7 s × 600 players ≈ 7 min saved per refresh).
@@ -256,9 +256,9 @@ article-level recall/diversity and top-1 freshness for `hybrid_rerank` at no lat
 `ms-marco-MiniLM-L-12-v2`, gpt-4o-mini T = 0, one retriever per mode, judge budget 20 per mode.
 Corpus after the matcher re-tag: 1104 articles / 1625 chunks visible at `as_of` for the v1 arm
 (`max(published_at)` 09:08Z); the ingest loop back-filled **one** more pre-`as_of` article (1105 / 1630)
-before the v2 arms ran — each results file records what it saw. Commit `f40ff5c` (working tree of this
-change). Reproducible on 23.09 with `--corpus-cutoff 2026-09-17T10:14:17Z`: the shipped arm replays with
-the same prior on 27/27 rows and the same chunks on 25/27, at 24–25/27 (§4.5). Arms:
+before the v2 arms ran — each results file records what it saw. Reproducible with
+`--corpus-cutoff 2026-09-17T10:14:17Z`: the shipped arm replays with the same prior on 27/27 rows and the
+same chunks on 25/27, at 24–25/27 (§4.5). Arms:
 
 | arm | prompt | retrieval | abstain | file |
 |---|---|---|---|---|
@@ -414,61 +414,61 @@ Files: [`prompts/v1/signal_extraction.system.md`](../src/fplcopilot/prompts/v1/s
 | Rule 7: verbatim *including typos, prices and brackets*, with the "(£7.8m)" example | `align_quote` had to repair quotes where the model dropped "(£7.8m)" or fixed typos | single quote fixes remain on 4–5 rows per mode (Foden, João Pedro, Porro, Henderson, Haaland) and one verbatim drop cost the Timber row — quoting long FFScout sentences remains imperfect |
 | Rule 11: do not restate the request as a fact ("for Gameweek 5"), name source/date, state source disagreements; user prompt no longer says "for GW{n}" | judge flagged "for Gameweek 5" as unsupported (it came from the request); FPL "foot" vs Goal.com "ankle" repeated without comment | summaries name source and date; the foot/ankle conflict is still repeated rather than flagged |
 
-### 4.5 A/B #3 (23.09): summary check + prompt v3 — and why the first run showed 0.741
+### 4.5 A/B #3: summary check + prompt v3 — and why the first run showed 0.741
 
 **Hypothesis.** (1) A deterministic check of the signal summary (`rag/summary_check.py`: dates, numbers and
 proper names only from the cited documents, the FPL prior and the GW calendar) removes unsupported
-sentences — live example Cherki 23.09: "… scoring in the last match against Sunderland (BBC, 2026-09-20)"
+sentences — live example (Cherki): "… scoring in the last match against Sunderland (BBC, 2026-09-20)"
 with no cited document saying so — without touching availability. (2) Prompt v3 (= v2 + rule 13:
 relative periods such as "the next two matches" count from the document's date; the FPL date wins)
 does not lower availability accuracy.
 
 **The first run (0.741) measured a leak, not the arms.** The first A/B #3 files
-(`20260923T175751Z_…-nocheck`, `…175931Z_…-check`, `…180114Z_pv3-…-check`) gave 0.741 / 0.667 / 0.741 and
-attributed the drop from 0.852 to "the corpus grew". Golden `as_of` is fixed and retrieval filters
-`published_at <= as_of`, so growth alone cannot explain it. Row-by-row against the 17.09 shipped arm
-(`20260917T101417Z`), two inputs had changed for the same `as_of`:
+(`20260923T175751Z_…-nocheck`, `…175931Z_…-check`, `…180114Z_pv3-…-check`) gave 0.741 / 0.667 / 0.741,
+down from 0.852. Golden `as_of` is fixed and retrieval filters `published_at <= as_of`, so corpus growth
+alone cannot explain the drop. Row-by-row against the A/B #2 shipped arm (`20260917T101417Z`), two inputs
+had changed for the same `as_of`:
 
 1. **FPL prior from the future — code bug, main cause (−3 rows).** `fpl_prior` for a past `as_of` took the
    latest `player_status_snapshots` row with `coalesce(news_added, snapshot_at) <= as_of`. FPL does **not**
    update `news_added` when it changes the chance or the text or clears the news (i → a), so a snapshot taken
    after `as_of` keeps an old `news_added`, passes the filter and wins the `id DESC` tie. 34 of the 55
-   snapshots taken after 17.09 09:00Z leak this way; 7 golden rows got a future prior (priors identical on
+   snapshots taken after `as_of` leak this way; 7 golden rows got a future prior (priors identical on
    20/27 rows between the buggy and the fixed run, chunks identical on 27/27):
    Caicedo `i/0 "Expected back 18 Sep"` → `d/50 "50% chance"` (snapshot 17.09 13:53Z, `news_added` 30.08),
    Doku `i "Expected back 20 Sep"` → `a/100` (22.09, `news_added` 18.08), Amenda `d/50` → `i/0 "Unknown
    return date"` (22.09), Mosquera, Gomes, Tonali `d` → `a`, Reinildo `s` → `a`. Labels flipped on three:
    Caicedo → doubtful, Doku → fit, Amenda → injured; return GW exact 8/8 → 6–7/8 (the new texts carry no
-   date). The 17.09 runs were clean only because those snapshots did not exist yet. **Fix:** the time of an
-   FPL state is `snapshot_at` (when the ingest observed it); the prior is the last snapshot observed by
-   `as_of` (`rag/extract.py: prior_from_snapshots`, tests `tests/test_asof_replay.py`). The same mistake sat
-   in `core/signals.py` (rule "FPL status `a` newer than the signal cancels it" never fired for a cleared
-   status because `changed_at` was the old `news_added`) — fixed the same way.
+   date). The A/B #2 runs were clean only because those snapshots did not exist when they ran. **Fix:** the
+   time of an FPL state is `snapshot_at` (when the ingest observed it); the prior is the last snapshot
+   observed by `as_of` (`rag/extract.py: prior_from_snapshots`, tests `tests/test_asof_replay.py`).
+   `core/signals.py` had the same mistake (the rule "FPL status `a` newer than the signal cancels it" could
+   not fire for a cleared status while `changed_at` was the old `news_added`) and uses `snapshot_at` too.
 2. **Articles published before `as_of` but collected later — data (−1 row).** 14 articles / 61 chunks with
-   `published_at <= as_of` were fetched after the 17.09 run (10:14Z): 1105 + 14 = 1119, exactly the count in
-   the 23.09 files. Two are FFScout "FPL notes" with RSS `pubDate` 17.09 01:00Z / 01:30Z that the 30-minute
-   ingest loop first saw at 16:53Z / 17:23Z, while FFScout items with later `pubDate`s were picked up within
-   0.2–2 h — the `pubDate` is back-dated and the articles went public after `as_of`. Article 2286 names van
+   `published_at <= as_of` were fetched after the A/B #2 cutoff (2026-09-17T10:14:17Z): 1105 + 14 = 1119,
+   exactly the count in the first A/B #3 files. Two are FFScout "FPL notes" with RSS `pubDate`
+   17.09 01:00Z / 01:30Z that the 30-minute ingest loop first saw at 16:53Z / 17:23Z, while FFScout
+   items with later `pubDate`s were picked up within 0.2–2 h — the `pubDate` is back-dated and the articles went public after `as_of`. Article 2286 names van
    Ewijk ("fully rested in midweek") → the `no_coverage` row becomes `fit` (false evidence 0/4 → 1/4,
    abstentions 4 → 3), and the new chunks changed the retrieved top-8 of 11/27 rows.
-3. **Rejected.** Retrieval / matcher code: `retrieve.py`, `entity_matcher.py` unchanged since A/B #2
-   (`37ddcbe`); no `--rematch` after 17.09 (the only one ran just before the A/B #2 runs). Code: commit
-   `52936c7` in a temporary worktree against the same DB (`20260923T181616Z_…-oldcode52936c7-livedb.json`)
-   reproduces the 23.09 v2 run row for row — identical chunks, prior and label on 27/27 — so the
-   uncommitted changes of 23.09 are not the cause. Golden: `signals.jsonl` unchanged since `37ddcbe`.
+3. **Rejected.** Retrieval / matcher code: `retrieve.py`, `entity_matcher.py` are unchanged from A/B #2;
+   the only `--rematch` ran just before the A/B #2 runs. Code: the committed revision named in the file
+   (`20260923T181616Z_…-oldcode52936c7-livedb.json`), run in a separate worktree against the same DB,
+   reproduces the first-run v2 arm row for row — identical chunks, prior and label on 27/27 — so the
+   uncommitted working-tree changes are not the cause. Golden: `signals.jsonl` is unchanged from A/B #2.
    LLM variation: ±1–2 rows, below.
 
 **Reproducible corpora.** `evals.run_rag --corpus-cutoff` also requires `news_articles.fetched_at <= cutoff`
 (dense SQL and BM25 corpus) and `snapshot_at <= cutoff` (prior); without a cutoff the production SQL is
 unchanged. Default `as_of` = **operational replay**: only what the system had collected at each row's
 `as_of` (1102 articles / 1622 chunks — exactly the A/B #1 corpus). `2026-09-17T10:14:17Z` = the A/B #2
-corpus (1105 / 1630). `none` = **research reconstruction**: everything published by `as_of` in today's
+corpus (1105 / 1630). `none` = **research reconstruction**: everything published by `as_of` in the live
 corpus — it drifts with every back-fill and back-dated `pubDate` and can contain what was not public at
 `as_of`. Replaying the A/B #2 shipped arm on its own corpus (`20260923T182050Z_pv2-…-cut0917T1014-nocheck`):
 prior identical 27/27, chunks identical 25/27 (Dasilva, Botman differ in the 8th chunk only), labels
 identical 25/27; the two flips (Timber doubtful → fit, Vicario unknown → unavailable) have identical chunks
-and prior — run-to-run variation of gpt-4o-mini over six days (§7.1: 1 of 23 within a day). The 17.09
-number 0.852 reproduces as 0.889–0.926.
+and prior — run-to-run variation of gpt-4o-mini between runs six days apart (§7.1: 1 of 23 between
+same-day runs). The A/B #2 number 0.852 reproduces as 0.889–0.926.
 
 **Arms on identical data** (hybrid_rerank, retrieval v2, abstention on, no judge; strict · lenient of 27):
 
@@ -498,17 +498,17 @@ the golden runs (Dasilva) removed "(document id 3055)", an internal chunk id lea
 text; on the live Cherki signal the check removed the unsupported "Carabao / Norwich" and "Sunderland,
 2026-09-20" sentences (docs/rag.md «Новости в советах»).
 
-**Decision.** Defaults unchanged: prompt v3 (`RAG_PROMPT_VERSION=v3`) and the summary check
+**Decision.** Defaults: prompt v3 (`RAG_PROMPT_VERSION=v3`) and the summary check
 (`RAG_SUMMARY_CHECK=true`); v1 / v2 remain eval arms (`--prompt v2`). Evals default to the operational
 replay, so a rerun reproduces the table above instead of drifting with the corpus; the first-run files stay
 in `evals/results/` as evidence of the leak. Not measured by golden: the relative-date rule of v3 itself
 (no golden row has a stale "next N matches" phrase) — shown only on the live Cherki example. Form quotes
 as availability evidence ("Rayan Cherki scored") — §4.6.
 
-### 4.6 A/B #4 (23.09): `form_notes` — form and role apart from availability evidence (prompt v4)
+### 4.6 A/B #4: `form_notes` — form and role apart from availability evidence (prompt v4)
 
 **Problem.** For fit players the model cites form as availability evidence and sets confidence 1.0. Live
-23.09 (prompt v3, `rag.signal --no-save`): Saka `fit`, confidence **1.00**, all three quotes are form —
+(prompt v3, `rag.signal --no-save`): Saka `fit`, confidence **1.00**, all three quotes are form —
 "have found some early-season form", "looks back to his dangerous best with the ball", "forming a rather
 terrifying … triumvirate when they all start firing"; Cherki `fit`, 0.80, quotes "Rayan Cherki scored" and
 "can boast as many goal involvements as Haaland". Golden: Haaland `fit` at 1.0 on "the only player to
@@ -596,8 +596,8 @@ were injuries, bans or rest filed as "role"/"form", and the both-fields rule rem
 (`…185235Z_…-check-r2rep{1,2}.json`, James and Raya `unknown`). The final v4 keeps rules 1–13 of v3
 verbatim apart from the four insertions.
 
-**Live check** (`RAG_PROMPT_VERSION=v4 uv run python -m fplcopilot.rag.signal --player … --timings --no-save`,
-23.09 ~19:00Z; before = the same command with v3 at 18:29Z):
+**Live check** (`RAG_PROMPT_VERSION=v4 uv run python -m fplcopilot.rag.signal --player … --timings --no-save`;
+before = the same command with v3, about 30 minutes earlier on the live corpus):
 
 | player | v3 (before) | v4 (after) |
 |---|---|---|
@@ -621,14 +621,15 @@ re-check (the James failure), or run v4 on gpt-5.4-mini (§8.1: verbatim quotes,
 - n = 27 / 18: one flipped row ≈ 4–7 pp. Treat differences below ~10 pp as noise unless the per-row
   diff (`rows[]` in the results JSON) shows a consistent pattern.
 - Corpus is live: the ingest loop back-fills and some feeds back-date `pubDate` (FFScout, §4.5), so the
-  set with `published_at <= as_of` grows after labelling. Since §4.5 runs are pinned by `--corpus-cutoff`
-  (default `as_of`: `fetched_at` / `snapshot_at` <= `as_of`); files before 23 Sep were not, and §7–§8
-  (17 Sep 11:57Z) also saw the leaky FPL prior of §4.5 for one row (Amenda `d/25` from 11:23Z instead of
-  `d/50`). The cutoff cannot undo re-tagging (`--rematch` rewrites `players` in place) or deleted rows.
-- The FPL status before the ingest started (first snapshot 17 Sep 07:34Z) is approximated by the first
-  observation if its news predates `as_of` — exact only from 17 Sep on.
+  set with `published_at <= as_of` grows after labelling. `--corpus-cutoff` pins a run (default `as_of`:
+  `fetched_at` / `snapshot_at` <= `as_of`); the §4.5–§4.6 replay files use it, the `20260917T*` files of
+  §3, §4.1–§4.4 and §7–§8 were produced without it, and §7–§8 also saw the leaky FPL prior of §4.5 for one
+  row (Amenda `d/25` from a snapshot at 11:23Z instead of `d/50`). The cutoff cannot undo re-tagging
+  (`--rematch` rewrites `players` in place) or deleted rows.
+- The FPL status before the ingest started (first snapshot 2026-09-17T07:34Z) is approximated by the first
+  observation if its news predates `as_of` — exact only from that snapshot on.
 - Latency measured on one laptop, warm process, sequential; the embedding call is network-bound.
-- Faithfulness judge is same-family (gpt-4o-mini) and quote-only; no human calibration of the judge yet.
+- Faithfulness judge is same-family (gpt-4o-mini) and quote-only; no human calibration of the judge.
 - Cost is an estimate from token counts × list price.
 - T = 0 is not determinism: the same chunks under a different prompt can flip one quote (Timber, §4.1).
   Single-row differences between arms need a repeat run before they count as a trend.
@@ -651,7 +652,7 @@ uv run python -m evals.run_rag --suite retrieval --modes hybrid_rerank,dense --r
 # the score gate is a setting, not a flag: RAG_ABSTAIN_SCORE=0.2 uv run python -m evals.run_rag ... --tag score02
 
 # corpus pinning (§4.5): default --corpus-cutoff as_of (operational replay, reproducible);
-# the A/B #2 corpus; today's corpus (research reconstruction — drifts, report separately)
+# the A/B #2 corpus; the live corpus (research reconstruction — drifts, report separately)
 uv run python -m evals.run_rag --suite signals --modes hybrid_rerank --prompt v2 --no-judge --corpus-cutoff 2026-09-17T10:14:17Z
 RAG_SUMMARY_CHECK=false uv run python -m evals.run_rag --suite signals --modes hybrid_rerank --prompt v2 --no-judge --tag nocheck
 uv run python -m evals.run_rag --suite signals --modes hybrid_rerank --prompt v3 --no-judge --corpus-cutoff none --tag livecorpus
@@ -692,15 +693,15 @@ Requirements: Postgres with the indexed corpus (`docker compose up -d db`, inges
 applied — `007_signals_v2.sql` adds `player_signals.abstained`, `010_signal_form_notes.sql` adds
 `player_signals.form_notes`), `OPENAI_API_KEY` in `.env` (embeddings,
 extraction, judge). `player_signals` is never written by evals. Results land in
-`evals/results/<UTC timestamp>_<suite>_<arm>.json`; the files for the runs reported above are committed as
-evidence. After changing the entity matcher run `uv run python -m fplcopilot.rag.ingest --rematch` first
+`evals/results/<UTC timestamp>_<suite>_<arm>.json`; the files for the runs reported above are kept in the
+repo as evidence. After changing the entity matcher run `uv run python -m fplcopilot.rag.ingest --rematch` first
 (re-tags articles and copies the tags to chunks) and re-check the `no_coverage` rows.
 
 ## 7. Hyperparameters: temperature, top_p, max_tokens, determinism
 
-Runner `evals/run_hparams.py`. Two suites, run 17 Sep 2026 11:57–12:05Z on commit `49b2b82`
-(working tree of this change), shipped defaults otherwise (prompt v2, retrieval v2, abstention on,
-`hybrid_rerank`, k = 8). Prices for all cost figures: `run_hparams.PRICES` (OpenAI list, 17 Sep 2026).
+Runner `evals/run_hparams.py`. Two suites; all other settings are the A/B #2 decision (prompt v2,
+retrieval v2, abstention on, `hybrid_rerank`, k = 8). Prices for all cost figures: `run_hparams.PRICES`
+(OpenAI list prices at run time, also stored in each results file).
 Total spend for this section ≈ $0.27 (extraction $0.10, explain grid $0.07 + replicate $0.06,
 re-judge $0.05).
 
@@ -786,10 +787,10 @@ Files: `20260917T115722Z_hparams_explain.json` (grid, run 1, with the captured r
 fit for GW5?" (player_status), "Should I sell Palmer?" (transfer), "Who should I captain this week?"
 (captain), "Plan my transfers for the next 5 gameweeks" (plan), "Compare Haaland and Salah for the
 next 3 gameweeks" (compare_players), "Who should I start this week?" (lineup). Grid: T ∈ {0, 0.2, 0.7}
-× max_tokens ∈ {300, 600, 1000} plus the production cell (0.2, 1400). 60 answers per run. Explain
-prompt **v1** (`agent/prompts/v1/explain.system.md`, the only version at run time; an agent prompt v2
-is being introduced in parallel — the runner records the active `AGENT_PROMPT_VERSION`, so rerunning
-the grid gives the v1 → v2 comparison on the same captured facts).
+× max_tokens ∈ {300, 600, 1000} plus the production cell of the run (0.2, 1400). 60 answers per run.
+Explain prompt **v1** (`agent/prompts/v1/explain.system.md`); the runner records the active
+`AGENT_PROMPT_VERSION`, so rerunning the grid with another prompt version compares it with v1 on the
+same captured facts.
 
 Metrics per answer: `finish_reason` (`length` = truncated; the SDK raises and in production the
 explain node falls back to a JSON dump of the facts), the graph's own validator
@@ -805,7 +806,7 @@ iff evidence), length (completion tokens, words), faithfulness judge over (FACTS
 | 300 | 36 | **36 (100 %)** | – | – | – | – | – | $0.00062 | 2.8 s |
 | 600 | 36 | **9 (25 %)** | 0.926 | 0.07 | 431 | 171 | 0.893 (14) | $0.00073 | 4.3 s |
 | 1000 | 36 | 0 | 0.833 | 0.17 | 480 | 192 | 0.917 (18) | $0.00073 | 4.1 s |
-| 1400 (shipped) | 12 | 0 | 0.750 | 0.25 | 470 | 191 | 0.833 (6) | $0.00072 | 3.6 s |
+| 1400 (production cell) | 12 | 0 | 0.750 | 0.25 | 470 | 191 | 0.833 (6) | $0.00072 | 3.6 s |
 
 Completed answers span 328–736 completion tokens (median 441) for the prompt's 150–350 words plus a
 table. The 9 truncations at 600 are all transfer (565–610 tokens) and lineup (581–736) answers — the
@@ -816,7 +817,7 @@ two intents with a routes table or a full XI.
 | temperature | answers | validator pass | violations / answer | placeholder citations | unknown numbers | unknown names | completion tokens | judge gpt-4.1-mini | judge gpt-4o-mini | latency p50 |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 0.0 | 12 | **0.917** | **0.08** | 1 | 0 | 0 | 473 | 0.917 | 0.583 | 3.8 s |
-| 0.2 (shipped) | 24 | 0.792 | 0.21 | 5 | 0 | 0 | 476 | 0.875 | 0.604 | 4.0 s |
+| 0.2 (production cell) | 24 | 0.792 | 0.21 | 5 | 0 | 0 | 476 | 0.875 | 0.604 | 4.0 s |
 | 0.7 | 12 | 0.750 | 0.25 | 2 | 1 | 0 | 486 | 0.917 | 0.583 | 4.1 s |
 
 Per query (both runs, completed answers): captain 14/14 and plan 14/14 pass the validator; transfer
@@ -825,12 +826,13 @@ Per query (both runs, completed answers): captain 14/14 and plan 14/14 pass the 
 same cell differ by 0–2 validator verdicts; the production cell went 4/6 and 5/6.
 
 **Decision.**
-- **max_tokens: 1400 stays.** 300 is unusable (100 % truncation), 600 loses a quarter of the answers,
+- **max_tokens: 1400 for this prompt** (prompts with the candidate-news block use 2000, `agent/llm.py`).
+  300 is unusable (100 % truncation), 600 loses a quarter of the answers,
   1000 is the floor; 1400 ≈ 2× the median completed length costs nothing extra (billing is per token
   used) and covers the 736-token lineup answer with margin. The deciding metric is the truncation
   rate: a truncated structured answer is a hard failure, not a shorter answer.
-- **temperature: 0 recommended (shipped 0.2; default lives in `agent/llm.py`, not changed here).**
-  Length, judge score, cost and latency are flat; the only metric that moves is the validator's
+- **temperature: 0** (`AGENT_EXPLAIN_TEMPERATURE = 0` in `config.py`; the production cell of the run
+  used 0.2). Length, judge score, cost and latency are flat; the only metric that moves is the validator's
   first-pass violation count, and it favours T = 0 (1/12 vs 5/24 vs 3/12 answers with a violation).
   The absolute effect is small and concentrated in the lineup query, whose placeholder-citation habit
   is a prompt defect (v2 candidate: "issues from FACTS need no citation") rather than a sampling one.
@@ -899,7 +901,7 @@ noise of §7.1. The consistent gains of the larger models are behavioural: verba
 fixes/row), evidence on every covered player, better-separated confidence. gpt-4.1-mini is worse
 than gpt-4o-mini at 2.7× the price; gpt-4.1-nano is unusable for this role.
 
-### 8.2 Router (8 demo queries, `agent/prompts/v1/router.system.md` — v1 was the active version at run time)
+### 8.2 Router (8 demo queries, router prompt v1 `agent/prompts/v1/router.system.md`)
 
 | metric | gpt-4o-mini | gpt-4.1-nano | gpt-4.1-mini | gpt-5.4-mini | gpt-4.1 |
 |---|---|---|---|---|---|
@@ -949,7 +951,7 @@ batch column is an upper bound.
 gpt-4o-mini stays for router, extraction, explain, grader and vision (`docs/LLM_CHOICE.md` §1). The
 data would justify **gpt-5.4-mini for extraction** if the budget allowed 5.7× the batch cost (best F1,
 verbatim quotes, same latency); gpt-4.1 buys the same behaviour at 14×. The judge for answer-vs-facts
-checks moves to gpt-4.1-mini (§7.3). No shipped default changed in this step.
+checks is gpt-4.1-mini (§7.3). The comparison changes no production model default.
 
 Limitations specific to §7–§8: n = 27 / 6 / 8; one run per model (the §7.1 noise floor of 1–2 rows
 applies to every column of §8.1); explain judged by a same-vendor model; the demo router queries do
@@ -958,10 +960,10 @@ laptop, sequential, network-bound; costs are list prices with no caching discoun
 50–90 % cheaper on every model listed, and the 3.5k-token extraction prompt shares its system part
 across players).
 
-## 9. Chat A/B: agent prompts v3 → v4 (chat regression set, 24 Sep 2026)
+## 9. Chat A/B: agent prompts v3 → v4 (chat regression set)
 
-**Question.** The chat was the weak spot: false `off_topic` refusals, no dialogue memory, English
-service texts in a Russian product, answers that relabel gameweeks or invent reasoning
+**Question.** With agent prompts v3 the chat is the weak spot: false `off_topic` refusals, no dialogue
+memory, English service texts in a Russian product, answers that relabel gameweeks or invent reasoning
 (diagnosis: `docs/chat_diagnosis.md`). Does agent prompt set v4 (router + explainer, plus the
 chat code it enables) fix that without new failure modes?
 
@@ -970,9 +972,9 @@ mixed RU/EN): squad review, transfers, captain, lineup, plan, chips for *my* squ
 player status / forecast, rankings past vs future, differentials, prices, rules, 7 multi-turn
 follow-ups (canned previous turns) and 5 true off-topic / prompt-injection rows. Each row: the
 acceptable intents, the ideal capability, the expected behaviour (answer / partial / clarify /
-refuse) and the answer language. On 24 Sep the v4 intents were added to `expect.intents` where
-they implement the row's declared `ideal` (squad_review, fixtures, chips, general_fpl); the
-baseline was re-scored on the same expectations (`--metrics --refresh-expect`).
+refuse) and the answer language. `expect.intents` includes the v4 intents where they implement the
+row's declared `ideal` (squad_review, fixtures, chips, general_fpl); the baseline is scored on the
+same expectations (`--metrics --refresh-expect`).
 Holdout: `evals/golden/chat_holdout.jsonl` — 15 new questions written after the last prompt edit
 and run once.
 
@@ -984,7 +986,7 @@ FACTS: `evals/results/<ts>_chat_<label>.json`; manual review: `<…>_review.json
 partial / bad with a reason per row). `--router-probe N` runs the router alone (cheap intent /
 refusal checks between full runs).
 
-| | baseline (v3, code of 23 Sep 18:29 UTC) | v3 on current code | **v4 run 3 (final)** | v4 holdout (15 new) |
+| | baseline (v3 prompts, pre-v4 code) | v3 prompts on v4 code | **v4 run 3 (final)** | v4 holdout (15 new) |
 |---|---|---|---|---|
 | intent accuracy | 45/60 | 45/60 | **59/60** | 15/15 |
 | false refusals | 10/55 | 10/55 | **0/55** | 0/13 |
@@ -999,8 +1001,8 @@ refusal checks between full runs).
 | latency p50 / p95, s | 10.2 / 32.7 | 12.3 / 33.3 | **9.3 / 25.5** | 7.6 / 23.4 |
 | cost per 60 rows | $0.144 | $0.168 | $0.151 | $0.038 (15 rows) |
 
-"v3 on current code" isolates the prompts: same graph, tools, localized refusals and stricter
-validator, only `--prompt-version v3` (history is passed, but the v3 router has no field for it).
+"v3 prompts on v4 code" isolates the prompts: same graph, tools, localized refusals and stricter
+validator as v4 run 3, only `--prompt-version v3` (history is passed, but the v3 router has no field for it).
 The stricter validator is why v3's first-attempt rejections rose from 5 to 20.
 
 **Iterations (v4).** Run 1: helpful 43, bad 5, multi-turn 4/7 — follow-ups inherited the
@@ -1018,19 +1020,20 @@ on identical code and on the manual review; v1–v3 stay for reproducibility.
 **Not reached / honest caveats.**
 - Multi-turn ≥ 6/7 was reached in run 2 but not in run 3 (4/7): c51 repeated the canned history's
   «капитан Haaland» against FACTS (Saka) — the captain check missed it because Saka was named as
-  vice — and c56 hit the explainer's max_tokens (fallback). Both were fixed *after* run 3
-  (vice-aware captain check; one concise retry on `LengthFinishReasonError`) and checked on those
-  two rows only (both helpful, `…_chat_v4-postfix-c51-c56.json`) — not a fourth full run.
-- Persistent failures: a "review of last gameweek" question (c03) still gets an invented "your
-  mistake was …" in 3/3 runs — past gameweeks are not modelled; «кто подорожает» (c45) once
-  presented this gameweek's price rises as tonight's prediction.
-- After run 3 the plan also gets per-player xPts of the target-GW squad (the owner's scenario
-  on 895045 had a table with invented numbers); verified on c20 / c52 only.
+  vice — and c56 hit the explainer's max_tokens (fallback). The run-4 code fixes both (vice-aware
+  captain check; one concise retry on `LengthFinishReasonError`); a check on those two rows alone
+  had both helpful (`…_chat_v4-postfix-c51-c56.json`), and run 4 below reaches 6/7.
+- Failures persistent across runs 1–3 (addressed in run 4, below): a "review of last gameweek"
+  question (c03) got an invented "your mistake was …" in 3/3 runs — past gameweeks were not
+  modelled; «кто подорожает» (c45) once presented this gameweek's price rises as tonight's prediction.
+- The plan's per-player xPts for the target-GW squad (a manual check on 895045 found a plan table
+  with invented numbers) is absent from runs 1–3 and measured only in run 4, plus a spot check on
+  c20 / c52.
 - Canned history turns are text written by hand; with real history the previous answer agrees
   with FACTS, so c51-type contradictions are rarer in the UI. `--history replay` runs the previous
   turns live.
 - One manager (895045, all first-half chips used) plus UI checks on 6856911; manual grading by the
-  same agent that wrote the prompts (grades and reasons are in the review files); the gpt-4o-mini
+  author of the prompts (grades and reasons are in the review files); the gpt-4o-mini
   judge agrees with the manual grades on 43/60 rows and is a trend indicator only.
 
 ```bash
@@ -1040,7 +1043,7 @@ uv run python -m evals.run_chat --rows evals/golden/chat_holdout.jsonl --label h
 uv run python -m evals.run_chat --compare evals/results/A.json evals/results/B.json
 ```
 
-**Run 4 — confirmation on the final code (24 Sep, 01:40 local).** After run 3 the chat got:
+**Run 4 — confirmation on the final code.** Compared with run 3, the chat code adds:
 - a deterministic review of a finished gameweek (intent `gw_review`: picks of that GW, actual
   points from `player_gw_history`, the model's forecast saved before the deadline, captain,
   points left on the bench);
@@ -1082,10 +1085,10 @@ drop is not claimed as a code effect: both runs made the same number of LLM call
 extractions, 63–64 explanations); run 3 ran with LangSmith tracing on (uploads rejected with
 429), run 4 with tracing off, and OpenAI latency varies between runs.
 
-## 10. Live test: xPts v0 vs FPL `ep_next` on the played GW5 (24 Sep 2026)
+## 10. Live test: xPts v0 vs FPL `ep_next` on the played GW5
 
 Not an LLM eval, but the one pre-registered out-of-sample test of the deterministic core. The GW5
-forecast was frozen on 17 Sep 12:50Z (`xpts_predictions`, `model_version = v0`, 659 players, each
+forecast was frozen at 2026-09-17T12:50Z (`xpts_predictions`, `model_version = v0`, 659 players, each
 with the official `ep_next` captured at the same moment); the questions to answer were written
 down in `docs/xpts.md` before the round was played. Run: `uv run python -m fplcopilot.core.history
 --sync` (667 players, 3 216 season rows), then `uv run python scripts/gw_review.py --gw 5`; the
@@ -1114,6 +1117,6 @@ ranking — where captain and transfer decisions are made — `ep_next` picked t
 (4.5 vs 4.0 points, 3 vs 2 hits); 20 players and one round prove nothing either way, and the claim
 "v0 beats the official forecast" is **not** supported. The live numbers sit inside the walk-forward
 range (MAE 1.07–1.19, ρ 0.67–0.74 on GW2–4), so there is no out-of-sample degradation. Next: a
-clean-sheet correction (Dixon–Coles or odds-based, `v0-odds` is already saved for GW6) and the
+clean-sheet correction (Dixon–Coles or odds-based; a `v0-odds` forecast is stored for GW6) and the
 same review on GW6. GW4 cannot be reviewed against `ep_next`: no pre-deadline `ep_next` snapshot
 exists for it (only the `v0-backtest` walk-forward rows). Details: `docs/xpts.md`, «Итог GW5».

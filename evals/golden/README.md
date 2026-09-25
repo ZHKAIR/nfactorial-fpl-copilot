@@ -30,7 +30,7 @@ Schemas: `evals/schemas.py` (`SignalExample`, `RetrievalExample`); validated by 
    0 for out, 0.85–1.0 for nailed starters, wide for doubtful players, 0.5/0.5 (the system's
    neutral placeholder) for `unknown`. `expected_minutes` is only given where defensible
    (0 for out; for fit starters the lower bound is the v2 formula at `start_probability_min`,
-   see `CHANGELOG.md` 2026-09-17 — `expected_minutes` is the unconditional expectation, not
+   see `CHANGELOG.md` — `expected_minutes` is the unconditional expectation, not
    "minutes if he plays").
 6. **`return_gw`** = first GW whose fixture date is on/after the official "Expected back"/"Suspended
    until" date (Foden: until 17 Oct → GW7; Henderson: back 11 Oct → GW6). Scored exactly and ±1.

@@ -1,9 +1,9 @@
 # MCP-сервер `fpl-intelligence` и Skill `fpl-transfer-analyst`
 
-Шаг 8b (после vision 8a, до Strategy KB 8c). `src/fplcopilot/mcp_server/` выставляет по
-Model Context Protocol **14 инструментов, 5 ресурсов (2 статических + 3 шаблона) и 1 промпт**, чтобы
-ими пользовался любой MCP-хост — Cursor, Claude Desktop, Inspector, свой клиент. Инструменты: 11
-инструментов агента (`agent/tools.py`, `TOOL_NAMES`; десятый — `search_strategy_kb`,
+`src/fplcopilot/mcp_server/` выставляет по Model Context Protocol **14 инструментов, 5 ресурсов
+(2 статических + 3 шаблона) и 1 промпт**, чтобы ими пользовался любой MCP-хост — Cursor, Claude
+Desktop, Inspector, свой клиент. Инструменты: 11 общих с агентом через `LiveTools`
+(`agent/tools.py`, `TOOL_NAMES`; десятый — `search_strategy_kb`,
 стратегическая база знаний с цитатами, `docs/strategy_kb.md`, плюс ресурс `fpl://kb/stats`;
 одиннадцатый — `rank_players`) и 3 справочных: `get_player_advanced_stats`,
 `get_player_points_breakdown`, `get_team_defensive_profile`. `skills/fpl-transfer-analyst/` — Skill
@@ -28,8 +28,8 @@ bootstrap, фикстуры, picks, историю игрока. Мы их не 
 по хиту, многотуровый план с альтернативой Wildcard, лучшие 11 и капитанские опции, новостной
 сигнал с цитатами. Это то, чего нет ни у FPL API, ни у чужих MCP, и то, что LLM сама не посчитает
 без ошибок (см. валидатор в docs/agent.md: объяснитель складывал числа). Букмекерские
-коэффициенты — отдельный внешний MCP/API, который позже станет *входом* модели xPts
-(`XPTS_FIXTURE_PROVIDER=odds`), но никогда не выйдет наружу: инструменты о ставках не говорят.
+коэффициенты (внешний API) могут быть только *входом* модели xPts (`XPTS_FIXTURE_PROVIDER=odds`) и
+наружу не выходят: инструменты о ставках не говорят.
 
 Принцип не меняется: **LLM-хост объясняет, сервер считает**. Каждый инструмент — тонкая обёртка
 над `LiveTools`; логика не дублируется, MCP лишь (1) разрешает имена игроков в id, (2) собирает
@@ -49,7 +49,7 @@ Docstring функции = описание инструмента для LLM (�
 | `analyze_player_risk` | доступность/ротация из новостей + статус FPL, цитаты `[source, dd.mm]` | `player` | последний `player_signals` (≤ 12 ч) иначе `rag.extract.extract_signal` (hybrid_rerank k=8) | **да, только при извлечении** (gpt-4o-mini, ~4 с, ≈ $0.001) | 6 мс cached / 3–5 с extracted |
 | `optimize_team` | лучшие 11, скамейка, капитан/вице, top-3 капитанов с тегом по владению | `manager_id`, `strategy` | `best_xi` (MILP, 1 тур) + `_lineup_player` | нет | 0.3–1 с |
 | `recommend_transfers` | top-3 маршрутов трансфера с вердиктом по хиту; принудительная продажа/покупка + `alternative` + `verdict_on_forced_sale` | `manager_id`, `strategy`, `horizon=3`, `allow_hit?`, `sell[]`, `buy[]`, `keep[]`, `exclude[]` | `single_transfer` или `constrained_routes` (та же MILP + no-good cuts) | нет | 1.3 с |
-| `build_gameweek_plan` | план на N туров, FT копятся, WC-альтернатива, фишки BB / TC в названном туре, diff с прошлым планом, снимок в БД | `manager_id`, `horizon=5`, `strategy`, `allow_hits=true`, `chips?` = `[{gw, chip}]`, chip ∈ {`bboost`, `3xc`} | `plan_transfers` (+ `allow_hits` — Task 0, `chips` -> `validate_chip_plan`, docs/optimizer.md), `latest_plan`/`diff_plans`/`save_plan` | нет | 5–15 с (солвер) |
+| `build_gameweek_plan` | план на N туров, FT копятся, WC-альтернатива, фишки BB / TC в названном туре, diff с прошлым планом, снимок в БД | `manager_id`, `horizon=5`, `strategy`, `allow_hits=true`, `chips?` = `[{gw, chip}]`, chip ∈ {`bboost`, `3xc`} | `plan_transfers` (+ `allow_hits`, `chips` -> `validate_chip_plan`, docs/optimizer.md), `latest_plan`/`diff_plans`/`save_plan` | нет | 5–15 с (солвер) |
 | `simulate_scenario` | what-if: продать/купить X, хит, Wildcard сейчас | `manager_id`, `sell[]`, `buy[]`, `keep[]`, `allow_hit?`, `use_wildcard?`, `strategy`, `horizon=3` | `constrained_routes` (+ «версия с хитом»), при WC — `plan_transfers(["wildcard"])` | нет | 1–3 с, WC ~10 с |
 | `diagnose_squad` | проблемы состава: kind/severity/detail, `problem_players` | `manager_id`, `strategy` | `candidates.diagnose_squad` через `load_inputs` | нет | 0.5 с тёплый |
 | `search_strategy_kb` | стратегическая KB: правила, чипы, хиты, FT, капитанство, цены — чанки с `title/url/source/tags/text/score` для цитируемого ответа «как играть»; хост отвечает **только** по чанкам, `rules`-теги авторитетны | `query`, `tags[]` ⊆ {rules, chips, transfers, hits, captaincy, structure, rank, prices, fixtures, defcon, beginner}, `k=6` (1–12) | `LiveTools.search_strategy_kb` -> `rag.kb.retrieve.KBRetriever.search` (dense + BM25 -> RRF -> flashrank, cap 2 на документ; reranker общий с новостным Retriever) | нет (эмбеддинг запроса) | 0.3–1 с тёплый; первый вызов 3–4 с (загрузка ранкера) |
@@ -61,9 +61,9 @@ Docstring функции = описание инструмента для LLM (�
 Три справочных инструмента (`get_player_advanced_stats`, `get_player_points_breakdown`,
 `get_team_defensive_profile`) не входят в `TOOL_NAMES` агента (граф их не зовёт) и принимают id,
 а не имя: id игрока — из `predict_player` / `get_gameweek_context`, id клуба — `team_id` из
-`get_player_advanced_stats`. Фолы / стандарты соперника Understat стабильно не публикует — FBref отложен.
+`get_player_advanced_stats`. Фолы / стандарты соперника Understat стабильно не публикует, FBref не подключён.
 
-Фишки в `build_gameweek_plan`: без `chips` план прежний (без фишек). С `chips` солвер
+Фишки в `build_gameweek_plan`: без `chips` план строится без фишек. С `chips` солвер
 оптимизирует трансферы под Bench Boost / Triple Captain в указанном туре; в ответе `chips`
 [{gw, chip, name, points, players}] (вклад фишки уже в `xi_points_by_gw` / `expected_total`) и
 `notes` (фишка в первом туре отключает WC-альтернативу). Схема пускает только `bboost` / `3xc` и
@@ -100,7 +100,7 @@ web name, полное имя, инициалы, контекст клуба, «
 | `fpl://manager/{manager_id}/squad` | состав (picks последнего завершённого тура) с ролями и xPts, банк, FT, чипы, issues |
 | `fpl://manager/{manager_id}/plan` | последний сохранённый план на предстоящий тур из `plan_snapshots` (ходы по турам, хиты, FT, рекомендация, WC-альтернатива, `created_at`) или `null` |
 | `fpl://player/{player_id}/signal` | последний `PlayerSignal` из `player_signals` с evidence; `null`, если нет. Извлечение **не** запускает |
-| `fpl://kb/stats` | размер стратегической KB: `docs`, `chunks`, `chunks_embedded`, `tokens`, `docs_by_source`, `tags{tag: {docs, chunks}}`, `max_fetched_at` (снимок 17.09.2026: 41 документ, 622 чанка, 9 источников) |
+| `fpl://kb/stats` | размер стратегической KB: `docs`, `chunks`, `chunks_embedded`, `tokens`, `docs_by_source`, `tags{tag: {docs, chunks}}`, `max_fetched_at` (корпус — 41 документ, 623 чанка, 9 источников; docs/strategy_kb.md) |
 
 Промпт `pre_deadline_review(manager_id, strategy="balanced")` возвращает одно user-сообщение с
 последовательностью вызовов (context -> diagnose -> risk/predict для проблемных -> recommend ->
@@ -203,11 +203,11 @@ npx -y @modelcontextprotocol/inspector@latest --cli uv run python -m fplcopilot.
 npx -y @modelcontextprotocol/inspector@1 --cli uv run python -m fplcopilot.mcp_server --method tools/list
 ```
 
-## Проверка (17.09.2026, GW5, manager 895045)
+## Проверка (GW5 и GW6, manager 895045 / 6856911)
 
 `uv run python scripts/mcp_smoke.py` — клиент `stdio_client` + `ClientSession` из SDK спавнит
-сервер, делает `initialize`, списки, пять вызовов и чтение двух ресурсов (сокращено; прогон
-после добавления 10-го инструмента, 12:33Z):
+сервер, делает `initialize`, списки, пять вызовов и чтение двух ресурсов (сокращено; этот прогон
+на GW5 охватывает первые 10 инструментов, все 14 — во второй проверке ниже):
 
 ```
 server: fpl-intelligence v0.1.0 protocol 2025-11-25 | instructions 938 chars | 1678 ms
@@ -257,18 +257,18 @@ latencies (ms): {"initialize": 1678, "list_tools": 2, "get_gameweek_context": 70
 ```
 
 Совпадает с оптимизатором из docs/optimizer.md (маршруты 1–2, baseline 56.14). Сигнал João
-Pedro пришёл из кэша (4.1 ч < 12 ч) — LLM не вызывался; с `origin: extracted` вызов стоит
+Pedro пришёл из кэша (2.6 ч < 12 ч) — LLM не вызывался; с `origin: extracted` вызов стоит
 ≈ $0.001 и 3–5 с. `search_strategy_kb` с тегом `hits` (в корпусе 2 документа / 43 чанка с этим
 тегом) вернул официальную страницу правил и внутренний дайджест — именно их агент подшивает как
 `rules_context` к решениям о хите; 3.9 с — первый вызов процесса (загрузка ONNX-ранкера flashrank
-и эмбеддинг запроса), тёплый ~0.3–1 с. Inspector v2 CLI (`--method tools/list --format json`) вернул те же имена (на 17.09 — 10),
+и эмбеддинг запроса), тёплый ~0.3–1 с. Inspector v2 CLI (`--method tools/list --format json`) вернул те же имена,
 `tools/call predict_player` — `structuredContent` с `total_xpts 7.13`, `tools/call
 predict_player {"player": "Gabriel"}` — ошибку `ambiguous` с четырьмя кандидатами,
 `resources/read fpl://gameweek/current` — `application/json` с `gw 5`. Транспорт streamable-http
 проверен клиентом `mcp.Client("http://127.0.0.1:8765/mcp")`: протокол 2026-07-28, все инструменты в списке,
 `get_gameweek_context` за 83 мс.
 
-**Повторная проверка stdio (23.09.2026, GW6)** — сервер запущен так же, как в `.cursor/mcp.json`
+**Проверка всех 14 инструментов через stdio (GW6)** — сервер запущен так же, как в `.cursor/mcp.json`
 (`uv run --project <repo> python -m fplcopilot.mcp_server`), клиент `stdio_client` SDK:
 
 ```
@@ -315,7 +315,7 @@ Frontmatter: `name: fpl-transfer-analyst`, `description` с триггерами
 на стратегический вопрос: `[n]` + нумерованные Sources); жёсткие правила (не считать самому, без
 ставок и коэффициентов, as-of и «состав = picks последнего завершённого тура», `ambiguous` ->
 спросить, правила только из KB, ответ на языке пользователя); мини-примеры: два хода про João
-Pedro/Saka и стратегический вопрос на русском. Копия в `.cursor/skills/` синхронизирована
+Pedro/Saka и стратегический вопрос на русском. Копия в `.cursor/skills/` совпадает с `skills/`
 (`diff -rq` пуст). Тестирование — в `skills/README.md`.
 
 ## Тесты
@@ -346,10 +346,13 @@ Pedro/Saka и стратегический вопрос на русском. К�
 
 - Моделируется только предстоящий тур (`gw` в `get_gameweek_context` — валидация, не выбор);
   состав = picks последнего завершённого тура, цена продажи = текущая, FT — оценка по истории
-  (docs/optimizer.md). Состав со скриншота (docs/vision.md) через MCP пока не передаётся —
-  следующий шаг: инструмент `set_squad_override`.
+  (docs/optimizer.md). Состав со скриншота (docs/vision.md) через MCP не передаётся: инструмента
+  вроде `set_squad_override` нет.
 - `analyze_player_risk` — единственный инструмент с LLM и записью в БД (`player_signals`);
   `build_gameweek_plan` пишет `plan_snapshots` (в том числе план с фишками). Остальное read-only.
+- Трейсинг LangSmith (LLM-вызов внутри `analyze_player_risk`) не сохраняется: месячная квота трейсов
+  проекта исчерпана (429). После отказов процесс сам выключает трейсинг, инструменты работают
+  (`agent/tracing.py`, docs/agent.md «Промпты, стриминг, трейсинг»).
 - Фишки в плане — только Bench Boost и Triple Captain в туре, который назвал пользователь; Free
   Hit не моделируется, лучший тур для фишки сервер сам не ищет (перебор туров — N solve'ов).
 - Вызовы сериализованы: параллельные запросы от хоста ждут друг друга (план 5 туров — до 15 с).
