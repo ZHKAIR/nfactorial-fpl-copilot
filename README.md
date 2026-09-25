@@ -451,7 +451,7 @@ fpl-copilot/
 | 12 | GitHub-репозиторий с README и инструкцией | ✅ публичный репозиторий [ZHKAIR/nfactorial-fpl-copilot](https://github.com/ZHKAIR/nfactorial-fpl-copilot); README — этот файл, запуск — «Как запустить», сервер — [`docs/deploy.md`](docs/deploy.md) | [`docs/PLAN_STATUS.md`](docs/PLAN_STATUS.md) |
 | 13 | ARCHITECTURE.md или mindmap | ✅ | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/diagrams/`](docs/diagrams/) |
 | 14 | EVALS.md с метриками и результатами | ✅ golden, метрики, A/B #1–4 и чата, эволюция промпта, гиперпараметры, модели; результаты — JSON в `evals/results/` | [`docs/EVALS.md`](docs/EVALS.md) |
-| 15 | Презентация | ⏳ не начата; структура и тайминг — в [`docs/DEFENSE_QA.md`](docs/DEFENSE_QA.md) | — |
+| 15 | Презентация | ✅ 15 слайдов, PDF — [`docs/presentation/FPL_Copilot_defense.pdf`](docs/presentation/FPL_Copilot_defense.pdf); исходник — `docs/presentation/slides.html` (экспорт: Chrome → «Печать» → PDF); структура и тайминг — [`docs/DEFENSE_QA.md`](docs/DEFENSE_QA.md) §2 | `docs/presentation/` |
 | 16 | Развёрнутое демо или однокомандный локальный запуск | ✅ публичный URL https://fpl-copilot.duckdns.org (вход по паролю, прод-стек `docker-compose.prod.yml` + Caddy HTTPS); локально — `docker compose up -d` (db + app + ingest) | `docker-compose.prod.yml`, `docker-compose.yml`, `Dockerfile`, [`docs/deploy.md`](docs/deploy.md) |
 
 Рекомендуемые пункты §4: **guardrails** — есть (доменный отказ betting/off-topic и просьб

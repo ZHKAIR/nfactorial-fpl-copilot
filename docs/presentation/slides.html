@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>FPL Copilot — защита финального проекта</title>
+<style>
+@font-face { font-family: "Manrope"; src: url("fonts/Manrope-cyrillic.woff2") format("woff2"); font-weight: 200 800; unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Manrope"; src: url("fonts/Manrope-latin-ext.woff2") format("woff2"); font-weight: 200 800; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Manrope"; src: url("fonts/Manrope-latin.woff2") format("woff2"); font-weight: 200 800; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-latin.woff2") format("woff2"); font-weight: 100 800; unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF, U+2212; }
+@font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-cyrillic.woff2") format("woff2"); font-weight: 100 800; unicode-range: U+0400-045F, U+0490-0491; }
+
+:root {
+  --text: #12202A; --text-2: #3B4B55; --muted: #667883;
+  --accent: #0277B8; --accent-bg: #E6F6FE; --accent-line: #8FD5FA;
+  --good: #15803D; --good-bg: #E8F6EE; --warn: #B45309; --warn-bg: #FEF6E4; --warn-line: #F2C94C;
+  --bad: #C8373E; --bad-bg: #FDECEC; --llm: #C2410C; --llm-bg: #FFF1E6; --llm-line: #F9B98A;
+  --bg: #F4F7F9; --surface: #FFFFFF; --line: #E3EAEE; --line-strong: #D6E0E6;
+}
+@page { size: 1920px 1080px; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #CBD5DC; }
+body { font-family: "Manrope", "Helvetica Neue", Arial, sans-serif; color: var(--text);
+       -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.slide { width: 1920px; height: 1080px; position: relative; overflow: hidden; background: var(--bg);
+         padding: 84px 112px 96px; margin: 0 auto 24px; display: flex; flex-direction: column;
+         page-break-after: always; break-after: page; }
+@media print { html, body { background: none; } .slide { margin: 0; } }
+.kicker { font-size: 20px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+h1 { font-size: 58px; line-height: 1.1; font-weight: 800; margin: 0 0 18px; letter-spacing: -0.01em; }
+h2 { font-size: 30px; line-height: 1.2; font-weight: 800; margin: 0 0 14px; }
+h3 { font-size: 24px; line-height: 1.25; font-weight: 800; margin: 0 0 10px; }
+p, li { font-size: 25px; line-height: 1.42; color: var(--text-2); margin: 0; }
+.lead { font-size: 29px; line-height: 1.4; color: var(--text-2); max-width: 1500px; margin-bottom: 30px; }
+ul { margin: 0; padding-left: 28px; } li { margin: 0 0 10px; } li::marker { color: var(--accent); }
+b, strong { color: var(--text); font-weight: 800; }
+code, .mono { font-family: "JetBrains Mono", Menlo, monospace; font-size: 0.86em; background: #EAF0F3; padding: 1px 7px; border-radius: 6px; color: #20323D; }
+.footer { position: absolute; left: 112px; right: 112px; bottom: 34px; display: flex; justify-content: space-between;
+          font-size: 17px; color: var(--muted); font-weight: 600; }
+.body { flex: 1; min-height: 0; }
+.grid { display: grid; gap: 28px; }
+.g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
+.card { background: var(--surface); border: 1px solid var(--line-strong); border-radius: 20px; padding: 28px 32px; box-shadow: 0 1px 2px rgba(18,32,42,.05); }
+.card.accent { background: var(--accent-bg); border-color: var(--accent-line); }
+.card.llm { background: var(--llm-bg); border-color: var(--llm-line); }
+.card.warn { background: var(--warn-bg); border-color: var(--warn-line); }
+.card.good { background: var(--good-bg); border-color: #A7DDBB; }
+.card p + p { margin-top: 10px; }
+.pill { display: inline-block; font-size: 18px; font-weight: 800; padding: 5px 14px; border-radius: 999px; margin: 0 8px 8px 0; background: #EAF0F3; color: var(--text-2); }
+.pill.code { background: var(--accent-bg); color: var(--accent); }
+.pill.llm { background: var(--llm-bg); color: var(--llm); }
+.pill.hitl { background: var(--warn-bg); color: var(--warn); }
+.pill.good { background: var(--good-bg); color: var(--good); }
+.pill.bad { background: var(--bad-bg); color: var(--bad); }
+.big { font-size: 64px; font-weight: 800; line-height: 1; color: var(--text); letter-spacing: -0.02em; }
+.big small { font-size: 26px; font-weight: 700; color: var(--muted); letter-spacing: 0; }
+.caption { font-size: 20px; color: var(--muted); margin-top: 10px; line-height: 1.35; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 18px; overflow: hidden; }
+th, td { text-align: left; vertical-align: top; padding: 15px 20px; font-size: 22px; line-height: 1.35; border-bottom: 1px solid var(--line); color: var(--text-2); }
+th { font-size: 17px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); background: #F7FAFB; font-weight: 800; }
+tr:last-child td { border-bottom: none; }
+td b { color: var(--text); }
+.shot { border-radius: 16px; border: 1px solid var(--line-strong); box-shadow: 0 8px 28px rgba(18,32,42,.12); display: block; width: 100%; background: #fff; }
+.callout { margin-top: 26px; padding: 22px 30px; border-radius: 18px; background: var(--text); color: #fff; font-size: 28px; font-weight: 700; line-height: 1.35; }
+.callout b { color: #7DD3FC; }
+.muted { color: var(--muted); }
+.good-t { color: var(--good); } .bad-t { color: var(--bad); } .warn-t { color: var(--warn); } .llm-t { color: var(--llm); } .acc-t { color: var(--accent); }
+
+/* title */
+.title-slide { background: linear-gradient(135deg, #0B2536 0%, #0F3A55 55%, #0277B8 140%); color: #fff; }
+.title-slide .kicker { color: #7DD3FC; }
+.title-slide h1 { font-size: 104px; color: #fff; margin-bottom: 26px; }
+.title-slide p { color: #CFE3EE; }
+.title-slide .footer { color: #9FC3D6; }
+
+/* architecture */
+.arch { display: grid; grid-template-columns: 1fr 44px 1.25fr 44px 1.15fr 44px 0.95fr; align-items: stretch; gap: 0; }
+.arch .col { background: var(--surface); border: 1px solid var(--line-strong); border-radius: 20px; padding: 20px 20px 16px; display: flex; flex-direction: column; gap: 12px; }
+.arch .col h3 { font-size: 19px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 2px; }
+.arch .box { border-radius: 14px; padding: 12px 16px; border: 1.5px solid var(--accent-line); background: var(--accent-bg); }
+.arch .box.llm { border-color: var(--llm-line); background: var(--llm-bg); }
+.arch .box.hitl { border-color: var(--warn-line); background: var(--warn-bg); }
+.arch .box.ext { border-color: var(--line-strong); background: #F1F5F8; }
+.arch .box b { display: block; font-size: 21px; line-height: 1.25; }
+.arch .box span { display: block; font-size: 17.5px; line-height: 1.35; color: var(--text-2); margin-top: 3px; }
+.arch .arrow { display: flex; align-items: center; justify-content: center; font-size: 34px; color: #94A3B8; font-weight: 800; }
+.flow { display: flex; flex-direction: column; gap: 8px; }
+.flow .sep { text-align: center; color: #94A3B8; font-size: 18px; line-height: 1; margin: -2px 0; }
+.legend { display: flex; gap: 26px; margin-top: 20px; font-size: 19px; color: var(--muted); font-weight: 700; align-items: center; }
+.legend i { display: inline-block; width: 22px; height: 16px; border-radius: 5px; margin-right: 8px; vertical-align: -2px; border: 1.5px solid; }
+
+/* request path */
+.steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.step { background: var(--surface); border: 1px solid var(--line-strong); border-radius: 16px; padding: 16px 18px; position: relative; }
+.step .n { font-size: 16px; font-weight: 800; color: var(--muted); letter-spacing: 0.06em; }
+.step b { display: block; font-size: 22px; margin: 4px 0 6px; font-family: "JetBrains Mono", monospace; font-weight: 700; }
+.step p { font-size: 19px; line-height: 1.35; }
+.step .t { margin-top: 8px; font-size: 18px; font-weight: 800; }
+.step.llm { background: var(--llm-bg); border-color: var(--llm-line); }
+.step.hitl { background: var(--warn-bg); border-color: var(--warn-line); }
+.demo-list li { font-size: 27px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<!-- 1. Титул -->
+<section class="slide title-slide">
+  <div class="body" style="display:flex; align-items:center; gap:90px;">
+    <img src="img/logo.png" alt="" style="width:360px; height:360px; border-radius:50%; background:#fff; box-shadow:0 20px 60px rgba(0,0,0,.35);">
+    <div>
+      <div class="kicker">Финальный проект · LLM Engineering · nFactorial</div>
+      <h1>FPL Copilot</h1>
+      <p style="font-size:36px; line-height:1.35; max-width:1080px; color:#E6F2F8;">Помощник менеджера Fantasy Premier League: новости о травмах, ожидаемые очки и оптимальный состав — с объяснением, в котором ни одно число не придумано моделью.</p>
+      <p style="font-size:28px; margin-top:44px; color:#9FC3D6;">Zhanibek Kairgeldinov · 25 сентября 2026</p>
+      <p style="font-size:24px; margin-top:14px; color:#9FC3D6;">fpl-copilot.duckdns.org · github.com/ZHKAIR/nfactorial-fpl-copilot</p>
+    </div>
+  </div>
+  <div class="footer"><span>Demo Day</span><span>1</span></div>
+</section>
+
+<!-- 2. Проблема -->
+<section class="slide">
+  <div class="kicker">Проблема</div>
+  <h1>Раз в неделю — дедлайн и 3–4 решения с ценой ошибки</h1>
+  <p class="lead"><b>Пользователь:</b> менеджер FPL, который перед каждым дедлайном хочет за 5 минут понять, кого продать, кого поставить капитаном, стоит ли платить −4 очка за лишний трансфер и когда играть фишку.</p>
+  <div class="body grid g3">
+    <div class="card">
+      <div class="big">11 млн</div>
+      <p class="caption" style="font-size:22px;">менеджеров в FPL сезона 2026/27 (10 976 255 по официальному API)</p>
+      <p style="margin-top:22px;">Травмированный игрок в старте — минус очки и минус ранг, а трансфер обратно стоит ещё −4.</p>
+    </div>
+    <div class="card">
+      <h2>Как решают сейчас</h2>
+      <ul>
+        <li>флаги FPL, пресс-конференции, RSS и таблицы сообщества — вручную</li>
+        <li>готовые модели ожидаемых очков — платные и непрозрачные</li>
+        <li>тренер по ощущениям: «он же в форме»</li>
+      </ul>
+    </div>
+    <div class="card warn">
+      <h2>Почему не просто ChatGPT</h2>
+      <ul>
+        <li>не знает текущий состав, цены и статусы травм</li>
+        <li>уверенно выдумывает цифры и сроки возвращения</li>
+        <li>не проверяет правила FPL: бюджет, 3 игрока из клуба, схемы</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot</span><span>2</span></div>
+</section>
+
+<!-- 3. Решение -->
+<section class="slide">
+  <div class="kicker">Решение и главный принцип</div>
+  <h1>LLM маршрутизирует, извлекает и объясняет. Считает код.</h1>
+  <div class="body">
+    <table>
+      <tr><th style="width:38%">задача</th><th style="width:34%">кто решает</th><th>где в коде</th></tr>
+      <tr><td>понять вопрос: интент, игроки, тур, фишки, ограничения</td><td><span class="pill llm">LLM</span> gpt-4o-mini, T = 0, structured output</td><td><code>agent/llm.py</code></td></tr>
+      <tr><td>кто такой «Палмер», «Габриэл»</td><td><span class="pill code">код</span> матчер сущностей, транслитерация</td><td><code>agent/resolve.py</code></td></tr>
+      <tr><td>что пишут о травме → сигнал с цитатой и датой</td><td><span class="pill code">поиск</span> + <span class="pill llm">LLM</span> + проверка цитат кодом</td><td><code>rag/extract.py</code></td></tr>
+      <tr><td>ожидаемые очки игрока на тур</td><td><span class="pill code">код</span> компонентная модель xPts, без LLM</td><td><code>core/xpts.py</code></td></tr>
+      <tr><td>состав, трансферы, план на 5 туров, хит или нет</td><td><span class="pill code">код</span> MILP-оптимизатор (HiGHS)</td><td><code>core/optimizer.py</code></td></tr>
+      <tr><td>объяснить решение человеку</td><td><span class="pill llm">LLM</span> только числами из фактов</td><td><code>agent/validate.py</code></td></tr>
+    </table>
+    <div class="callout">Ни одно число в ответе не рождается в LLM: <b>валидатор</b> сверяет каждое имя и каждое десятичное число с фактами; нарушение → регенерация, затем видимая оговорка.</div>
+  </div>
+  <div class="footer"><span>FPL Copilot</span><span>3</span></div>
+</section>
+
+<!-- 4. Продукт -->
+<section class="slide">
+  <div class="kicker">Продукт</div>
+  <h1>Что сделать до дедлайна — и почему</h1>
+  <p class="muted" style="font-size:23px; margin:-4px 0 26px;"><b>8 экранов:</b> Брифинг · Мой состав · К дедлайну · План · Игрок · Сравнение · Чат · О системе. Живая версия — <b>fpl-copilot.duckdns.org</b> (вход по паролю).</p>
+  <div class="body grid g2" style="gap:36px; align-items:start;">
+    <div><img class="shot" src="img/deadline_plan.png" alt=""><p class="caption" style="font-size:22px;"><b>К дедлайну → «План на тур»</b> (команда 2558291): «João Pedro — не продаём»: здоровым даёт 5.5 очка за тур (больше, чем у 94 % позиции), продать можно за £7.6, выкупить — уже за £7.7. Всё посчитано кодом, без LLM.</p></div>
+    <div><img class="shot" src="img/briefing.png" alt=""><p class="caption" style="font-size:22px;"><b>Брифинг</b> (менеджер 895045): главный трансфер +5.6 очка за 3 тура, шансы выйти в старте, капитан Saka против Haaland, кого проверить до дедлайна.</p></div>
+  </div>
+  <div class="footer"><span>FPL Copilot</span><span>4</span></div>
+</section>
+
+<!-- 5. Демо -->
+<section class="slide">
+  <div class="kicker">Демо · 3,5 минуты</div>
+  <h1>Сценарий живого показа</h1>
+  <div class="body grid g2" style="grid-template-columns: 1.2fr 1fr; align-items:start;">
+    <div class="card">
+      <ol style="margin:0; padding-left:34px;" class="demo-list">
+        <li><b>Брифинг</b> (менеджер 895045): главный ход, капитан, кто под вопросом.</li>
+        <li><b>К дедлайну</b> (команда 2558291): «План на тур» — почему не продаём травмированных Palmer и João Pedro.</li>
+        <li><b>Чат:</b> «Кого поставить капитаном на GW6?» → ответ за ~15 с. Затем вопрос с платным трансфером → граф <b>останавливается</b> и ждёт «Подтвердить / Отклонить».</li>
+        <li><b>Мой состав → скриншот Pick Team:</b> vision читает 15 карточек, код проверяет правила FPL, дальше те же расчёты.</li>
+        <li><b>Cursor + MCP:</b> «Should I sell João Pedro?» — Skill вызывает инструменты <code>fpl-intelligence</code>.</li>
+        <li><b>О системе:</b> граф агента, отрендеренный из скомпилированного LangGraph.</li>
+      </ol>
+    </div>
+    <div class="grid" style="gap:22px; align-content:start;">
+      <div><img class="shot" src="img/chat.png" alt=""><p class="caption">Чат на живом сайте, 25.09: ответ за ~15 с, те же 14.76 и 12.54, что на Брифинге.</p></div>
+      <div class="card accent"><h3>Что показать глазами</h3><p style="font-size:23px;">HITL-прерывание, цитаты новостей <code>[fpl_api, 24.09]</code>, одинаковые числа в UI, чате и MCP.</p></div>
+      <div class="card"><h3>Резерв, если сеть упала</h3><p style="font-size:23px;">CLI агента, транскрипт <code>docs/agent_demo_output.md</code>, скриншоты, запись демо.</p></div>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot</span><span>5</span></div>
+</section>
+
+<!-- 6. Архитектура -->
+<section class="slide">
+  <div class="kicker">Архитектура</div>
+  <h1>Один набор инструментов на три интерфейса</h1>
+  <div class="body">
+    <div class="arch">
+      <div class="col">
+        <h3>Интерфейсы</h3>
+        <div class="box ext"><b>Веб-приложение</b><span>Streamlit, 8 экранов, чат с HITL</span></div>
+        <div class="box ext"><b>MCP-сервер</b><span>fpl-intelligence, 14 tools · Cursor / Claude + Skill</span></div>
+        <div class="box llm"><b>Vision</b><span>скриншот Pick Team → JSON → код проверяет правила → состав</span></div>
+        <div class="box ext"><b>CLI и evals</b><span>agent · optimizer · rag · evals.*</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="col">
+        <h3>LangGraph-агент · 14 узлов</h3>
+        <div class="flow">
+          <div class="box llm"><b>router</b><span>16 интентов, история 6 реплик</span></div>
+          <div class="sep">↓ неоднозначное имя → <b class="warn-t">HITL</b></div>
+          <div class="box"><b>сигналы новостей</b><span>ensure → grade ⟲ повторный поиск ≤ 2</span></div>
+          <div class="sep">↓</div>
+          <div class="box"><b>compute → candidate_news</b><span>⟲ пересчёт, если покупка травмирована</span></div>
+          <div class="sep">↓ хит или Wildcard → <b class="warn-t">HITL</b></div>
+          <div class="box llm"><b>explain → validate</b><span>числа только из фактов</span></div>
+        </div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="col">
+        <h3>LiveTools — считает код</h3>
+        <div class="box"><b>xPts v0</b><span>минуты · календарь · Understat · очки «если здоров»</span></div>
+        <div class="box"><b>MILP (PuLP + HiGHS)</b><span>состав · трансферы · план на 5 туров · BB / TC · «ценный актив»</span></div>
+        <div class="box"><b>News RAG</b><span>pgvector + BM25 → RRF → flashrank → abstention</span></div>
+        <div class="box"><b>Strategy KB</b><span>41 документ правил и гайдов, ответы с цитатами</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="col">
+        <h3>Данные</h3>
+        <div class="box ext"><b>FPL API</b><span>дисковый кэш 1 ч</span></div>
+        <div class="box ext"><b>Новости</b><span>BBC · Sky · Guardian · FFScout, ingest каждые 30 мин</span></div>
+        <div class="box ext"><b>Postgres + pgvector</b><span>1 885 статей · 3 710 чанков · 317 сигналов</span></div>
+        <div class="box ext"><b>Understat · The Odds API</b><span>xG / xA, сила соперников</span></div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--accent-bg); border-color:var(--accent-line)"></i>детерминированный код</span>
+      <span><i style="background:var(--llm-bg); border-color:var(--llm-line)"></i>вызов LLM (gpt-4o-mini)</span>
+      <span><i style="background:var(--warn-bg); border-color:var(--warn-line)"></i>подтверждение человеком</span>
+      <span style="margin-left:auto;">все LLM-вызовы → LangSmith · прод: Caddy HTTPS → пароль → суточный лимит ИИ</span>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot · docs/ARCHITECTURE.md</span><span>6</span></div>
+</section>
+
+<!-- 7. LangGraph -->
+<section class="slide">
+  <div class="kicker">Оркестрация</div>
+  <h1>LangGraph: ветвления, циклы и два HITL</h1>
+  <div class="body" style="display:grid; grid-template-columns: 430px 1fr; gap:48px; min-height:0;">
+    <div style="display:flex; flex-direction:column; align-items:center; min-height:0;">
+      <img src="img/agent_graph.png" alt="" style="height:690px; width:auto; border-radius:14px; background:#fff; border:1px solid var(--line-strong); padding:8px;">
+      <p class="caption" style="text-align:center;">сгенерирован кодом: <code>get_graph().draw_mermaid()</code></p>
+    </div>
+    <div class="grid" style="gap:22px; align-content:start;">
+      <div class="card">
+        <h2>Почему LangGraph</h2>
+        <p>Агенту нужны ровно три вещи: условные рёбра, ограниченный цикл и <code>interrupt_before</code> с чекпоинтером — прервать граф в UI и продолжить в другом процессе. Это API графа состояний.</p>
+        <p class="muted" style="font-size:22px;">CrewAI — ролевые «команды агентов» ради видимости, здесь один агент. Parlant — про правила диалога, не про вычисления. Свой автомат — без чекпоинтов и resume.</p>
+      </div>
+      <div class="grid g3" style="gap:18px;">
+        <div class="card"><h3>Ветвления</h3><p style="font-size:21px;">router → 16 интентов; ставки и off-topic → <code>refuse</code> без объяснителя за ~1 с</p></div>
+        <div class="card"><h3>Циклы</h3><p style="font-size:21px;">сигнал слабый → повторный поиск ≤ 2 раз; покупка травмирована → пересчёт 1 раз</p></div>
+        <div class="card warn"><h3>HITL</h3><p style="font-size:21px;">«какой Gabriel?» и «платный трансфер / Wildcard?»; состояние в SQLite</p></div>
+      </div>
+      <div style="display:flex; gap:24px; align-items:center;">
+        <img class="shot" src="img/hitl.png" alt="" style="height:250px; width:auto;">
+        <p class="caption" style="margin:0;">Прерывание перед <code>confirm_action</code>: решение пишется в чекпоинт треда, «Отклонить» → пересчёт без хита.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot · docs/agent.md</span><span>7</span></div>
+</section>
+
+<!-- 8. Путь запроса -->
+<section class="slide">
+  <div class="kicker">Путь одного запроса</div>
+  <h1>«Should I sell Palmer?» — от вопроса до ответа</h1>
+  <div class="body">
+    <div class="steps">
+      <div class="step"><div class="n">1 · КОД</div><b>load_context</b><p>тур, дедлайн, состав, 4 проблемы состава</p><div class="t muted">0–0.3 с (кэш)</div></div>
+      <div class="step llm"><div class="n">2 · LLM</div><b>router</b><p>intent = transfer, игрок Palmer, горизонт 3</p><div class="t llm-t">0.9–1.8 с</div></div>
+      <div class="step"><div class="n">3 · КОД</div><b>resolve</b><p>Cole или Alex Palmer? В составе один → Cole</p><div class="t muted">мс</div></div>
+      <div class="step"><div class="n">4 · RAG</div><b>ensure_signals</b><p>сигнал моложе 12 ч — из БД, иначе поиск + извлечение</p><div class="t muted">2 мс / 2–5 с</div></div>
+      <div class="step"><div class="n">5 · КОД</div><b>grade_signals</b><p>достаточно ли доказательств; нет → повторный поиск</p><div class="t muted">0 мс</div></div>
+      <div class="step"><div class="n">6 · КОД</div><b>compute</b><p>xPts 4.76 · MILP с «продать Palmer» + свободная альтернатива</p><div class="t muted">≈ 1 с</div></div>
+      <div class="step"><div class="n">7 · RAG</div><b>candidate_news</b><p>новости о покупках топ-3 маршрутов, ≤ 3 извлечения</p><div class="t muted">0 с при кэше</div></div>
+      <div class="step hitl"><div class="n">8 · HITL?</div><b>check_action</b><p>в рекомендации нет хита → без прерывания</p><div class="t warn-t">0 мс</div></div>
+      <div class="step llm"><div class="n">9 · LLM</div><b>explain</b><p>вердикт = headline кода, таблица маршрутов, цитаты</p><div class="t llm-t">4.7 с</div></div>
+      <div class="step"><div class="n">10 · КОД</div><b>validate</b><p>39 имён и 18 чисел сверены с фактами → passed</p><div class="t muted">5 мс</div></div>
+    </div>
+    <div class="grid g3" style="margin-top:30px;">
+      <div class="card"><div class="big">2 <small>LLM-вызова</small></div><p class="caption">на типичный вопрос: роутер + объяснитель</p></div>
+      <div class="card"><div class="big">$0.0026 <small>в среднем</small></div><p class="caption">по 60 вопросам чата, максимум $0.0055</p></div>
+      <div class="card"><div class="big">7.5 с <small>медиана</small></div><p class="caption">p95 14.8 с; замер 17.09 этого вопроса — 6.5 с, $0.0012</p></div>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot · docs/diagrams/request_path.mmd</span><span>8</span></div>
+</section>
+
+<!-- 9. RAG -->
+<section class="slide">
+  <div class="kicker">Работа с данными</div>
+  <h1>Два RAG: новости о травмах и правила игры</h1>
+  <div class="body grid g2" style="grid-template-columns: 1.3fr 1fr; align-items:start;">
+    <div class="card">
+      <h2>News RAG → сигнал доступности игрока</h2>
+      <p style="font-size:22px; margin-bottom:14px;"><span class="pill">RSS BBC · Sky · Guardian · FFScout</span><span class="pill">полный текст из HTML (trafilatura)</span><span class="pill">статусы FPL</span></p>
+      <table style="margin-top:4px;">
+        <tr><th style="width:30%">выбор</th><th>почему так, а не иначе</th></tr>
+        <tr><td><b>чанк = абзац ≤ 300 токенов + заголовок статьи</b></td><td>без заголовка «he trained fully on Thursday» ни о ком — не находится ни BM25, ни эмбеддингом</td></tr>
+        <tr><td><b>text-embedding-3-small</b></td><td>корпус маленький: полная переиндексация ≈ 27 с и $0.004</td></tr>
+        <tr><td><b>pgvector в том же Postgres</b></td><td>защита от утечки из будущего — одно условие <code>published_at ≤ as_of</code> в SQL</td></tr>
+        <tr><td><b>BM25 + dense → RRF → flashrank</b></td><td>reranker локально на CPU, без сети и денег; +4 п.п. recall@8</td></tr>
+        <tr><td><b>abstention до LLM</b></td><td>нет упоминаний игрока → «неизвестно» без вызова модели: 4/4, 0 ложных</td></tr>
+      </table>
+    </div>
+    <div class="grid" style="gap:24px; align-content:start;">
+      <div class="card accent">
+        <h2>Strategy KB</h2>
+        <p>41 документ: официальные правила 2026/27 и гайды сообщества, 623 чанка. Ответ — только с цитатами <code>[n]</code>, код проверяет, что цитата дословно есть в источнике.</p>
+        <p class="muted" style="font-size:21px;">Без time-decay: гайд 2021 года про EO — лучший в корпусе, дата не сигнал.</p>
+      </div>
+      <div class="card">
+        <h3>Что получает агент</h3>
+        <p style="font-size:22px;">«João Pedro — под вопросом (75 %), колено» + цитаты <code>[ffscout, 16.09]</code>, <code>[fpl_api, 24.09]</code> + тур возвращения. Модель минут читает сигнал, а не текст.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot · docs/rag.md · docs/strategy_kb.md</span><span>9</span></div>
+</section>
+
+<!-- 10. MCP, Skill, Vision -->
+<section class="slide">
+  <div class="kicker">Обязательные модули</div>
+  <h1>Свой MCP-сервер, Skill и мультимодальность</h1>
+  <div class="body grid g3">
+    <div class="card">
+      <h2>MCP fpl-intelligence</h2>
+      <p><b>14 tools</b>, 5 resources, 1 prompt; stdio и streamable-http.</p>
+      <p style="margin-top:12px;"><code>recommend_transfers</code>, <code>build_gameweek_plan</code>, <code>predict_player</code>, <code>analyze_player_risk</code>, <code>search_strategy_kb</code>…</p>
+      <p style="margin-top:12px;"><b>Почему MCP, а не REST:</b> те же инструменты сразу работают в Cursor и Claude Desktop без своего клиента. Сервер отдаёт <b>решения</b>, а не сырые данные FPL. Ошибки — всегда <code>{error, hint}</code>.</p>
+    </div>
+    <div class="card">
+      <h2>Skill fpl-transfer-analyst</h2>
+      <p><code>SKILL.md</code> с триггерами: «should I sell X», «who to captain», «take a −4», «bench boost in GW N», вопросы о правилах.</p>
+      <p style="margin-top:12px;"><b>Чем лучше промпта:</b> фиксирует порядок вызовов (<code>get_gameweek_context → diagnose_squad → recommend_transfers → analyze_player_risk</code>), жёсткие запреты (только числа из инструментов, никаких коэффициентов ставок) и шаблон ответа.</p>
+    </div>
+    <div class="card llm">
+      <h2>Vision: скриншот состава</h2>
+      <p>Pick Team → строгий JSON → код резолвит имена → правила FPL (2/5/5/3, ≤ 3 из клуба) → тот же <code>Squad</code>, что из API.</p>
+      <p style="margin-top:12px;"><b>Без него</b> приложение не знает текущий состав: API отдаёт выбор только после дедлайна.</p>
+      <p style="margin-top:12px;"><code>detail=high</code>: 15/15, $0.0066. <code>detail=low</code> в 4.5× дешевле, но подменил игрока (Virgil → Livramento) — отклонён.</p>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot · docs/mcp.md · skills/ · docs/vision.md</span><span>10</span></div>
+</section>
+
+<!-- 11. Evals -->
+<section class="slide">
+  <div class="kicker">Мониторинг и оценка</div>
+  <h1>Golden dataset: 130 примеров, автоматические прогоны</h1>
+  <div class="body grid g2" style="grid-template-columns: 1fr 1.1fr; align-items:start;">
+    <table>
+      <tr><th>набор</th><th style="width:16%">n</th><th>что покрывает</th></tr>
+      <tr><td><b>signals</b></td><td>27</td><td>травмы, дисквалификации, конфликт FPL и прессы, нет новостей, два Henderson, 4 Gabriel</td></tr>
+      <tr><td><b>retrieval</b></td><td>18</td><td>разметка по статьям, 3 запроса без ответа по построению</td></tr>
+      <tr><td><b>strategy KB</b></td><td>10</td><td>правила с обязательной цитатой, вопрос вне базы → NOT_COVERED</td></tr>
+      <tr><td><b>chat</b></td><td>60</td><td>50 RU / 10 EN, опечатки, 7 многоходовых, 5 off-topic и инъекций</td></tr>
+      <tr><td><b>chat holdout</b></td><td>15</td><td>написаны после последней правки промптов, прогнаны один раз</td></tr>
+    </table>
+    <div class="grid" style="gap:22px; align-content:start;">
+      <div class="card">
+        <h3>Метрики</h3>
+        <p style="font-size:22px;"><span class="pill code">accuracy strict / lenient</span><span class="pill code">macro-F1</span><span class="pill code">P@8 · R@8 · MRR</span><span class="pill code">return_gw exact</span><span class="pill llm">faithfulness: LLM-judge</span><span class="pill code">валидатор с 1-й попытки</span><span class="pill">«полезен»: ручная разметка</span></p>
+      </div>
+      <div class="card">
+        <h3>Автоматизация</h3>
+        <p style="font-size:22px;"><code>evals.run_rag · run_kb · run_chat · run_hparams · run_models</code> → <code>evals/results/*.json</code> с коммитом, корпусом, ценой; бюджет <code>--budget-usd</code>. Корпус закреплён на <code>as_of</code> — прогоны воспроизводимы.</p>
+      </div>
+      <div class="card warn">
+        <h3>Чего метрики не показывают</h3>
+        <p style="font-size:21px;">n = 27 не различает изменения меньше ~10 п.п.; faithfulness ≠ правда; смена размера судьи меняет вердикт на 47 % ответов — оценки судьи читаем как относительные.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot · docs/EVALS.md</span><span>11</span></div>
+</section>
+
+<!-- 12. A/B -->
+<section class="slide">
+  <div class="kicker">A/B-эксперименты</div>
+  <h1>Гипотеза → результат → решение</h1>
+  <div class="body">
+    <table>
+      <tr><th style="width:21%">эксперимент</th><th style="width:26%">гипотеза</th><th style="width:31%">результат</th><th>решение</th></tr>
+      <tr><td><b>#1 режимы поиска</b></td><td>hybrid + rerank лучше dense</td><td>поиск — да (recall@8 0.837 против 0.794), точность сигнала — нет (24 против 26 из 27)</td><td>rerank в чате, dense в пакетном обновлении</td></tr>
+      <tr><td><b>#2 промпт v2 + abstention</b></td><td>календарь туров в промпте починит тур возвращения</td><td><b class="good-t">0/8 → 8/8</b>; порог rerank-score для «нет новостей» дал 4 ложных отказа</td><td>тур считает код; abstention по упоминаниям: 4/4</td></tr>
+      <tr><td><b>#3 «упало из-за корпуса»</b></td><td>точность 0.852 → 0.741 из-за роста корпуса</td><td><b class="bad-t">утечка из будущего:</b> prior FPL брал снимки после <code>as_of</code></td><td>prior по <code>snapshot_at</code>, корпус закреплён на <code>as_of</code></td></tr>
+      <tr><td><b>#4 form_notes</b></td><td>форма отдельно от доказательств здоровья</td><td>цитаты формы 4/78 → 2/73, но точность 25 → <b class="bad-t">23/27</b></td><td>не выпущен, остался опцией</td></tr>
+      <tr><td><b>чат v3 → v4</b></td><td>чат слаб из-за структуры, а не модели</td><td>ложные отказы <b class="good-t">10/55 → 0/55</b>; «полезен» 17 → 49 → 54 из 60; holdout 13/15</td><td>v4 по умолчанию</td></tr>
+    </table>
+  </div>
+  <div class="footer"><span>FPL Copilot · docs/EVALS.md §3–4, §9</span><span>12</span></div>
+</section>
+
+<!-- 13. LLM и гиперпараметры -->
+<section class="slide">
+  <div class="kicker">Выбор LLM и гиперпараметры</div>
+  <h1>gpt-4o-mini: та же точность, что у gpt-4.1, в 15 раз дешевле</h1>
+  <div class="body grid g2" style="grid-template-columns: 1fr 1fr;">
+    <div>
+      <table>
+        <tr><th>модель (извлечение, 27 игроков)</th><th>точно</th><th>цена</th></tr>
+        <tr><td>gpt-4.1-nano</td><td class="bad-t"><b>15/27</b></td><td>дешевле</td></tr>
+        <tr><td>gpt-4.1-mini</td><td>21/27</td><td>2.7×</td></tr>
+        <tr style="background:var(--accent-bg);"><td><b>gpt-4o-mini — выбрана</b></td><td><b>23/27</b></td><td><b>1×</b></td></tr>
+        <tr><td>gpt-4.1</td><td>23/27</td><td>15×</td></tr>
+        <tr><td>gpt-5.4-mini — кандидат на апгрейд</td><td>24/27</td><td>5.7×</td></tr>
+      </table>
+      <p class="caption">Сильные модели в объяснении не вернее: gpt-4.1 вписал те же выдуманные производные числа, их ловит валидатор. Reasoning-модели — без управления temperature и с непредсказуемой ценой.</p>
+    </div>
+    <div class="grid" style="gap:20px; align-content:start;">
+      <div class="card"><h3>temperature = 0 везде</h3><p style="font-size:22px;">T ∈ {0, 0.3, 0.7} на точность не влияет, но при T = 0 совпадают 12/23 текстов summary, при 0.7 — 0/23. Объяснитель: с 1-й попытки проходит валидатор 0.92 при T = 0 против 0.79 при 0.2.</p></div>
+      <div class="card"><h3>max_tokens и top_p</h3><p style="font-size:22px;">Объяснение: 300 → обрезано 100 %, 600 → 25 %, 1000 → 0 % → взяли 1400, с русским и блоком новостей — 2000. top_p 0.5 ничего не изменил → по умолчанию.</p></div>
+      <div class="card warn"><h3>Если OpenAI недоступна</h3><p style="font-size:22px;">Ответ из фактов кода без LLM, отказы и уточнения без LLM, сигналы из кэша. Переключение на другого провайдера спроектировано, но <b>не реализовано</b>.</p></div>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot · docs/LLM_CHOICE.md · docs/EVALS.md §7–8</span><span>13</span></div>
+</section>
+
+<!-- 14. Мониторинг и прод -->
+<section class="slide">
+  <div class="kicker">Трейсинг, прод и guardrails</div>
+  <h1>LangSmith, публичный URL и защита от лишних трат</h1>
+  <div class="body grid g2" style="grid-template-columns: 1.15fr 1fr;">
+    <div class="card" style="display:flex; flex-direction:column;">
+      <h2>LangSmith</h2>
+      <p style="font-size:22px;"><code>wrap_openai</code> на каждом вызове OpenAI, <code>@traceable</code> в RAG и vision, callbacks графа с тегами <code>intent:*</code>, <code>model:*</code>, <code>strategy:*</code>.</p>
+      <div style="flex:1; margin-top:18px; border:2px dashed var(--line-strong); border-radius:16px; display:flex; align-items:center; justify-content:center; text-align:center; padding:24px; color:var(--muted); font-size:24px; font-weight:700;">скриншот дашборда LangSmith:<br>трейс одного сценария из демо</div>
+      <p class="caption">При отказе LangSmith (квота, 429) трейсинг в процессе выключается сам, ответы не задерживаются.</p>
+    </div>
+    <div class="grid" style="gap:20px; align-content:start;">
+      <div class="card"><h3>Прод: один VPS</h3><p style="font-size:22px;">Hetzner 2 vCPU / 4 GB (≈ €5 в месяц), docker compose: <b>Caddy</b> (HTTPS Let's Encrypt) → Streamlit → Postgres + pgvector, <b>ingest</b> новостей каждые 30 мин, бэкап базы по cron.</p></div>
+      <div class="card"><h3>Guardrails</h3><ul style="font-size:22px;"><li style="font-size:22px;">вход по паролю, до входа — ни одного вызова OpenAI</li><li style="font-size:22px;">200 запросов к LLM в сутки + лимит трат в OpenAI</li><li style="font-size:22px;">ставки, off-topic и инъекции → отказ (5/5, 0/55 ложных)</li><li style="font-size:22px;">новости идут в промпт как данные, инструкции внутри игнорируются</li></ul></div>
+      <div class="card good"><h3>Тесты</h3><p style="font-size:22px;">877 тестов; граф, чат, UI и MCP — на фейках, без сети и LLM.</p></div>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot · docs/deploy.md · agent/tracing.py</span><span>14</span></div>
+</section>
+
+<!-- 15. Выводы -->
+<section class="slide">
+  <div class="kicker">Выводы</div>
+  <h1>Что не подтвердилось и что дальше</h1>
+  <div class="body grid g2" style="grid-template-columns: 1.25fr 1fr; align-items:start;">
+    <div class="card">
+      <h2>Гипотезы, которые не подтвердились</h2>
+      <ul>
+        <li style="font-size:26px;">rerank лучше по поиску, но <b>не</b> по точности сигнала</li>
+        <li style="font-size:26px;">порог rerank-score не отличает «нет новостей» — работает правило кодом</li>
+        <li style="font-size:26px;">T = 0 ≠ детерминизм: воспроизводимость закрепляем кодом</li>
+        <li style="font-size:26px;">«метрика упала из-за корпуса» оказалось утечкой из будущего</li>
+        <li style="font-size:26px;">xPts v0 против официального прогноза FPL на живом GW5 — <b>ничья</b> (MAE 1.146 против 1.166), в top-20 FPL лучше</li>
+        <li style="font-size:26px;">горизонта в 3 тура мало: оптимизатор продавал травмированных звёзд «на дне» → правило «ценный актив»</li>
+      </ul>
+    </div>
+    <div class="grid" style="gap:22px; align-content:start;">
+      <div class="card accent"><h3>Главный урок</h3><p style="font-size:23px;">LLM полезна там, где её ответ можно проверить кодом. Падение метрики сначала проверяем на утечку, а не объясняем «данными».</p></div>
+      <div class="card"><h3>Дальше</h3><ul style="font-size:22px;"><li style="font-size:22px;">xPts v1 на LightGBM по истории 2016–2026</li><li style="font-size:22px;">fallback на другого провайдера LLM</li><li style="font-size:22px;">учётные записи и лимит на пользователя</li><li style="font-size:22px;">отзывы участников мини-лиги перед GW6</li></ul></div>
+      <div class="card"><p style="font-size:22px;"><b>fpl-copilot.duckdns.org</b><br>github.com/ZHKAIR/nfactorial-fpl-copilot</p></div>
+    </div>
+  </div>
+  <div class="footer"><span>FPL Copilot · спасибо!</span><span>15</span></div>
+</section>
+
+<script>
+  // slides.html#3 — показать только третий слайд (превью и PNG для репозитория)
+  const n = parseInt(location.hash.slice(1), 10);
+  if (n) document.querySelectorAll(".slide").forEach((s, i) => {
+    if (i + 1 !== n) s.remove(); else s.style.margin = "0";
+  });
+</script>
+</body>
+</html>
