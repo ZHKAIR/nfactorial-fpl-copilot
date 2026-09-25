@@ -271,6 +271,25 @@ class ManagerHistory(_Model):
     chips: list[ChipPlay] = Field(default_factory=list)
 
 
+class TransferRow(_Model):
+    """Строка entry/{id}/transfers/: цены — в десятых долях миллиона."""
+
+    element_in: int
+    element_in_cost: int
+    element_out: int
+    element_out_cost: int
+    event: int
+    time: datetime
+
+
+class SalePrice(_Model):
+    """Цена покупки, продажи и текущая цена игрока в составе менеджера, £m."""
+
+    purchase: float
+    selling: float
+    now: float
+
+
 # ---------- element-summary ----------
 
 

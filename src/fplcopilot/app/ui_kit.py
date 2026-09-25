@@ -370,6 +370,48 @@ def news_ticker_html(items: Sequence[Mapping[str, Any]], player_url: str) -> str
     )
 
 
+PLAN_MARK_RU = {"new": "новый", "in": "в старт", "out": "на скамейку"}
+
+
+def deadline_plan_html(plan: Any, player_url: str) -> str:
+    """«План на тур» (app/deadline_plan.DeadlinePlan): заголовок и выигрыш, пронумерованные
+    шаги слева, состав на тур по линиям справа — отметки «новый», «в старт», «на скамейку»."""
+    steps = "".join(
+        f'<li class="{esc(s.tone)}"><b class="n">{i}</b><div><strong>{esc(s.title)}</strong>'
+        f"<p>{esc(s.body)}</p></div></li>"
+        for i, s in enumerate(plan.steps, 1)
+    )
+
+    def chip(p: Any) -> str:
+        role = f'<b class="role">{esc(p.role)}</b>' if p.role else ""
+        mark = f"<em>{esc(PLAN_MARK_RU[p.mark])}</em>" if p.mark in PLAN_MARK_RU else ""
+        cls = f"chip {esc(p.mark)}".strip()
+        href = player_url.format(pid=p.id)
+        return f'<a class="{cls}" href="{href}" target="_self">{esc(p.name)}{role}{mark}</a>'
+
+    def row(label: str, players: Sequence[Any], cls: str = "row") -> str:
+        names = "".join(chip(p) for p in players)
+        return f'<div class="{cls}"><span class="pos">{esc(label)}</span><span class="names">{names}</span></div>'
+
+    lines = "".join(row(label, group) for label, group in plan.lines)
+    if plan.bench:
+        lines += row("Скамейка", plan.bench, "row bench")
+    gain = ""
+    if plan.gain:
+        number, note = plan.gain
+        tone = "good" if str(number).startswith("+") else "plain"
+        gain = f'<div class="gain {tone}"><b>{esc(number)}</b><small>{esc(note)}</small></div>'
+    xi = (
+        f'<div class="xi"><div class="k">Состав на тур · {esc(plan.formation)}</div>{lines}</div>'
+        if lines
+        else ""
+    )
+    return (
+        f'<div class="fpl-plan"><div class="head"><h2>{esc(plan.title)}</h2>{gain}</div>'
+        f'<div class="body{"" if xi else " solo"}"><ol class="steps">{steps}</ol>{xi}</div></div>'
+    )
+
+
 def name_chips(names: Sequence[str]) -> str:
     return '<div class="fpl-pills">' + "".join(pill(n) for n in names) + "</div>"
 
@@ -766,6 +808,67 @@ KIT_CSS = """
 .fpl-watch-row .st { font-size: 14px; color: var(--fpl-text-2); overflow-wrap: anywhere; }
 .fpl-watch-row small { grid-column: 2 / 4; font-size: 12px; color: var(--fpl-faint); }
 
+/* «План на тур» (К дедлайну) */
+.fpl-plan .head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap; margin: 0 0 14px;
+}
+.fpl-plan .head h2 {
+  margin: 0; padding: 0; font-size: 22px; font-weight: 750; line-height: 1.25;
+  letter-spacing: -0.025em; color: var(--fpl-text);
+}
+.fpl-plan .gain { display: flex; flex-direction: column; text-align: right; }
+.fpl-plan .gain b { font-family: var(--fpl-mono); font-size: 28px; font-weight: 600; line-height: 1.1; color: var(--fpl-good); }
+.fpl-plan .gain.plain b { color: var(--fpl-text); }
+.fpl-plan .gain small { font-size: 12.5px; color: var(--fpl-muted); }
+.fpl-plan .body { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 22px; }
+.fpl-plan .body.solo { grid-template-columns: 1fr; }
+@media (max-width: 900px) { .fpl-plan .body { grid-template-columns: 1fr; } }
+.fpl-plan .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.fpl-plan .steps li { display: flex; gap: 12px; align-items: flex-start; margin: 0; }
+.fpl-plan .steps .n {
+  width: 24px; height: 24px; border-radius: 50%; flex: 0 0 auto; display: grid; place-items: center;
+  font-family: var(--fpl-mono); font-size: 12.5px; font-weight: 700;
+  background: var(--fpl-surface-2); color: var(--fpl-text-2); border: 1px solid var(--fpl-line-strong);
+}
+.fpl-plan .steps li.accent .n { background: var(--fpl-accent-bg); color: var(--fpl-accent); border-color: transparent; }
+.fpl-plan .steps li.warn .n { background: var(--fpl-warn-bg); color: var(--fpl-warn); border-color: transparent; }
+.fpl-plan .steps strong { display: block; font-size: 15px; font-weight: 700; color: var(--fpl-text); }
+.fpl-plan .steps p { margin: 3px 0 0; font-size: 14px; line-height: 1.55; color: var(--fpl-text-2); }
+.fpl-plan .xi {
+  align-self: start; background: var(--fpl-surface-2); border: 1px solid var(--fpl-line);
+  border-radius: 10px; padding: 12px 14px;
+}
+.fpl-plan .xi .k {
+  font-size: 11.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--fpl-muted); margin: 0 0 6px;
+}
+.fpl-plan .row {
+  display: grid; grid-template-columns: 92px 1fr; gap: 8px; align-items: baseline;
+  padding: 6px 0; border-bottom: 1px solid var(--fpl-line);
+}
+.fpl-plan .row:last-child { border-bottom: 0; }
+.fpl-plan .pos { font-size: 12px; font-weight: 600; color: var(--fpl-muted); }
+.fpl-plan .names { display: flex; flex-wrap: wrap; gap: 5px; }
+.fpl-plan .chip {
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; background: var(--fpl-surface); border: 1px solid var(--fpl-line-strong);
+  color: var(--fpl-text) !important; text-decoration: none !important;
+}
+.fpl-plan .chip:hover { border-color: var(--fpl-accent-line); }
+.fpl-plan .chip .role {
+  font-family: var(--fpl-mono); font-size: 10.5px; line-height: 1.5; border-radius: 4px; padding: 0 4px;
+  background: var(--fpl-text); color: var(--fpl-surface);
+}
+.fpl-plan .chip em { font-style: normal; font-size: 10.5px; font-weight: 750; letter-spacing: 0.04em; text-transform: uppercase; }
+.fpl-plan .chip.new { background: var(--fpl-accent-bg); border-color: var(--fpl-accent-line); }
+.fpl-plan .chip.new em { color: var(--fpl-accent); }
+.fpl-plan .chip.in { background: var(--fpl-good-bg); border-color: transparent; }
+.fpl-plan .chip.in em { color: var(--fpl-good); }
+.fpl-plan .chip.out { background: var(--fpl-warn-bg); border-color: var(--fpl-warn-line); }
+.fpl-plan .chip.out em { color: var(--fpl-warn); }
+.fpl-plan .row.bench .chip:not(.new):not(.out) { color: var(--fpl-text-2) !important; }
+
 /* лента новостей */
 .fpl-ticker {
   height: 300px; overflow: hidden; position: relative;
@@ -778,9 +881,29 @@ KIT_CSS = """
 .fpl-ticker:hover .track { animation-play-state: paused; }
 @keyframes fpl-ticker-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
 .fpl-ticker .item { padding: 12px 2px; border-bottom: 1px solid var(--fpl-line); }
+.fpl-ticker .item.squad {
+  padding: 11px 12px 11px 13px; margin: 8px 0; border: 1px solid var(--fpl-warn-line);
+  border-radius: 10px; background: var(--fpl-warn-bg); box-shadow: inset 3px 0 0 var(--fpl-warn);
+}
+.fpl-ticker .item.squad.bad {
+  background: var(--fpl-bad-bg); border-color: color-mix(in srgb, var(--fpl-bad) 35%, var(--fpl-line));
+  box-shadow: inset 3px 0 0 var(--fpl-bad);
+}
+.fpl-ticker .item.league { opacity: 0.92; }
 .fpl-ticker .h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .fpl-ticker .h a { font-size: 15px; font-weight: 700; color: var(--fpl-text) !important; text-decoration: none; }
+.fpl-ticker .item.squad .h a { font-weight: 750; }
 .fpl-ticker .h .st { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--fpl-muted); }
+.fpl-ticker .item.squad .st { color: var(--fpl-warn); }
+.fpl-ticker .item.squad.bad .st { color: var(--fpl-bad); }
+.fpl-ticker .imp {
+  font-size: 10.5px; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--fpl-warn); background: color-mix(in srgb, var(--fpl-warn) 12%, transparent);
+  border-radius: 999px; padding: 2px 7px;
+}
+.fpl-ticker .item.squad.bad .imp {
+  color: var(--fpl-bad); background: color-mix(in srgb, var(--fpl-bad) 12%, transparent);
+}
 .fpl-ticker p { margin: 4px 0 3px; font-size: 14px; line-height: 1.5; color: var(--fpl-text-2); overflow-wrap: anywhere; }
 .fpl-ticker small { font-size: 12px; color: var(--fpl-faint); }
 .fpl-ticker small a { color: var(--fpl-accent) !important; }
@@ -881,29 +1004,9 @@ a.fpl-token:hover > strong { box-shadow: 0 0 0 2px var(--fpl-brand); }
 .fpl-bench .fpl-token > small em { color: var(--fpl-text); }
 
 /* карточки туров плана */
-.fpl-ticker .item.squad {
-  padding: 11px 12px 11px 13px; margin: 8px 0; border: 1px solid var(--fpl-warn-line);
-  border-radius: 10px; background: var(--fpl-warn-bg); box-shadow: inset 3px 0 0 var(--fpl-warn);
-}
-.fpl-ticker .item.squad.bad {
-  background: var(--fpl-bad-bg); border-color: color-mix(in srgb, var(--fpl-bad) 35%, var(--fpl-line));
-  box-shadow: inset 3px 0 0 var(--fpl-bad);
-}
-.fpl-ticker .item.league { opacity: 0.92; }
 .fpl-gw-grid { display: flex; gap: 12px; align-items: stretch; overflow-x: auto; padding: 2px 0 10px; }
 .fpl-gw {
-.fpl-ticker .item.squad .h a { font-weight: 750; }
   min-width: 210px; flex: 1; background: var(--fpl-surface); border: 1px solid var(--fpl-line-strong);
-.fpl-ticker .item.squad .st { color: var(--fpl-warn); }
-.fpl-ticker .item.squad.bad .st { color: var(--fpl-bad); }
-.fpl-ticker .imp {
-  font-size: 10.5px; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--fpl-warn); background: color-mix(in srgb, var(--fpl-warn) 12%, transparent);
-  border-radius: 999px; padding: 2px 7px;
-}
-.fpl-ticker .item.squad.bad .imp {
-  color: var(--fpl-bad); background: color-mix(in srgb, var(--fpl-bad) 12%, transparent);
-}
   border-radius: 12px; display: flex; flex-direction: column; box-shadow: var(--fpl-shadow);
 }
 .fpl-gw.current { border-color: var(--fpl-accent-line); box-shadow: inset 0 3px var(--fpl-brand); }

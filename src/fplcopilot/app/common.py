@@ -297,6 +297,16 @@ def cached_entry(manager_id: int) -> dict[str, Any] | None:
     }
 
 
+@st.cache_data(ttl=CACHE_TTL, show_spinner=False)
+def cached_sale_prices(manager_id: int, player_ids: tuple[int, ...]) -> dict[int, Any]:
+    """Цены продажи игроков состава по истории трансферов; {} — сеть / API без ответа."""
+    try:
+        return get_tools().client.sale_prices(int(manager_id), player_ids)
+    except Exception:
+        log.warning("sale_prices(%s) failed", manager_id, exc_info=True)
+        return {}
+
+
 CHAT_PAGE = "views/5_chat.py"  # путь относительно Home.py (st.switch_page)
 
 

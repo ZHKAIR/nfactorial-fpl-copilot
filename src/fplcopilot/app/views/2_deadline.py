@@ -9,7 +9,7 @@ from datetime import timedelta
 
 import streamlit as st
 
-from fplcopilot.app import briefing, common, ui_kit
+from fplcopilot.app import briefing, common, deadline_plan, ui_kit
 from fplcopilot.app import format as fmt
 
 
@@ -55,7 +55,6 @@ allow_hit = st.toggle(
 )
 horizon = 3
 
-st.subheader(f"Лучший состав на тур {gw}")
 with st.spinner("Оптимизирую состав…"):
     lu = common.guarded(
         common.cached_lineup, ui.squad_manager_id, gw, ui.strategy, ui.fp, ui.override
@@ -111,6 +110,27 @@ if rt is not None and rt.routes:
             why_facts = {}
             why_data = None
 
+if lu is not None:
+    sale = {}
+    if ui.override is None and ui.manager_id and deadline_plan.recommended(rt) is not None:
+        squad_ids = tuple(sorted(p.id for p in ctx.squad or []))
+        sale = common.cached_sale_prices(ui.squad_manager_id, squad_ids)
+    try:
+        plan = deadline_plan.build_plan(
+            lu, rt, ctx, common.get_tools().bootstrap, why_preds, sale, horizon=horizon
+        )
+    except Exception:  # noqa: BLE001 — объяснитель не роняет страницу
+        common.log.warning("deadline plan failed", exc_info=True)
+        plan = None
+    if plan is not None:
+        with st.container(border=True, key="card_plan"):
+            st.markdown(
+                ui_kit.section_label(f"План на GW{gw}", dot=True, tone="accent")
+                + ui_kit.deadline_plan_html(plan, fmt.PLAYER_URL),
+                unsafe_allow_html=True,
+            )
+
+st.subheader(f"Лучший состав на тур {gw}")
 if lu is not None:
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Схема", lu.formation)

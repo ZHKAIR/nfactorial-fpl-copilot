@@ -11,12 +11,14 @@ import hashlib
 import json
 import logging
 import time
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any, Self
 
 import httpx
 
 from fplcopilot.config import settings
+from fplcopilot.data.prices import purchase_prices, selling_price
 from fplcopilot.data.schemas import (
     Bootstrap,
     ElementSummary,
@@ -26,8 +28,10 @@ from fplcopilot.data.schemas import (
     LeagueStandings,
     ManagerHistory,
     PicksResponse,
+    SalePrice,
     Squad,
     SquadPlayer,
+    TransferRow,
 )
 
 log = logging.getLogger(__name__)
@@ -112,6 +116,40 @@ class FPLClient:
 
     def element_summary(self, player_id: int) -> ElementSummary:
         return ElementSummary.model_validate(self._get(f"element-summary/{player_id}/"))
+
+    def transfers(self, manager_id: int) -> list[TransferRow]:
+        return [TransferRow.model_validate(t) for t in self._get(f"entry/{manager_id}/transfers/")]
+
+    def sale_prices(self, manager_id: int, player_ids: Iterable[int]) -> dict[int, SalePrice]:
+        """Цены покупки / продажи игроков состава (правила FPL, prices.py). Стартовый состав
+        команды, созданной с GW1, куплен по цене начала сезона; созданной позже — по цене в
+        туре создания (element-summary)."""
+        bs = self.bootstrap()
+        ids = list(player_ids)
+        entry = self.entry(manager_id)
+        hist = self.history(manager_id)
+        started = entry.started_event or 1
+        start_cost: dict[int, int | None] = {}
+        for pid in ids:
+            p = bs.player(pid)
+            if started <= 1:
+                start_cost[pid] = p.now_cost - p.cost_change_start
+            else:
+                rows = [h for h in self.element_summary(pid).history if h.round >= started]
+                start_cost[pid] = rows[0].value if rows and rows[0].value else None
+        bought = purchase_prices(
+            ids,
+            self.transfers(manager_id),
+            start_cost,
+            freehit_events=[c.event for c in hist.chips if c.name == "freehit"],
+        )
+        out: dict[int, SalePrice] = {}
+        for pid, cost in bought.items():
+            now = bs.player(pid).now_cost
+            out[pid] = SalePrice(
+                purchase=cost / 10, selling=selling_price(cost, now) / 10, now=now / 10
+            )
+        return out
 
     def league_standings(self, league_id: int, page: int = 1) -> LeagueStandings:
         data = self._get(f"leagues-classic/{league_id}/standings/?page_standings={page}")
