@@ -249,7 +249,6 @@ render_similar(card.differential_bridge(player, bs, all_preds), "open_diff")
 # ---------- наше: модель, стандарты, новости — ниже и отдельно ----------
 
 st.subheader("Модель FPL Copilot и новости")
-st.caption("Этого нет на smartplay: прогноз по турам, откуда очки, стандарты, Understat и новости.")
 
 with st.expander("Прогноз xPts по турам", expanded=True):
     if pred is None or not pred.by_gw:

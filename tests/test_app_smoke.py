@@ -466,7 +466,6 @@ def test_chat_page_hitl_buttons_and_reject_branch(fakes, monkeypatch):
     calls = fakes.called("recommend_transfers")
     assert [c.allow_hit for c in calls] == [True, False]  # пересчёт без хита
     assert not {"confirm_1", "reject_1"} & keys(at)  # кнопки исчезли после решения
-    assert any("thread_id" in t.value.to_string() for t in at.table)
 
 
 def test_chat_page_confirm_branch_and_example_button(fakes, monkeypatch):
@@ -509,7 +508,6 @@ def test_chat_page_clarification_buttons_resume_with_chosen_player(fakes, monkey
     calls = fakes.called("recommend_transfers")
     assert len(calls) == 1 and calls[0].sell == [4]  # Gabriel Magalhães, тот, что в составе
     assert not {k for k in keys(at) if k.startswith("choose_1_")}  # кнопки исчезли после выбора
-    assert any("thread_id" in t.value.to_string() for t in at.table)
 
 
 def test_chat_page_clarification_cancel_button(fakes, monkeypatch):

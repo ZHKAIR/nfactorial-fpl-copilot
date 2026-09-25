@@ -111,6 +111,22 @@ html, body, [data-testid="stApp"] { -webkit-font-smoothing: antialiased; }
 [data-testid="stTopNavLink"][aria-current="page"] p { color: var(--fpl-text); font-weight: 700; }
 [data-testid="stAppDeployButton"] { display: none; }
 
+/* шапка: Streamlit крутит коляску / велосипед / бег — прячем и ставим мяч */
+@keyframes fpl-ball {
+  0%, 100% { transform: translateY(1px) rotate(-10deg); }
+  50% { transform: translateY(-3px) rotate(16deg); }
+}
+[data-testid="stStatusWidgetRunningIcon"] { position: relative !important; }
+[data-testid="stStatusWidgetRunningIcon"] > * { opacity: 0 !important; }
+[data-testid="stStatusWidgetRunningIcon"]::after {
+  content: ""; position: absolute; inset: 1px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23fff' stroke='%2306A8FD' stroke-width='3'/%3E%3Cpolygon points='32,20 40,26 37,36 27,36 24,26' fill='%2306A8FD'/%3E%3Cpath d='M32 20L32 8M40 26L52 20M37 36L46 50M27 36L18 50M24 26L12 20' fill='none' stroke='%2306A8FD' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M52 20C56 26 58 32 58 36M46 50C40 56 34 58 32 58C30 58 24 56 18 50M12 20C8 26 6 32 6 36' fill='none' stroke='%2306A8FD' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  animation: fpl-ball 0.7s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-testid="stStatusWidgetRunningIcon"]::after { animation: none; }
+}
+
 /* эмблема: крупно и по центру сайдбара (надписи на кольце герба читаются, поэтому отдельного
    вордмарка нет), кнопка сворачивания — в правом верхнем углу поверх свободного места;
    в шапке (сайдбар свёрнут) — заметно */

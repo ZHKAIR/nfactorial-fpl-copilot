@@ -112,6 +112,12 @@ CHIP_RU: dict[str, str] = {
     "bboost": "Bench Boost",
     "3xc": "Triple Captain",
 }
+CHIP_SHORT: dict[str, str] = {
+    "wildcard": "WC",
+    "freehit": "FH",
+    "bboost": "BB",
+    "3xc": "TC",
+}
 
 def example_prompts(next_gw: int | None) -> tuple[str, ...]:
     """Кнопки-примеры страницы «Чат»: состав, трансфер без хита, фишка, капитан, разбор прошлого
@@ -703,8 +709,9 @@ TIP_WIDGET_CSS = f"""
   margin: 0 0 0.75rem 0; padding: 14px 18px 13px; border-radius: 12px;
   background: var(--fpl-surface, transparent); border: 1px solid var(--fpl-line-strong, transparent);
   box-shadow: var(--fpl-shadow, none);
-  min-height: 88px; box-sizing: border-box;
+  min-height: 88px; box-sizing: border-box; min-width: 0;
   display: flex; flex-direction: column; justify-content: space-between;
+  overflow: hidden;
 }}
 .fpl-metric-label {{
   font-size: 12px; font-weight: 700; line-height: 1.35;
@@ -717,6 +724,9 @@ TIP_WIDGET_CSS = f"""
   letter-spacing: -0.02em;
   margin-top: 6px; white-space: nowrap; overflow: visible; text-overflow: clip;
   font-variant-numeric: tabular-nums;
+}}
+.fpl-metric-value.wrap {{
+  white-space: normal; overflow: hidden; font-size: 1.05rem; line-height: 1.3;
 }}
 .fpl-stats {{
   display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 10px;
@@ -800,15 +810,18 @@ def metric_html(
     )
 
 
-def stat_strip_html(cells: Sequence[tuple[str, str, str | None]]) -> str:
-    """Ряд метрик одной сеткой [(подпись, значение, help)]: карточки одной высоты, перенос по
-    ширине экрана — вместо st.columns, где длинная подпись растягивает одну карточку."""
+def stat_strip_html(cells: Sequence[tuple[str, ...]]) -> str:
+    """Ряд метрик одной сеткой [(подпись, значение, help[, класс значения])]: карточки одной
+    высоты, перенос по ширине экрана — вместо st.columns, где длинная подпись растягивает одну
+    карточку. Класс `wrap` — длинный текст (чипы) остаётся внутри карточки."""
     items = []
-    for label, value, help_text in cells:
+    for cell in cells:
+        label, value, help_text, *rest = cell
+        extra = f" {rest[0]}" if rest else ""
         tip_h = tip(help_text) if help_text else ""
         items.append(
             f'<div class="fpl-metric"><div class="fpl-metric-label"><span>{_esc(label)}</span>'
-            f'{tip_h}</div><div class="fpl-metric-value">{_esc(value)}</div></div>'
+            f'{tip_h}</div><div class="fpl-metric-value{extra}">{_esc(value)}</div></div>'
         )
     return TIP_WIDGET_CSS + '<div class="fpl-stats">' + "".join(items) + "</div>"
 
@@ -971,8 +984,9 @@ def squad_header(
     entry: Mapping[str, Any] | None,
     preds: Mapping[int, PlayerPrediction],
 ) -> list[tuple[str, str, str]]:
-    """Шапка команды: [(подпись, значение, help)] — очки сезона, общий ранг (FPL entry), банк,
-    бесплатные трансферы, чипы (контекст тура), прогноз очков на тур (старт, капитан ×2)."""
+    """Шапка команды: [(подпись, значение, help[, класс])] — очки сезона, общий ранг (FPL
+    entry), банк, бесплатные трансферы, чипы (короткие WC/FH/BB/TC, иначе наезжают на соседнюю
+    карточку), прогноз очков на тур (старт, капитан ×2)."""
     points = entry.get("points") if entry else None
     rank = entry.get("rank") if entry else None
     total = 0.0
@@ -985,7 +999,11 @@ def squad_header(
             continue
         have_pred = True
         total += x * (2 if p.is_captain else 1)
-    chips = ", ".join(CHIP_RU.get(c, c) for c in ctx.chips_available) or "—"
+    names = [CHIP_RU.get(c, c) for c in ctx.chips_available]
+    chips = " · ".join(CHIP_SHORT.get(c, c) for c in ctx.chips_available) or "—"
+    chips_help = (
+        "Неиспользованные чипы: " + ", ".join(names) if names else "Неиспользованные чипы"
+    )
     return [
         (
             "Очки сезона",
@@ -1003,7 +1021,7 @@ def squad_header(
             "—" if ctx.free_transfers is None else str(ctx.free_transfers),
             "Трансферы без потери очков на этот тур; каждый сверх — платный (−4)",
         ),
-        ("Чипы", chips, "Неиспользованные чипы"),
+        ("Чипы", chips, chips_help, "wrap"),
         (
             f"Прогноз очков на GW{ctx.gw}",
             num(total, 1) if have_pred else "—",

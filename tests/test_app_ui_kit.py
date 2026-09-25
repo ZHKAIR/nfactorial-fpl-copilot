@@ -507,3 +507,4 @@ def test_components_escape_and_css_is_injected_once():
     assert css.count(".fpl-pitch {") == 1 and "--fpl-mono" in css and "JetBrains Mono" in css
     assert "Manrope" in css and "Space Mono" not in css and "DM Sans" not in css
     assert "Copilot" not in css
+    assert "stStatusWidgetRunningIcon" in css and "fpl-ball" in css

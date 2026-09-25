@@ -1,12 +1,11 @@
 """Страница «Чат»: LangGraph-агент со стримингом узлов и human-in-the-loop.
 
-Прогон -> `agent.stream(...)` (прогресс узлов в st.status) -> `agent.snapshot(thread_id)`.
+Прогон -> `agent.stream(...)` (в UI только спиннер, без лога узлов) -> `agent.snapshot(thread_id)`.
 Два вида прерываний:
 - перед `confirm_action` (`pending_action`: хит / Wildcard) — кнопки «Подтвердить» / «Отклонить»
   -> `agent.stream_resume(thread_id, decision)`;
 - перед `resolve_clarification` (`pending_clarification`: неоднозначное имя) — кнопка на каждого
   кандидата -> `agent.stream_resume(thread_id, player_id=...)`, граф продолжает с выбранным игроком.
-Футер каждого ответа: интент, инструменты с латентностью, LLM-вызовы, стоимость, валидация, thread_id.
 """
 
 from __future__ import annotations
@@ -37,13 +36,10 @@ def run_agent(
     if ui.override is not None:
         kwargs["squad_override"] = ui.override
     try:
-        with st.status("Агент работает…", expanded=True) as status:
+        with st.spinner("Думаю…"):
             for node, line in agent.stream(prompt, **kwargs):
                 if node == "start":
                     thread_id = line.split()[-1]
-                status.write(f"`{node}` {line}")
-            elapsed = time.perf_counter() - started
-            status.update(label=f"Готово за {elapsed:.1f} с", state="complete", expanded=False)
         assert thread_id is not None
         state = agent.snapshot(thread_id)
     except Exception as exc:  # noqa: BLE001
@@ -59,54 +55,17 @@ def resume_agent(
     if not llm_budget.allow_llm():
         return None
     started = time.perf_counter()
-    label = (
-        f"Выбран игрок {player_id} — продолжаю…"
-        if player_id
-        else f"Решение: {decision} — продолжаю…"
-    )
+    label = "Продолжаю…"
     try:
-        with st.status(label, expanded=True) as status:
-            for node, line in agent.stream_resume(thread_id, decision, player_id=player_id):
-                status.write(f"`{node}` {line}")
-            status.update(
-                label=f"Продолжение готово за {time.perf_counter() - started:.1f} с",
-                state="complete",
-                expanded=False,
-            )
+        with st.spinner(label):
+            for _node, _line in agent.stream_resume(thread_id, decision, player_id=player_id):
+                pass
         state = agent.snapshot(thread_id)
     except Exception as exc:  # noqa: BLE001
         common.show_error(exc)
         return None
     state["elapsed_s"] = round(time.perf_counter() - started, 1)
     return state
-
-
-def render_footer(state: dict[str, Any]) -> None:
-    with st.expander("Как получен ответ: интент, инструменты, LLM, стоимость, валидация"):
-        st.table(
-            [
-                {"Поле": k, "Значение": v}
-                for k, v in fmt.run_summary(state, elapsed_s=state.get("elapsed_s")).items()
-            ]
-        )
-        tools_rows = fmt.tool_log_rows(state)
-        if tools_rows:
-            st.caption("Инструменты (в порядке вызова)")
-            st.dataframe(tools_rows, hide_index=True, width="stretch")
-        llm_rows = fmt.llm_call_rows(state)
-        if llm_rows:
-            st.caption("LLM-вызовы")
-            st.dataframe(llm_rows, hide_index=True, width="stretch")
-        v = state.get("validation") or {}
-        if v and not v.get("passed"):
-            st.warning(
-                f"Валидатор: имена {v.get('unknown_names')}, числа {v.get('unknown_numbers')}, "
-                f"цитаты {v.get('bad_citations')}"
-            )
-        if state.get("caveats"):
-            st.caption("Оговорки: " + " · ".join(state["caveats"]))
-        if state.get("facts", {}).get("headline"):
-            st.caption(f"headline (детерминированный вердикт): {state['facts']['headline']}")
 
 
 def candidate_label(c: dict[str, Any]) -> str:
@@ -120,10 +79,6 @@ def render_clarification(
 ) -> None:
     """Кнопки-кандидаты для неоднозначного имени (HITL №2) + «Отменить»."""
     st.warning(f"Уточнение: какого **{pending.get('mention')}** вы имеете в виду?")
-    st.caption(
-        "Граф прерван перед узлом resolve_clarification; выбор записывается в чекпоинт треда, "
-        "и ответ продолжается с выбранным игроком."
-    )
     candidates = list(pending.get("candidates") or [])[:MAX_CANDIDATE_BUTTONS]
     cols = st.columns(2)
     chosen: int | None = None
@@ -153,9 +108,6 @@ def render_assistant(idx: int, msg: dict[str, Any], agent: Any) -> None:
     pending_clar = state.get("pending_clarification") if interrupted else None
     if pending and msg.get("decision") is None:
         st.warning(fmt.pending_action_text(pending))
-        st.caption(
-            "Граф прерван перед узлом confirm_action; решение записывается в чекпоинт треда."
-        )
         c1, c2 = st.columns(2)
         decision = None
         if c1.button("Подтвердить", key=f"confirm_{idx}", icon=":material/check:", type="primary"):
@@ -185,11 +137,10 @@ def render_assistant(idx: int, msg: dict[str, Any], agent: Any) -> None:
         st.markdown(state["answer"])
     elif not pending and not pending_clar:
         st.info("Ответа нет.")
-    render_footer(state)
 
 
 ui = common.sidebar()
-common.page_head("Ассистент · LangGraph-агент", "Чат с ассистентом")
+common.page_head("Ассистент", "Чат с ассистентом")
 if not common.openai_ready():
     st.error(
         "OPENAI_API_KEY не задан — агент недоступен. Заполните .env и перезапустите приложение."
@@ -201,10 +152,8 @@ if agent is None:
 
 follow_gw = f"GW{ui.gw + 1}" if ui.gw and ui.gw < 38 else "следующий тур"
 st.caption(
-    f"Вопросы на русском или английском — ответ на языке вопроса; можно уточнять («а на {follow_gw}?», "
-    "«а если без хита?») — чат помнит последние реплики. Каждое число в ответе — из "
-    "инструментов; ответ проверен валидатором. Платный трансфер / Wildcard требует вашего "
-    "подтверждения, неоднозначное имя — выбора игрока."
+    f"Вопросы на русском или английском. Можно уточнять («а на {follow_gw}?», «а если без хита?») — "
+    "чат помнит последние реплики. Платный трансфер и Wildcard требуют подтверждения."
 )
 with st.container(key="quick_prompts", horizontal=True, gap="small"):
     for i, example in enumerate(fmt.example_prompts(ui.gw)):

@@ -201,12 +201,11 @@ def validation_note(language: str | None, flagged: Sequence[str]) -> str:
     items = ", ".join(flagged)
     if _ru(language):
         return (
-            f"\n\n_Часть значений ({items}) не удалось сверить с расчётом — перепроверьте их; "
-            "подробности — в «Как получен ответ»._"
+            f"\n\n_Часть значений ({items}) не удалось сверить с расчётом — перепроверьте их._"
         )
     return (
         f"\n\n_Some values ({items}) could not be matched to the computed facts — double-check "
-        "them; details are under “How the answer was produced”._"
+        "them._"
     )
 
 

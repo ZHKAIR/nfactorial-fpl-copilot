@@ -295,7 +295,14 @@ def test_squad_header():
     ctx.chips_available = ["wildcard"]
     no_entry = {c[0]: c[1] for c in fmt.squad_header(ctx, None, {})}
     assert no_entry["Очки сезона"] == "—" and no_entry["Общий ранг"] == "—"
-    assert no_entry["Чипы"] == "Wildcard" and no_entry["Прогноз очков на GW5"] == "32.8"
+    assert no_entry["Чипы"] == "WC" and no_entry["Прогноз очков на GW5"] == "32.8"
+    ctx.chips_available = ["wildcard", "freehit", "3xc"]
+    three = fmt.squad_header(ctx, None, {})
+    chips_cell = next(c for c in three if c[0] == "Чипы")
+    assert chips_cell[1] == "WC · FH · TC" and chips_cell[3] == "wrap"
+    assert "Wildcard" in chips_cell[2] and "Triple Captain" in chips_cell[2]
+    html = fmt.stat_strip_html(three)
+    assert 'class="fpl-metric-value wrap"' in html and "WC · FH · TC" in html
     assert all(c[2] for c in cells)  # у каждой метрики есть help
     assert fmt.availability_text(None) == "нет разбора новостей"
     assert fmt.availability_text(fit_risk(PlayerRiskInput(player_id=154, as_of=NOW))) == (
