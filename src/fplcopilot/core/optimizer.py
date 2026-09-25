@@ -35,6 +35,7 @@ import pulp
 from pydantic import BaseModel, ConfigDict, Field
 
 from fplcopilot.config import settings
+from fplcopilot.core.assets import AssetFlag, asset_flags
 from fplcopilot.core.candidates import (
     Candidate,
     PredictionStore,
@@ -216,6 +217,8 @@ class ModelSpec:
     exclude: frozenset[int] = frozenset()  # нельзя купить
     allow_hits: bool = True  # False — paid[w] = 0 в каждом туре: только бесплатные трансферы
     chips: Mapping[int, str] = field(default_factory=dict)  # тур -> bboost | 3xc
+    # игрок -> очки-эквивалент за то, что он в составе на конец горизонта (core/assets.py)
+    asset_bonus: Mapping[int, float] = field(default_factory=dict)
 
     def validate(self) -> None:
         missing = [p for p in self.initial_squad if p not in self.pool]
@@ -469,6 +472,8 @@ def build_model(spec: ModelSpec) -> tuple[pulp.LpProblem, _Vars]:
         )
         prev_sq = {p: sq[p, w] for p in players}
         prev_itb = itb[w]
+    last = gws[-1]
+    obj += pulp.lpSum(b * sq[p, last] for p, b in spec.asset_bonus.items() if p in pool)
     prob += obj
     return prob, _Vars(sq, st, cp, bench, tin, tout, paid, ft, itb)
 
@@ -646,6 +651,7 @@ def _baseline(spec: ModelSpec, *, time_limit: float | None) -> Solution:
         strategy=spec.strategy,
         max_transfers={w: 0 for w in spec.gws},
         chips=spec.chips,
+        asset_bonus=spec.asset_bonus,
     )
     sol, _ = Model(base).solve(time_limit=time_limit)
     return sol
@@ -695,12 +701,14 @@ def single_transfer(
     top: int = 3,
     issues: Sequence[SquadIssue] | None = None,
     time_limit: float | None = None,
+    asset_bonus: Mapping[int, float] | None = None,
 ) -> list[TransferRoute]:
     """Top-`top` маршрутов трансфера в туре gw: одна MILP с t_in/t_out, альтернативы —
     no-good cuts. Лимит трансферов: 1 (2 при FT >= 2), +1 платный при allow_hit.
 
     Вердикт по хиту считается от лучшей бесплатной альтернативы (не от «без трансферов»):
-    hit_marginal_gain = Δdisc(маршрут) − Δdisc(лучший бесплатный) − 4 >= hit_threshold."""
+    hit_marginal_gain = Δdisc(маршрут) − Δdisc(лучший бесплатный) − 4 >= hit_threshold.
+    asset_bonus — «ценные активы» (core/assets.py): их продажа теряет бонус, покупка — даёт."""
     S = get_strategy(strategy)
     gws = list(range(gw, gw + horizon))
     free_cap = 1 if free_transfers < 2 else 2
@@ -717,6 +725,7 @@ def single_transfer(
             max_transfers={w: (cap if w == gw else 0) for w in gws},
             keep=frozenset(keep),
             exclude=frozenset(exclude),
+            asset_bonus=dict(asset_bonus or {}),
         )
 
     spec = spec_for(max_t)
@@ -908,6 +917,7 @@ def plan_transfers(
     allow_hits: bool = True,
     chips: Mapping[int, str] | Iterable[tuple[int, str]] = (),
     chips_available_by_gw: Mapping[int, Iterable[str]] | None = None,
+    asset_bonus: Mapping[int, float] | None = None,
 ) -> TransferPlan:
     """Многотуровый план (solve_multi_period в духе open-fpl-solver) + альтернатива с Wildcard
     в from_gw. Рекомендация: hold — ноль трансферов в from_gw; wildcard — WC доступен, план с WC
@@ -939,6 +949,7 @@ def plan_transfers(
         exclude=frozenset(exclude),
         allow_hits=allow_hits,
         chips=chip_plan,
+        asset_bonus=dict(asset_bonus or {}),
     )
     baseline = _baseline(spec, time_limit=time_limit)
     sol, solver_name = Model(spec).solve(time_limit=time_limit)
@@ -965,6 +976,7 @@ def plan_transfers(
             exclude=frozenset(exclude),
             allow_hits=allow_hits,
             chips=chip_plan,
+            asset_bonus=dict(asset_bonus or {}),
         )
         wc_sol, _ = Model(wc_spec).solve(time_limit=time_limit)
         limit_hit = limit_hit or wc_sol.time_limit_hit
@@ -1040,6 +1052,11 @@ class ManagerInputs:
     store: PredictionStore
     squad_gw: int  # тур, за который взяты picks (последний завершённый)
     chips_by_gw: dict[int, list[str]] = field(default_factory=dict)  # доступные чипы по туру
+    assets: dict[int, AssetFlag] = field(default_factory=dict)  # core/assets.py
+
+    @property
+    def asset_bonus(self) -> dict[int, float]:
+        return {p: a.bonus for p, a in self.assets.items() if p in self.pool}
 
 
 def load_inputs(
@@ -1065,6 +1082,7 @@ def load_inputs(
     gws = list(range(from_gw, from_gw + horizon))
     preds = store.horizon(gws)
     cands = build_candidates(bs, preds, ids)
+    assets = asset_flags(cands, ids, gws, get_strategy(strategy))
     pool = build_pool(
         cands,
         squad_ids=ids,
@@ -1072,6 +1090,7 @@ def load_inputs(
         size=pool_size or settings.optimizer_pool_size,
         bank=bank,
         exclude=exclude,
+        include=[p for p, a in assets.items() if a.kind == "buy_low"],
     )
     xi = best_xi([cands[p] for p in ids], from_gw, strategy)
     issues = diagnose_squad(ids, preds, cands, from_gw, starters=xi.starters)
@@ -1092,6 +1111,7 @@ def load_inputs(
         store=store,
         squad_gw=squad_gw,
         chips_by_gw=chips_by_gw,
+        assets=assets,
     )
 
 
@@ -1316,6 +1336,7 @@ def main(argv: list[str] | None = None) -> int:
             allow_hit=args.allow_hit,
             issues=inputs.issues,
             time_limit=args.time_limit,
+            asset_bonus=inputs.asset_bonus,
         )
         print(f"\ntransfer routes GW{gw} (horizon {horizon}, allow_hit={bool(args.allow_hit)}):")
         print(format_routes(routes, inputs.pool))
@@ -1352,6 +1373,7 @@ def main(argv: list[str] | None = None) -> int:
                 allow_hits=args.allow_hits,
                 chips=chips,
                 chips_available_by_gw=inputs.chips_by_gw,
+                asset_bonus=inputs.asset_bonus,
             )
         except ChipPlanError as exc:
             print(f"\nchip plan error: {exc}", file=sys.stderr)

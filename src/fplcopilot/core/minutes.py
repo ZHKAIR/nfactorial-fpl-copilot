@@ -133,6 +133,22 @@ def horizon_availability(
     return factor, True, f"signal return_gw={signal.return_gw}: out for GW{gw} -> ×{factor:.2f}"
 
 
+def fit_minutes(
+    rows: Sequence[PlayerGWHistory],
+    *,
+    position: Position,
+    past: SeasonTotals | None = None,
+    gw: int | None = None,
+    status_gw: int | None = None,
+) -> MinutesEstimate:
+    """Минуты «если здоров»: без статуса FPL и сигнала, а хвост матчей с 0 минут в конце истории
+    отрезан — у травмированного это и есть пропуск, иначе он занизит долю стартов."""
+    trimmed = list(rows)
+    while trimmed and trimmed[-1].minutes == 0:
+        trimmed.pop()
+    return estimate_minutes(trimmed, position=position, past=past, gw=gw, status_gw=status_gw)
+
+
 def estimate_minutes(
     rows: Sequence[PlayerGWHistory],
     *,

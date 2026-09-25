@@ -40,6 +40,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
+from fplcopilot.core.assets import AssetFlag
 from fplcopilot.core.candidates import Candidate, PredictionStore, SquadIssue, problem_players
 from fplcopilot.core.optimizer import (
     BENCH_BOOST,
@@ -339,6 +340,17 @@ class LineupOut(BaseModel):
     current_xi_points: float | None = None  # очки нынешних 11 (picks) с нынешним капитаном
 
 
+class RouteLineup(BaseModel):
+    """Лучший состав тура после маршрута (id FPL): старт, скамейка по порядку, капитан/вице."""
+
+    formation: str
+    starter_ids: list[int]
+    bench_ids: list[int]
+    captain_id: int
+    vice_id: int
+    expected_points: float
+
+
 class RouteOut(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
@@ -357,6 +369,8 @@ class RouteOut(BaseModel):
     risk_note: str
     verdict: str
     xi_points_after: float
+    # для экрана «К дедлайну»; в JSON для агента и MCP не уходит
+    lineup_after: RouteLineup | None = Field(default=None, exclude=True)
 
 
 class RecommendTransfersInput(BaseModel):
@@ -384,6 +398,8 @@ class RoutesOut(BaseModel):
     constrained: bool = False
     alternative: RouteOut | None = None  # лучший маршрут без ограничений сценария
     notes: list[str] = Field(default_factory=list)
+    # «ценные активы» (core/assets.py): свои — придержать, покупки маршрутов — на спаде цены
+    assets: list[AssetFlag] = Field(default_factory=list)
 
 
 class PlanMoveOut(BaseModel):
@@ -1114,6 +1130,7 @@ def fixture_label(pred: XPtsBreakdown | None) -> str:
 
 
 def route_out(route: TransferRoute, rank: int) -> RouteOut:
+    la = route.lineup_after
     return RouteOut(
         rank=rank,
         out=list(route.out_names),
@@ -1129,7 +1146,15 @@ def route_out(route: TransferRoute, rank: int) -> RouteOut:
         new_bank=r2(route.new_bank) or 0.0,
         risk_note=route.risk_note,
         verdict=route.verdict,
-        xi_points_after=r2(route.lineup_after.expected_points) or 0.0,
+        xi_points_after=r2(la.expected_points) or 0.0,
+        lineup_after=RouteLineup(
+            formation=la.formation,
+            starter_ids=list(la.starters),
+            bench_ids=list(la.bench_order),
+            captain_id=la.captain,
+            vice_id=la.vice,
+            expected_points=r2(la.expected_points) or 0.0,
+        ),
     )
 
 
@@ -1214,6 +1239,7 @@ def constrained_routes(
             max_transfers={w: ((c if w == gw else 0) if transfers else 0) for w in gws},
             keep=keep_set,
             exclude=exclude_set,
+            asset_bonus=inputs.asset_bonus,
         )
 
     def build(c: int, *, at_least: int | None = None) -> Model:
@@ -2271,6 +2297,7 @@ class LiveTools:
                 allow_hit=inp.allow_hit,
                 top=1,
                 issues=inputs.issues,
+                asset_bonus=inputs.asset_bonus,
             )
             pick = recommend_route(free)
             if pick is not None and (not routes or set(pick.in_) != set(routes[0].in_)):
@@ -2288,11 +2315,13 @@ class LiveTools:
                 keep=inp.keep,
                 allow_hit=inp.allow_hit,
                 issues=inputs.issues,
+                asset_bonus=inputs.asset_bonus,
             )
             squad_cands = [inputs.cands[p] for p in inputs.squad]
             baseline_pts = r2(best_xi(squad_cands, inp.gw, inp.strategy).expected_points) or 0.0
         pick = recommend_route(routes)
         rank = routes.index(pick) + 1 if pick is not None else None
+        bought = {p for r in routes for p in r.in_}
         return RoutesOut(
             gw=inp.gw,
             horizon=inp.horizon,
@@ -2306,6 +2335,11 @@ class LiveTools:
             constrained=constrained,
             alternative=alternative,
             notes=notes,
+            assets=[
+                a
+                for a in inputs.assets.values()
+                if (a.kind == "hold" and a.player_id in inputs.squad) or a.player_id in bought
+            ],
         )
 
     def _plan_out(self, plan: TransferPlan, pool: dict[int, Candidate]) -> PlanOut:
@@ -2424,6 +2458,7 @@ class LiveTools:
             allow_hits=inp.allow_hits,
             chips=chips,
             chips_available_by_gw=inputs.chips_by_gw or None,
+            asset_bonus=inputs.asset_bonus,
         )
         out = self._plan_out(plan, inputs.pool)
         if previous is not None:
@@ -2472,6 +2507,7 @@ class LiveTools:
                 keep=inp.keep,
                 exclude=inp.exclude,
                 manager_id=inp.manager_id,
+                asset_bonus=inputs.asset_bonus,
             )
             wc = plan.wildcard_alternative
             return ScenarioOut(

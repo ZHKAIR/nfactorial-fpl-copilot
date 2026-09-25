@@ -68,6 +68,7 @@ class Player(_Model):
     element_type: Position
     now_cost: int  # в десятых долях миллиона: 55 -> 5.5
     cost_change_event: int = 0
+    cost_change_start: int = 0  # now_cost − цена на старте сезона
 
     # доступность
     status: str = "a"  # a=available d=doubtful i=injured s=suspended u=unavailable n=not in squad

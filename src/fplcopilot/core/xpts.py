@@ -59,7 +59,7 @@ from fplcopilot.core.history import (
     rows_before,
     team_match_stats,
 )
-from fplcopilot.core.minutes import MinutesEstimate, estimate_minutes
+from fplcopilot.core.minutes import MinutesEstimate, estimate_minutes, fit_minutes
 from fplcopilot.core.signals import SignalLite, latest_signals
 from fplcopilot.core.stats import expected_floor_div, negbin_sf, percentile_rank, shrink
 from fplcopilot.data import Bootstrap, Fixture, FPLClient, Player, Position
@@ -294,6 +294,9 @@ class XPtsBreakdown(BaseModel):
     notes: list[str] = Field(default_factory=list)
     setpiece_bonus: float = 0.0
     understat_blend: float = 0.0
+    # xPts «если здоров» (минуты без статуса/сигнала и без хвоста пропусков) — только у тех, кому
+    # статус FPL или новость режут доступность; у остальных None (= xpts)
+    xpts_fit: float | None = None
 
     @property
     def sd(self) -> float:
@@ -588,36 +591,47 @@ def predict_player(
     rates = ctx.rates[player_id]
     bonus = ctx.bonus_per_match(player)
     baseline = ctx.team_baseline.get(player.team, (0.0, 0.0))
-
-    comps = XPtsComponents()
-    variance = 0.0
-    inputs: list[FixtureInput] = []
     raw_setpiece = setpiece_bonus_xpts(player)
-    minutes_scale = min(1.0, mins.exp_minutes / 90.0) if mins.exp_minutes > 0 else 0.0
-    applied_setpiece = raw_setpiece * minutes_scale
     blend_w = (
         settings.xpts_understat_blend
         if ctx.ext is not None and ctx.ext.player_row(player.id) is not None
         else 0.0
     )
-    for fv in ctx.team_fixtures.get(player.team, []):
-        c, v, inp = fixture_components(
-            pos,
-            rates,
-            mins,
-            fv,
-            baseline=baseline,
-            bonus_per_match=bonus,
-            penalty_taker=player.penalties_order == 1,
+
+    def components(m: MinutesEstimate) -> tuple[XPtsComponents, float, list[FixtureInput], float]:
+        comps = XPtsComponents()
+        variance = 0.0
+        inputs: list[FixtureInput] = []
+        scale = min(1.0, m.exp_minutes / 90.0) if m.exp_minutes > 0 else 0.0
+        setpiece = raw_setpiece * scale
+        for fv in ctx.team_fixtures.get(player.team, []):
+            c, v, inp = fixture_components(
+                pos,
+                rates,
+                m,
+                fv,
+                baseline=baseline,
+                bonus_per_match=bonus,
+                penalty_taker=player.penalties_order == 1,
+            )
+            inp.opponent = ctx.bs.team(fv.opponent_id).short_name
+            inp.setpiece_bonus = setpiece
+            inp.understat_blend = blend_w
+            comps = comps.add(c)
+            variance += v
+            inputs.append(inp)
+        if inputs and setpiece:
+            comps = comps.add(XPtsComponents(setpiece=setpiece))
+        return comps, variance, inputs, setpiece
+
+    comps, variance, inputs, applied_setpiece = components(mins)
+    xpts_fit: float | None = None
+    limited = status != "a" or (chance is not None and chance < 100)
+    if limited or (signal is not None and signal.rules_out):
+        fit = fit_minutes(
+            rows, position=pos, past=ctx.past.get(player_id), gw=ctx.gw, status_gw=ctx.status_gw
         )
-        inp.opponent = ctx.bs.team(fv.opponent_id).short_name
-        inp.setpiece_bonus = applied_setpiece
-        inp.understat_blend = blend_w
-        comps = comps.add(c)
-        variance += v
-        inputs.append(inp)
-    if inputs and applied_setpiece:
-        comps = comps.add(XPtsComponents(setpiece=applied_setpiece))
+        xpts_fit = round(max(components(fit)[0].total(), comps.total()), 4)
 
     notes = list(mins.notes)
     if not inputs:
@@ -667,6 +681,7 @@ def predict_player(
         notes=notes,
         setpiece_bonus=applied_setpiece,
         understat_blend=blend_w,
+        xpts_fit=xpts_fit,
     )
 
 

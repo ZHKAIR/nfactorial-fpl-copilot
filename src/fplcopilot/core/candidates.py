@@ -9,9 +9,10 @@
 from __future__ import annotations
 
 import logging
+import re
 import statistics
 from collections.abc import Iterable, Sequence
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -74,9 +75,21 @@ class Candidate(BaseModel):
     ownership: float = 0.0  # selected_by_percent
     status: str = "a"
     in_squad: bool = False
+    # для правила «ценный актив» (core/assets.py): очки «если здоров», шанс сыграть и тур
+    # возвращения, старт в ближайшем туре, динамика цены и трансферов
+    xpts_fit_by_gw: dict[int, float] = Field(default_factory=dict)
+    chance: int | None = None
+    news: str = ""
+    return_gw: int | None = None
+    p_start: float = 1.0
+    price_change_start: float = 0.0  # £m с начала сезона (минус — подешевел)
+    transfers_net: int = 0  # transfers_in_event − transfers_out_event
 
     def xpts(self, gw: int) -> float:
         return self.xpts_by_gw.get(gw, 0.0)
+
+    def xpts_fit(self, gw: int) -> float:
+        return self.xpts_fit_by_gw.get(gw, self.xpts(gw))
 
     def variance(self, gw: int) -> float:
         return self.variance_by_gw.get(gw, 0.0)
@@ -164,6 +177,7 @@ def build_candidates(
     squad_ids: Iterable[int] = (),
 ) -> dict[int, Candidate]:
     squad = set(squad_ids)
+    first = min(preds_by_gw) if preds_by_gw else None
     out: dict[int, Candidate] = {}
     for p in bs.elements:
         xpts = {
@@ -172,6 +186,20 @@ def build_candidates(
         var = {
             gw: round(preds[p.id].variance, 4) for gw, preds in preds_by_gw.items() if p.id in preds
         }
+        fit = {
+            gw: preds[p.id].xpts_fit
+            for gw, preds in preds_by_gw.items()
+            if p.id in preds and preds[p.id].xpts_fit is not None
+        }
+        head = preds_by_gw[first].get(p.id) if first is not None else None
+        sig = (head.signal or {}) if head is not None else {}
+        kickoffs = sorted(
+            (f.kickoff_time.date(), gw)
+            for gw, preds in preds_by_gw.items()
+            if p.id in preds
+            for f in preds[p.id].fixtures
+            if f.kickoff_time is not None
+        )
         out[p.id] = Candidate(
             player_id=p.id,
             name=p.web_name,
@@ -184,8 +212,46 @@ def build_candidates(
             ownership=float(p.selected_by_percent or 0.0),
             status=p.status,
             in_squad=p.id in squad,
+            xpts_fit_by_gw=fit,
+            chance=p.chance_of_playing_next_round,
+            news=p.news,
+            return_gw=sig.get("return_gw")
+            or return_gw_from_news(p.news, kickoffs, max(preds_by_gw, default=0)),
+            p_start=head.p_start if head is not None else 1.0,
+            price_change_start=p.cost_change_start / 10,
+            transfers_net=p.transfers_in_event - p.transfers_out_event,
         )
     return out
+
+
+_RETURN_DATE = re.compile(
+    r"\b(?:Expected back|Suspended until|Unavailable until|Out until)\s+"
+    r"(?P<day>\d{1,2})(?:st|nd|rd|th)?\s+(?P<mon>[A-Za-z]{3})",
+    re.IGNORECASE,
+)
+_MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
+
+
+def return_gw_from_news(
+    news: str, kickoffs: Sequence[tuple[date, int]], last_gw: int
+) -> int | None:
+    """Тур возвращения из новости FPL («Knee injury - Expected back 18 Oct»): первый матч клуба
+    в горизонте с датой не раньше даты возврата (как GWCalendar в rag/extract.py; «until» у FPL
+    включительно). Возврат позже всех матчей горизонта — last_gw + 1. Даты в новости нет — None."""
+    m = _RETURN_DATE.search(news or "")
+    if not m or not kickoffs:
+        return None
+    mon = m.group("mon")[:3].lower()
+    if mon not in _MONTHS:
+        return None
+    first = kickoffs[0][0]
+    try:
+        when = date(first.year, _MONTHS.index(mon) + 1, int(m.group("day")))
+    except ValueError:
+        return None
+    if when < first - timedelta(days=180):
+        when = when.replace(year=when.year + 1)
+    return next((gw for day, gw in kickoffs if day >= when), last_gw + 1)
 
 
 def squad_candidates(cands: dict[int, Candidate], squad_ids: Iterable[int]) -> list[Candidate]:
@@ -201,14 +267,19 @@ def build_pool(
     bank: float = 0.0,
     exclude: Iterable[int] = (),
     cheap_per_position: int = CHEAP_PER_POSITION,
+    include: Iterable[int] = (),
 ) -> dict[int, Candidate]:
     """Текущий состав + top-`size` по сумме xPts за горизонт (квоты по позициям 2/5/5/3 от 15)
-    + по `cheap_per_position` лучших дешёвых на позицию. Вне пула: статусы i/s/u/n, `exclude`,
+    + по `cheap_per_position` лучших дешёвых на позицию + `include` (покупки «на спаде» из
+    core/assets.py — их статус i/s не отсекается). Вне пула: статусы i/s/u/n, `exclude`,
     цена выше максимально доступной (банк + самый дорогой игрок состава), нулевой xPts."""
     squad = list(dict.fromkeys(squad_ids))
     excluded = set(exclude)
     pool: dict[int, Candidate] = {pid: cands[pid] for pid in squad}
     max_price = bank + max((cands[pid].price for pid in squad), default=15.0)
+    for pid in include:
+        if pid in cands and pid not in excluded and cands[pid].price <= max_price + 1e-9:
+            pool[pid] = cands[pid]
     eligible = [
         c
         for pid, c in cands.items()
