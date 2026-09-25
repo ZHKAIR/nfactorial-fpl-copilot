@@ -11,8 +11,8 @@
 Исходники диаграмм (mermaid) лежат в [`docs/diagrams/`](diagrams/):
 `architecture.mmd` (слои), `request_path.mmd` (путь запроса), `data_flow.mmd` (офлайн/онлайн),
 `data_model.mmd` (таблицы), `agent_graph.mmd` (граф LangGraph, сгенерирован кодом),
-`deploy.mmd` (прод-стек, §13). Упрощённая схема для защиты — `overview.png` (слайд 6
-[`docs/presentation/slides.html`](presentation/slides.html)).
+`deploy.mmd` (прод-стек, §13). Упрощённая схема для защиты — `overview.png` и слайд 6
+презентации [`docs/presentation/FPL_Copilot_defense.pdf`](presentation/FPL_Copilot_defense.pdf).
 
 ## 1. Принцип, из которого следует всё остальное
 
